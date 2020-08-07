@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>成绩查看与操作</title>
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+</head>
+<body class="container">
+
+	    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">梦云智</a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="index.html">课程管理</a></li>
+                            <li><a href="course.html">上课管理</a></li>
+                            <li><a href="grade.html">成绩管理</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">注销</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </div>
+    </div>
+
+    <!--学生信息签到等情况展示-->
+    <div class="container" style="margin-top: 20px;margin-bottom: 50px;">
+    	<div class="row">
+    <form action="" method="post">
+    <label>课程名称：商业网址开发  </label>	
+    <br>
+    <label>签到成绩占比</label>
+    <input type="hidden" name="id" value="{$Teacher->id}" />
+    <input type="text" name="name" value="0.8" />
+    <label>上课表现成绩占比</label>
+    <input type="text" name="username" value="0.2" />
+    
+    
+    <button type="submit"><a href="studentUpdate.html"> 保存</a></button>
+    </div>
+    </div>
+    <!--课程信息展示-->
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <table class="table table-hover table-bordered">
+                    <tr class="info">
+                        <th>序号</th>
+                        <th>学生姓名</th>
+                        <th>学生学号</th>
+                        <th>签到成绩</th>
+                        <th>上课表现成绩</th>
+                        <th>最终成绩</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>郝泽龙</td>
+                        <td>1</td>
+                        <td>78</td>
+                        <td>2</td>
+                        <td>79</td>
+                        <td><a href="gradeEdit.html">编辑</a> &nbsp;&nbsp;
+                        	</td>
+                    </tr>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>温宇航</td>
+                        <td>2</td>
+                        <td>96</td>
+                        <td>90</td>
+                        <td>93</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        	</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>陈丽婷</td>
+                        <td>3</td>
+                        <td>86</td>
+                        <td>76</td>
+                        <td>82</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        	</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>张三</td>
+                        <td>4</td>
+                        <td>84</td>
+                        <td>82</td>
+                        <td>83</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        	</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
