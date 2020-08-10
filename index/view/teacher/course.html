@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>上课管理</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        td {
+            width: 9.09%;
+            height: 50px;
+            text-align: center;
+        }
+
+        .tdBg {
+            background-color: pink;
+        }
+    </style>
+
+    <script>
+        var timer = null;
+
+        // 这是一个函数，表示一个功能
+        function start(){
+
+            timer = setInterval(function(){
+                // alert("要开始了！");
+                // console.log("???");
+                // 1.找到所有的 单元格
+                var allTd = document.getElementsByTagName("td");
+
+                // 3.获取一个随机数
+                // Math.random() 获取一个0-1的小数
+                // Math.random()*42 获取0-42中间的小数
+                // parseInt()把一个数字变成整数，例：parseInt(55.99999) ====== 55
+                var num = parseInt(Math.random()*42);
+
+                // 2.遍历所有单元格，将所有单元格加上背景颜色
+                for (var i=0; i<allTd.length; i++) {
+
+                    // 如果（xxxxx） {
+                        // 1
+                    // } 否则 {
+                        // 2 
+                    // }
+                    if (i == num) {
+                        allTd[i].className = "tdBg";
+                    } else {
+                        allTd[i].className = "";
+                    }
+                }
+            }, 1);
+        }
+
+        function end(){
+            clearInterval(timer);
+        }
+
+    </script>
+</head>
+
+<body class="container">
+    <!-- 菜单导航 -->
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">梦云智</a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                           <li class="active"><a href="index.html">课程管理</a></li>
+                            <li><a href="register.html">上课管理</a></li>
+                            <li><a href="grade.html">成绩管理</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">注销</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </div>
+    </div>
+    <!-- /菜单导航 -->
+<table border="1" width="1000" style="margin-right: auto;margin-left: auto;margin-top: 50px;">
+<tr>
+    <td>应到50人</td>
+<td>实到49人</td></tr>
+</table>
+    
+    <!--座位表显示-->
+    <table border="1" width="1000" style="margin-right: auto;margin-left: auto;margin-top: 50px;">
+        <tr>
+        <!-- 可以对单元格施加宽度属性，使用百分比和长度皆可 -->
+            <td>郝泽龙1</td>
+            <td>郝泽龙2</td>
+            <td>郝泽龙3</td>
+            <td>郝泽龙4</td>
+            <td>郝泽龙5</td>
+            <td rowspan="4">走<br>廊</td>
+            <td>张三</td>
+            <td>李四</td>
+            <td>王五</td>
+            <td>郝泽龙</td>
+            <td>咋办</td>
+            </tr>
+        <tr>
+        
+            <td>刘杰</td>
+            <td>苏杰</td>
+            <td>宇航</td>
+            <td>加油</td>
+            <td>二狗</td>
+            
+            <td>毛蛋</td>
+            <td>哈哈</td>
+            <td>lisa</td>
+            <td>叫啥呢</td>
+            <td>你才</td>
+        </tr>
+        <tr>
+            <td>测试1</td>
+            <td>测试2</td>
+            <td>测试3</td>
+            <td>测试4</td>
+            <td>测试5</td>
+            
+            <td>测试6</td>
+            <td>测试7</td>
+            <td>测试8</td>
+            <td>测试9</td>
+            <td>测试0</td>
+        </tr>
+        <tr>
+            <td>哒哒</td>
+            <td>尴尬</td>
+            <td>没名了</td>
+            <td>嘻嘻</td>
+            <td>啧啧</td>
+            <td>嘿嘿</td>
+            <td>田一凡</td>
+            <td>施雨涵</td>
+            <td>没了</td>
+            <td>终于完了</td>
+        </tr>
+        <tr>
+            
+            
+            <!-- colspan 可以跨列 -->
+            <td colspan="11">讲台</td>
+        </tr>
+    </table>
+    <br><br>
+    <div class="row" style="margin-right: auto;margin-left: auto;">
+    <input type="button" value="开始随机点名" onclick="start()" >
+    <input type="button" value="结束" onclick="end()" ></div>
+</form>
+</body>
+
+</html>
