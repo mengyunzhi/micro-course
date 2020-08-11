@@ -42,14 +42,14 @@
                     <form class="form-inline">
                         <div class="form-group">
                             <label>学期选择:</label>
-                            <select>
+                            <select><option value="2019秋">2019秋</option>
                                 <option value="2020春">2020春</option>
-                                <option value="2019秋"> 2019秋</option>
+                                
                                 <option value="2019春">2019春</option>
                                 <option value="2018秋">2018秋</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-default">&nbsp;<a href="semester.html">确认</a></button>
+                        <button type="submit" class="btn btn-default">&nbsp;确认</button>
                     </form>
                 </div>
                 <div class="col-md-4 text-right">
@@ -75,28 +75,28 @@
                         <td>1</td>
                         <td>商业网址开发入门</td>
                         <td>50</td>
-                        <td>2020春</td>
+                        <td>2019秋</td>
                         <td><a href="courseEditAgain.html">编辑</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">删除</a></td>
                     </tr>
                     <tr>
                         <td>2</td>
                         <td>高等数学</td>
                         <td>45</td>
-                        <td>2020春</td>
+                        <td>2019秋</td>
                         <td><a href="courseEdit.html">编辑</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">删除</a></td>
                     </tr>
                     <tr>
                         <td>3</td>
                         <td>西洋音乐鉴赏</td>
                         <td>60</td>
-                        <td>2020春</td>
+                        <td>2019秋</td>
                         <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">删除</a></td>
                     </tr>
                     <tr>
                         <td>4</td>
                         <td>大学物理A</td>
                         <td>45</td>
-                        <td>2020春</td>
+                        <td>2019秋</td>
                         <td><a href="courseEdit.html">编辑</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">删除</a></td>
                     </tr>
                 </table>

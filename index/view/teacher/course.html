@@ -16,7 +16,6 @@
             background-color: pink;
         }
     </style>
-
     <script>
         var timer = null;
 
@@ -60,6 +59,7 @@
 </head>
 
 <body class="container">
+
     <!-- 菜单导航 -->
     <div class="row">
         <div class="col-md-12">
@@ -71,7 +71,7 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                           <li class="active"><a href="index.html">课程管理</a></li>
+                            <li class="active"><a href="index.html">课程管理</a></li>
                             <li><a href="register.html">上课管理</a></li>
                             <li><a href="grade.html">成绩管理</a></li>
                         </ul>
@@ -85,17 +85,21 @@
             </nav>
         </div>
     </div>
-    <!-- /菜单导航 -->
-<table border="1" width="1000" style="margin-right: auto;margin-left: auto;margin-top: 50px;">
-<tr>
-    <td>应到50人</td>
-<td>实到49人</td></tr>
-</table>
+    
+
+    <!--签到人数显示-->
+    <table border="1" width="1000" style="margin-right: auto;margin-left: auto;margin-top: 50px;">
+        <tr>
+            <td>应到50人</td>
+            <td>实到49人</td>
+        </tr>
+    </table>
+
     
     <!--座位表显示-->
     <table border="1" width="1000" style="margin-right: auto;margin-left: auto;margin-top: 50px;">
         <tr>
-        <!-- 可以对单元格施加宽度属性，使用百分比和长度皆可 -->
+            <!-- 可以对单元格施加宽度属性，使用百分比和长度皆可 -->
             <td>郝泽龙1</td>
             <td>郝泽龙2</td>
             <td>郝泽龙3</td>
@@ -107,15 +111,13 @@
             <td>王五</td>
             <td>郝泽龙</td>
             <td>咋办</td>
-            </tr>
+        </tr>
         <tr>
-        
             <td>刘杰</td>
             <td>苏杰</td>
             <td>宇航</td>
             <td>加油</td>
             <td>二狗</td>
-            
             <td>毛蛋</td>
             <td>哈哈</td>
             <td>lisa</td>
@@ -128,7 +130,6 @@
             <td>测试3</td>
             <td>测试4</td>
             <td>测试5</td>
-            
             <td>测试6</td>
             <td>测试7</td>
             <td>测试8</td>
@@ -148,17 +149,15 @@
             <td>终于完了</td>
         </tr>
         <tr>
-            
-            
             <!-- colspan 可以跨列 -->
             <td colspan="11">讲台</td>
         </tr>
     </table>
     <br><br>
     <div class="row" style="margin-right: auto;margin-left: auto;">
-    <input type="button" value="开始随机点名" onclick="start()" >
-    <input type="button" value="结束" onclick="end()" ></div>
-</form>
+        <input type="button" value="开始随机点名" onclick="start()">
+        <input type="button" value="结束" onclick="end()"></div>
+    </form>
 </body>
 
 </html>
