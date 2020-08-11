@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>学生添加</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+</head>
+<body class="container">
+    
+    <!-- 菜单导航 -->
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">梦云智</a>
+                    </div>
+                    <!-- Collect the nav links, forms, and other content for toggling -->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+<li class="active"><a href="index.html">课程管理</a></li>
+                            <li><a href="course.html">上课管理</a></li>
+                            <li><a href="grade.html">成绩管理</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="#">注销</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.navbar-collapse -->
+                </div>
+                <!-- /.container-fluid -->
+            </nav>
+        </div>
+    </div>
+	<form action="" method="post">
+    <label>课程名称:</label>
+    <input type="hidden" name="id" value="{$Teacher->id}" />
+    <input type="text" name="name" value="商业网址开发入门" />
+    <label>教学班级:</label>
+    <input type="text" name="username" value="计1905、1906" />
+    
+    <button type="submit"><a href="">+选择文件</a></button>
+    <button type="submit"><a href="studentUpdate.html">保存</a></button>
+</form>
+</body>
+</html>
