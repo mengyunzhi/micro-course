@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>成绩编辑</title>
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <title>成绩编辑</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
 </head>
+
 <body class="container">
-	
     <!-- 菜单导航 -->
     <div class="row">
         <div class="col-md-12">
@@ -17,7 +18,7 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-<li class="active"><a href="index.html">课程管理</a></li>
+                            <li class="active"><a href="index.html">课程管理</a></li>
                             <li><a href="course.html">上课管理</a></li>
                             <li><a href="grade.html">成绩管理</a></li>
                         </ul>
@@ -31,18 +32,16 @@
             </nav>
         </div>
     </div>
-	
-	<!-- 最终成绩直接编辑 -->
-<form action="" method="post">
-    <label>姓名:</label>
-    <input type="hidden" name="id" value="{$Teacher->id}" />
-    <input type="text" name="name" value="郝泽龙" />
-    <label>学号:</label>
-    <input type="text" name="username" value="1" />
-    <label>成绩:</label>
-    <input type="text" name="username" value="79" />
-    <button type="submit"><a href="studentUpdate.html"> 保存</a></button>
-</form>
-
+    <!-- 最终成绩直接编辑 -->
+    <form action="" method="post">
+        <label>姓名:郝泽龙</label>
+        <br>
+        <label>学号:1</label>
+        <br>
+        <label>成绩:</label>
+        <input type="text" name="username" value="79" />
+        <button type="submit" onclick="alert('成绩编辑成功')"><a href="gradeLook.html"> 保存</a></button>
+    </form>
 </body>
+
 </html>

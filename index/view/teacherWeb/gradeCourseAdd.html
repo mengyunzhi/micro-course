@@ -34,26 +34,24 @@
 
     <!-- 加分选择 -->
 	<form action="" method="post">
-    <label>姓名:</label>
-    <input type="hidden" name="id" value="{$Teacher->id}" />
-    <input type="text" name="name" value="郝泽龙" />
-    <label>学号:</label>
-    <input type="text" name="username" value="195717" />
+    <label>姓名:郝泽龙</label>
+        <br>
+    
+    <label>学号:195717</label>
+        
+    <br>
     <label>加分选择:</label>
     <select name="sex">
         <option value="0">回答问题好</option>
         <option value="1" {eq name="Teacher->sex" value="1" }selected="selected" {/eq}>作业完成好</option>
     </select>
-    <button type="submit"><a href="studentUpdate.html"> 保存</a></button>
-    <br>
+    <button type="submit"  onclick="alert('保存成功')"><a href="gradeCourse.html">保存</a></button>
+    <br><br><br>
     <label>新增加分项:</label>
     <input type="text" name="username" value="" />
-    <label>分值选择:</label>
-    <select name="分值选择:">
-        <option value="0">1</option>
-        <option value="1" {eq name="Teacher->sex" value="1" }selected="selected" {/eq}>2</option>
-    </select>
-    <button type="submit"><a href="studentUpdate.html"> 保存</a></button>
+    <label>分值设置:</label>
+    <input type="text" name="username" value="" />
+    <button type="submit"  onclick="alert('保存成功')"><a href="gradeCourse.html"> 保存</a></button>
 </form>
 </body>
 </html>

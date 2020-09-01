@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>上课成绩</title>
-	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-	<style>
-body{margin:0;padding:0;font-size:12px;}
+    <title>成绩查看与操作</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <style>
+        body{margin:0;padding:0;font-size:12px;}
 .scale_panel{color:#999;width:200px;position:absolute;line-height:18px;left:60px;top:-0px;}
 .scale_panel .r{float:right;}
 .scale span{background:url(images/scroll.gif) no-repeat;width:8px;height:16px;position:absolute;left:-2px;top:-5px;cursor:pointer;}
@@ -13,9 +14,9 @@ body{margin:0;padding:0;font-size:12px;}
 .lanren li{font-size:12px;line-height:50px;position:relative;height:50px;list-style:none;}
 </style>
 </head>
+
 <body class="container">
-		<!--菜单显示-->
-	    <div class="row">
+    <div class="row">
         <div class="col-md-12">
             <nav class="navbar navbar-default" role="navigation">
                 <div class="container-fluid">
@@ -39,25 +40,41 @@ body{margin:0;padding:0;font-size:12px;}
             </nav>
         </div>
     </div>
-
-	
-
-	<!--进度条-->
-	<div style="float: left;"> <ul>奖励</ul></div>
-        <div style="float: left;margin-left: -100px;">
-    <ul class="lanren">
-    <li>
-        <div class="scale_panel">
-        <span id="title">0</span>
-            <div class="scale" id="bar">
-                <div></div>
-                <span id="btn"></span>
-            </div>
+    <!--签到与上课表现成绩占比设置-->
+    <div class="container" style="margin-top: 20px;margin-bottom: 50px;">
+        <div class="row">
+            <form action="" method="post">
+                <br>
+                <label>签到成绩占比</label>
+                <input type="hidden" name="id" value="{$Teacher->id}" />
+                <input type="text" name="name" value="0.8" />
+                <label>上课表现成绩占比</label>
+                <input type="text" name="username" value="0.2" />
+                <button type="submit" onclick="alert('上课表现成绩占比设置成功')"><a href="#"> 保存</a></button>
+                <br>
+                <label>上课表现成绩分数上限设置</label>
+                <input type="text" name="username" value="100" />
+                <button type="submit" onclick="alert('上课表现成绩占比设置成功')"><a href="#"> 保存</a></button>
         </div>
-    </li>
-</ul>
-<script>
-var scale = function (btn,bar,title){
+    </div>
+    <!--奖励与惩罚选择-->
+    <div style="float: left;">
+        <ul>奖励</ul>
+    </div>
+    <div style="float: left;margin-left: -100px;">
+        <ul class="lanren">
+            <li>
+                <div class="scale_panel">
+                    <span id="title">0</span>
+                    <div class="scale" id="bar">
+                        <div></div>
+                        <span id="btn"></span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <script>
+            var scale = function (btn,bar,title){
     this.btn=document.getElementById(btn);
     this.bar=document.getElementById(bar);
     this.title=document.getElementById(title);
@@ -88,79 +105,70 @@ scale.prototype={
 }
 new scale('btn','bar','title');
 </script>
-</div>
-<div style="float: left;margin-left: 160px;">
-<ul>惩罚</ul>
-</div>
+    </div>
+    <div style="float: left;margin-left: 160px;">
+        <ul>惩罚</ul>
+    </div>
 
-<!--学生查询-->
-<div class="row">
-                <div class="col-md-12">
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-8">
-                            <form class="form-inline">
-                                <div class="form-group">
-                                    <label class="sr-only" for="name">姓名</label>
-                                    <input name="name" type="text" class="form-control" placeholder="学生学号" value="">
-                                </div>
-                                <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
-                            </form>
-                        </div>
-                    </div>
-                    <hr />
-                </div>
-            </div>
-  
-    <!--上课表现成绩展示-->
+    <!--最终成绩展示-->
     <div class="container">
         <div class="row">
             <div class="col">
                 <table class="table table-hover table-bordered">
                     <tr class="info">
-                        <th>序号</th>
+                        <th>排名</th>
                         <th>学生姓名</th>
                         <th>学生学号</th>
-                        <th>所教课程</th>
+                        <th>签到成绩</th>
                         <th>上课表现成绩</th>
+                        <th>最终成绩</th>
                         <th>操作</th>
                     </tr>
                     <tr>
                         <td>1</td>
                         <td>郝泽龙</td>
                         <td>1</td>
-                        <td>商业网址开发入门</td>
-                        <td>80</td>
-                        <td><a href="gradeCourseAdd.html">加分</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">减分</a></td>
+                        <td>78</td>
+                        <td>2</td>
+                        <td>99</td>
+                        <td><a href="gradeEdit.html">编辑</a> &nbsp;&nbsp;
+                        </td>
+                    </tr>
                     </tr>
                     <tr>
                         <td>2</td>
                         <td>温宇航</td>
                         <td>2</td>
-                        <td>商业网址开发入门</td>
-                        <td>91</td>
-                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">加分</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">减分</a></td>
+                        <td>96</td>
+                        <td>90</td>
+                        <td>93</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        </td>
                     </tr>
                     <tr>
                         <td>3</td>
                         <td>陈丽婷</td>
                         <td>3</td>
-                        <td>商业网址开发入门</td>
+                        <td>86</td>
                         <td>76</td>
-                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">加分</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">减分</a></td>
+                        <td>82</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        </td>
                     </tr>
                     <tr>
                         <td>4</td>
                         <td>张三</td>
                         <td>4</td>
-                        <td>商业网址开发入门</td>
+                        <td>84</td>
                         <td>82</td>
-                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">加分</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_teacher->getData('id'))}">减分</a></td>
+                        <td>70</td>
+                        <td><a href="{:url('edit?id=' . $_teacher->getData('id'))}">编辑</a> &nbsp;&nbsp;
+                        </td>
                     </tr>
                 </table>
             </div>
         </div>
     </div>
-    
 </body>
+
 </html>
