@@ -1,0 +1,30 @@
+ol {
+    counter-reset: section;
+    list-style-type: none;
+    padding-left: 0
+}
+
+ol li {
+    counter-increment: section;
+    font-weight: 700
+}
+
+ol li:before {
+    content: counters(section, ".") ". "
+}
+
+ol li ol {
+    padding-left: 15px
+}
+
+ol li ol li {
+    margin: 10px 0
+}
+
+ul {
+    list-style-type: lower-alpha
+}
+
+ul li:before {
+    content: ""
+}
