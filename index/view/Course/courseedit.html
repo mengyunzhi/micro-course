@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <title>课程信息编辑</title>
+</head>
+
+<body>
+    {php}$action=request()->action()==='add'?'save':'update';{/php}
+    <form action="{:url($action)}" method="post">
+        <input type="hidden" name="id" value="{$Course->getData('id')}" />
+        <label for="name">name:</label>
+        <input type="text" name="name" id="name" value="{$Course->name}" />
+        <label>学生信息导入:</label>
+        <input type="file" id="exampleInputFile">
+        <button type="submit"  onclick="alert('学生信息导入成功')">submit</button>
+    </form>
+</body>
+
+</html>

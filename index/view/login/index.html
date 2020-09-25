@@ -1,31 +1,14 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-
 <head>
-    <meta charset="UTF-8">
-    <title>login</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+	<meta charset="UTF-8">
+	<title>login</title>
 </head>
-
 <body>
-    <div class="container">
-        <div class="row" style="width: 1200px;margin-right: auto;margin-left: auto;height: 630px;background-image: url('1.jpg');padding-top: 20px;">
-            <form action="{:url('Login/login')}" method="post">
-            	<div class="login">
-                <label for="username">
-                    <h3 style="font-color:fff">username:</h3>
-                </label class="form-control"><input type="text" name="username" placeholder="请输入账号" id="username" />
-                <br>
-                <label for="password">
-                    <h3 style="font-color:white">passward:</h3>
-                </label><input type="password" name="password"placeholder="请输入密码" id="password" />
-                <button type="submit">login</button>
-                </div>
-                <div class="clean"></div>
-            </form>
-        </div>
-    </div>
+	<form action="{:url('Login/login')}" method="post">
+		<label for="username">username:</label><input type="text" name="username" id="username"/>
+		<label for="password">password:</label><input type="password" name="password" id="password"/>
+		<button type="submit">submit</button>
+	</form>
 </body>
-
 </html>
