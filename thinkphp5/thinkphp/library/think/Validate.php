@@ -101,6 +101,21 @@ class Validate
     // 批量验证
     protected $batch = false;
 
+
+    public function reMakeRule($dates = [])
+    {
+        $rule=[];
+        if (is_array($dates)) {
+            foreach ($dates as $key => $dates) {
+                if (array_key_exists($key, $this->rule)) {
+                    $rule[$key] = $this->rule[$key];
+                }
+                # code...
+            }
+        }
+        $this->rule=$rule;
+    }
+
     /**
      * 架构函数
      * @access public

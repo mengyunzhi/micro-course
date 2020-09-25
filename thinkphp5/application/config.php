@@ -19,7 +19,7 @@ return [
     // 应用调试模式
     'app_debug'              => true,
     // 应用Trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块
@@ -51,7 +51,7 @@ return [
     // 应用类库后缀
     'class_suffix'           => false,
     // 控制器类后缀
-    'controller_suffix'      => false,
+    'controller_suffix'      => true,
 
     // +----------------------------------------------------------------------
     // | 模块设置
@@ -67,6 +67,8 @@ return [
     'default_action'         => 'index',
     // 默认验证器
     'default_validate'       => '',
+    //默认全局过滤方法，用逗号分隔多个
+    'default_filter'         =>'htmlspecialchars',
     // 默认的空控制器名
     'empty_controller'       => 'Error',
     // 操作方法后缀
@@ -168,7 +170,7 @@ return [
     // +----------------------------------------------------------------------
     'trace'                  => [
         // 内置Html Console 支持扩展
-        'type' => 'Html',
+        'type' => 'Console',
     ],
 
     // +----------------------------------------------------------------------

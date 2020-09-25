@@ -1,0 +1,9 @@
+<?php
+namespace app\common\model;
+use think\Model;
+class Teacher extends Model{
+	 public function courses()
+    {
+        return $this->belongsToMany('Course',  config('database.prefix') . 'course');
+    }
+}
