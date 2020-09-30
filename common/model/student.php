@@ -10,6 +10,10 @@ class Student extends Model
         return $this->belongsToMany('Course',config('database.prefix').'course_student');
     }
 
+    public function Course()
+    {
+        return $this->belongsTo('course');
+    }
 
     //获取是否存在相关信息
      public function getIsChecked(Course &$Course)
@@ -39,11 +43,6 @@ class Student extends Model
      * @return Teacher 教师
      * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
      */
-    public function Course()
-    {
-        return $this->belongsToMany('Course');
-    }
-
     public function CourseStudent()
     {
         return $this->hasMany('CourseStudent');

@@ -23,8 +23,8 @@
         <td>{$student->name}</td>
         <td>{$student->num}</td>
         <td>{eq name="student->sex" value='0'}男{else /}女{/eq}</td>
-        <td><a class="btn btn-sm btn-primary" href="{:url('student/edit?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;学生信息编辑</a>&nbsp;<a class="btn btn-sm btn-primary" href="{:url('course/delete?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a>
-            <a class="btn btn-sm btn-primary" href="{:url('courseedit?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;课程信息编辑</a></td>
+        <td>
+            <a class="btn btn-sm btn-primary" href="{:url('courseedit?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class="btn btn-danger btn-sm" href="{:url('course/delete?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
     </tr>
     {/volist}
 </table>

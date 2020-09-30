@@ -55,6 +55,7 @@ class StudentController extends IndexController
 	public function update()
 	{
 		//实例化请求
+        $Request = Request::instance();
 		$id=Request::instance()->post('id/d');
 		$Student=Student::get($id);
 
@@ -67,7 +68,7 @@ class StudentController extends IndexController
                 return $this->error('当前操作的记录不存在');
                 
             }
-       return $this->success('操作成功',url('course/index'));
+       return $this->success('更新成功', $Request->header('refrence')); 
 
 	}
 
@@ -86,8 +87,8 @@ class StudentController extends IndexController
 
         // 利用course_id这个数组，拼接为包括course_id和student_id的二维数组。
         if (!is_null($courseIds)) {
-            if (!$Student->course()->saveAll($courseIds)) {
-                return $this->error('学生-课程信息保存错误：' . $Student->Courses()->getError());
+            if (!$Student->Courses()->saveAll($courseIds)) {
+                return $this->error('课程-班级信息保存错误：' . $Student->Courses()->getError());
             }
         }
         //-----新增班级信息结束
