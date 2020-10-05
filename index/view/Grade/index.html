@@ -17,7 +17,7 @@
         <td>{$_course->getData('name')}</td>
         <td></td>
         <td>{$teacher->term}</td>
-        <td><a href="{:url('/index?id=' . $_course->id)}">编辑</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_course->getData('id'))}">删除</a></td>
+        <td><a href="{:url('Gradelook/index?id=' . $_course->id)}">成绩查看</a> &nbsp;&nbsp;<a href="{:url('delete?id=' . $_course->getData('id'))}">删除</a></td>
     </tr>
     {/volist}
 </table>

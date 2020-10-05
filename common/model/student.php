@@ -43,7 +43,7 @@ class Student extends Model
      * @return Teacher 教师
      * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
      */
-    public function CourseStudent()
+    public function CourseStudents()
     {
         return $this->hasMany('CourseStudent');
     }
@@ -52,4 +52,6 @@ class Student extends Model
     {
         return $this->name;
     }
+
+    
 }

@@ -14,7 +14,7 @@ class TeacherController extends IndexController
     public function index()
     {
         //接受传来的ID值
-         $id = Request::instance()->param('id');
+         $id = Request::instance()->param(1);
 
          echo $id;
 

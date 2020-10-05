@@ -32,9 +32,6 @@ class CourseController extends IndexController
             }
 
             $Students = $course->Students;
-
-
-            $course->student_num = sizeof($Students);
            // $Students = new Teacher();
             // $arraytest = [new Student(), new Student()]; 
             //dump($Students);

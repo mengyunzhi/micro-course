@@ -2,8 +2,8 @@
 <html lang="zh-cn">
 
 <head>
-    <meta charset="UTF-8">
-    <title>{block name="title"}标题{/block}</title>
+    <meta charset="utf-8">
+    <title>编辑</title>
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
 </head>
 
@@ -33,29 +33,24 @@
             </nav>
         </div>
     </div>
-    <!--/菜单导航-->
     <div class="row">
         <div class="col-md-12">
-            {block name="search"}
-            <hr />
-            <div class="row">
-                <div class="col-md-8">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="name">姓名</label>
-                            <input name="name" type="text" class="form-control" placeholder="名称..." value={:input('get.name')}>
-                        </div>
-                        <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
-                    </form>
-                </div>
-                
-            </div>
-            <hr />
-            {/block}
-            {block name="content"}
-            {/block}
-            {block name="page"}
-            {/block}
+            {php}$action=request()->action()==='add'?'save':'update';{/php}
+            <form action="{:url($action)}" method="post">
+                <label>姓名:</label>
+                <label>{$Grade->Student->name}</label>
+                <br>
+                <label>学号:</label>
+                <label>{$Grade->Student->num}</label>
+                <br>
+                <label>性别:{$Grade->Student->sex}</label>
+                <br>
+                <label>上课成绩:</label>
+                <input type="text" name="num" value="{$Grade->coursegrade}" />
+                <label>考勤成绩:</label>
+                <input type="text" name="num" value="{$Grade->usgrade}" />
+                <button type="submit">保存</button>
+            </form>
         </div>
     </div>
 </body>
