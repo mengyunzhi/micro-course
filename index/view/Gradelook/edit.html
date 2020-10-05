@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <title>编辑</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+</head>
+
+<body class="container">
+    <!--菜单导航-->
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">梦云智</a>
+                    </div>
+                    <!--Collect the nav links,forms,and other contend for toggling-->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="{:url('Teacher/index')}">课程管理</a></li>
+                            <li><a href="{:url('')}">上课管理</a></li>
+                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="{:url('Login/logout')}">注销</a></li>
+                        </ul>
+                    </div>
+                    <!--/.navbar-collapse-->
+                </div>
+                <!--/.container-fluid-->
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {php}$action=request()->action()==='add'?'save':'update';{/php}
+            <form action="{:url($action)}" method="post">
+                <label>姓名:</label>
+                <label>{$Grade->Student->name}</label>
+                <br>
+                <label>学号:</label>
+                <label>{$Grade->Student->num}</label>
+                <br>
+                <label>性别:{$Grade->Student->sex}</label>
+                <br>
+                <label>上课成绩:</label>
+                <input type="text" name="num" value="{$Grade->coursegrade}" />
+                <label>考勤成绩:</label>
+                <input type="text" name="num" value="{$Grade->usgrade}" />
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
