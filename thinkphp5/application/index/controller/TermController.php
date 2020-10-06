@@ -54,7 +54,7 @@ class TermController extends Controller
         $Term = new Term();
         
         // 为对象的属性赋值
-        $Term->id=1;
+        $Term->id=0;
         $Term->name=$postData['name'];
 		$Term->ptime=$postData['ptime'];
      

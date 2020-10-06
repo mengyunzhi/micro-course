@@ -122,6 +122,28 @@ class TeacherController extends Controller
             return $e->getMessage();
         } 
     }
+     private function saveTeacher(Teacher &$Teacher) 
+    {
+        // 写入要更新的数据
+        $Teacher->name = input('post.name');
+        $Teacher->teacher_id = input('post.teacher_id');
+
+        // 更新或保存
+        return $Teacher->validate(true)->save();
+    }
+     public function save()
+    {
+        // 实例化
+        $Teacher = new Teacher;
+
+        // 新增数据
+        if (!$this->saveTeacher($Teacher)) {
+            return $this->error('操作失败' . $Term->getError());
+        }
+    
+        // 成功跳转至index触发器
+        return $this->success('操作成功', url('index'));
+    }
 	public function delete(){
 		try{
 			//实例化请求类

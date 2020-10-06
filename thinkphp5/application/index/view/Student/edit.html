@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>管理员系统</title>
+</head>
+<body class="container">
+	<div class="row">
+		<div class="col-md-12">
+			{php}$action=request()->action()==='add'?'save':'update';{/php}
+			<form action="{:url($action)}" method="post">
+				<label>姓名:</label>
+				<input type="hidden" name="id" value="{$Student->getData('id')}" />
+				<input type="text" name="name" value="{$Student->getData('name')}" />
+				<label>学号:</label>
+				<input type="text" name="num" value="{$Student->getData('num')}" />
+				<label>平时成绩:</label>
+				<input type="text" name="gscore" value="{$Student->getData('gscore')}" />
+				<label>考勤成绩:</label>
+				<input type="text" name="lscore" value="{$Student->getData('lscore')}" />
+			
+				<button type="submit">保存</button>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>

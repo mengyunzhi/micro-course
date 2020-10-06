@@ -13,7 +13,7 @@
             <form action="{:url($action)}" method="post">
                 <input type="hidden" name="id" value="{$Term->getData('id')}" />
                 <label for="name">学期名:</label><input type="text" name="name" id="name" value="{$Term->name}" />
-                <label for="name">起始时间:</label><input type="text" name="ptime" id="ptime" value="{$Term->name}" />
+                <label for="name">起始时间:</label><input type="date" name="ptime" id="ptime" value="{$Term->name}" />
                 <button type="submit">submit</button>
             </form>
         </div>

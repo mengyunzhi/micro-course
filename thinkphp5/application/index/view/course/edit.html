@@ -12,6 +12,7 @@
             {php}$action = request()->action() === 'add' ? 'save' : 'update';{/php}
             <form action="{:url($action)}" method="post">
                 <input type="hidden" name="id" value="{$Course->getData('id')}" />
+                <label for="teacher"></label><input type="hidden" name="teacher_id" id="teacher" />
                 <label for="name">课程名称:</label><input type="text" name="name" id="name" value="{$Course->name}" />
                 <button type="submit">submit</button>
             </form>
