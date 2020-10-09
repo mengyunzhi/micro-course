@@ -8,4 +8,8 @@ public function Student()
     {
         return $this->belongsTo('student');
     }
+    public function Course()
+    {
+        return $this->belongsTo('course');
+    }
 }

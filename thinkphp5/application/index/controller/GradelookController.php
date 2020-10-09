@@ -28,6 +28,8 @@ class GradeLookController extends IndexController
 
             // 定制查询信息
 
+            $Students = $course->Students;
+
             $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
 
 
@@ -37,6 +39,7 @@ class GradeLookController extends IndexController
             }
 
             // 向V层传数据
+            $this->assign('students', $Students);
             $this->assign('grades', $Grades);
             $this->assign('course', $course);
 
@@ -56,6 +59,7 @@ class GradeLookController extends IndexController
         } 
     }
 
+    
 
     public function edit()
     {
@@ -73,63 +77,6 @@ class GradeLookController extends IndexController
         $this->assign('Grade',$Grade);
 
         return $this->fetch();
-    }
-
-
-    public function delete()
-    {
-        try {
-            // 获取get数据
-            $Request = Request::instance();
-            $id = Request::instance()->param('id/d');
-            
-            // 判断是否成功接收
-            if (0 === $id) {
-                throw new \Exception("未获取到ID信息", 1);
-            }
-
-            // 获取要删除的对象
-            $Grade = Grade::get($id);
-
-            // 要删除的对象存在
-            if (is_null($Grade)) {
-                throw new \Exception('不存在id为' . $id . '的学生成绩，删除失败', 1);
-            }
-
-            // 删除对象
-            if (!$Grade->delete()) {
-                $message = '删除失败:' . $Teacher->getError();
-            }
-            }
-        //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
-        catch(\think\Exception\HttpResponseException $e){
-            throw $e;
-            //获取到正常的异常时，输出异常
-            
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
-    // 进行跳转
-    return $this->success('删除成功', $Request->header('referer')); 
-        
-    }
-
-    public function add()
-    {
-
-        // 获取get数据
-        $Request = Request::instance();
-        $id = Request::instance()->param('id/d');
-
-        $Grade=new Grade;
-        $Grade->student_id=0;
-        $Grade->course_id=$id;
-        $Grade->coursegrade=0;
-        $Grade->usgrade=0;
-        $this->assign('grade',$Grade);
-        $Students = new Student;
-
-        return $this->fetch('edit');
     }
 
 

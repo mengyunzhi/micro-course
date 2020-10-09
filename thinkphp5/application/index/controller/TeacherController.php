@@ -33,13 +33,14 @@ class TeacherController extends IndexController
 
         $pageSize=5;//每页显示5条数据
 
-        
+        //实例化Course
+        $Course = new Course;
         
         //打印$Teacher 至控制台
         trace($Teacher,'debug');
 
         //按条件查询数据并调用分页
-         $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
+         $courses = $Course->where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
             'query'=>[
                 'id' => $id,
                 ],

@@ -43,7 +43,7 @@
                 <label>学号:</label>
                 <label>{$Grade->Student->num}</label>
                 <br>
-                <label>性别:{$Grade->Student->sex}</label>
+                <label>性别:{eq name="$Grade->Student->sex" value='0'}男{else /}女{/eq}</label>
                 <br>
                 <label>上课成绩:</label>
                 <input type="text" name="coursegrade" value="{$Grade->coursegrade}" />
@@ -53,6 +53,15 @@
             </form>
         </div>
     </div>
+
+
+    <div class="panel-body" style="height: 400px; overflow:scroll">
+            <div style="border: 1px  #000000; width: 90%; margin: 0 auto;">
+                <span>
+        
+            </span>
+            </div>
+        </div>
 </body>
 
 </html>

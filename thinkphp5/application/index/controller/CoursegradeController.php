@@ -12,7 +12,7 @@ use app\common\model\Grade;
 /**
  * 
  */
-class GradeLookController extends IndexController
+class CoursegradeController extends IndexController
 {
      public function index()
     {
@@ -24,11 +24,11 @@ class GradeLookController extends IndexController
             $course = Course::get($id);
             $pageSize = 5; // 每页显示5条数据
 
-            // 实例化students和CourseStudent    
-            // $students = new Student;
-            // $courseStudents =new CourseStudent;
+
 
             // 定制查询信息
+
+            $Students = $course->Students;
 
             $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
 
@@ -39,6 +39,7 @@ class GradeLookController extends IndexController
             }
 
             // 向V层传数据
+            $this->assign('students', $Students);
             $this->assign('grades', $Grades);
             $this->assign('course', $course);
 
@@ -58,24 +59,6 @@ class GradeLookController extends IndexController
         } 
     }
 
-
-    public function edit()
-    {
-        $id=Request::instance()->param('id/d');
-
-
-        //判断是否存在为此id的记录
-
-        if(is_null($Grade=Grade::get($id)))
-        {
-            return $this->error('未找到ID为'.id.'的记录');
-        }
-
-        //向V层传值
-        $this->assign('Grade',$Grade);
-
-        return $this->fetch();
-    }
-
     
+
 }

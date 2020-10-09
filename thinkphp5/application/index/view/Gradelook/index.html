@@ -19,12 +19,12 @@
     {volist name="grades" id="grade" key="key"}
     <tr>
         <td>{$key}</td>
-        <td>{$grade->Student->getData('name')}</td>
-        <td>{$grade->Student->getData('num')}</td>
+        <td>{$grade->Student->name}</td>
+        <td>{$grade->Student->num}</td>
         <td>{$grade->coursegrade}</td>
         <td>{$grade->usgrade}</td>
-        <td>{$grade->usgrade+$grade->coursegrade}</td>
-        <td><a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
+        <td>{$grade->usgrade*$grade->Course->usmix/100+$grade->coursegrade*(100-$grade->Course->usmix)/100}</td>
+        <td><a class="btn btn-default"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}
 </table>

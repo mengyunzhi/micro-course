@@ -22,9 +22,6 @@ class CourseController extends IndexController
             $course = Course::get($id);
             $pageSize = 5; // 每页显示5条数据
 
-            // 实例化students和CourseStudent    
-            // $students = new Student;
-            // $courseStudents =new CourseStudent;
 
             // 定制查询信息
             if (!empty($id)) {
@@ -37,7 +34,6 @@ class CourseController extends IndexController
             //dump($Students);
             // 按条件查询数据并调用分页
             //die();
-            $course->student_num = sizeof($Students);
             // 向V层传数据
             $this->assign('students', $Students);
             $this->assign('course', $course);
