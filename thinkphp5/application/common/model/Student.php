@@ -1,24 +1,30 @@
 <?php
 namespace app\common\model;
-use think\model;
+use think\Model;
 use app\common\model\CourseStudent;
 
 class Student extends Model
 {
+	protected $dateFormat = 'Y年m月d日';    // 日期格式
+
+    /**
+     * 自定义自转换字换
+     * @var array
+     */
+    protected $type = [
+        'create_time' => 'datetime',
+        'update_time' => 'datetime',
+    ];
     public function Courses()
     {
         return $this->belongsToMany('Course',config('database.prefix').'course_student');
     }
 
-    public function Course()
-    {
-        return $this->belongsTo('course');
-    }
 
     //获取是否存在相关信息
      public function getIsChecked(Course &$Course)
     {
-        // 取课程ID
+        // 取学生ID
         $studentId = (int)$this->id;
         $courseId = (int)$Course->id; 
 
@@ -43,15 +49,22 @@ class Student extends Model
      * @return Teacher 教师
      * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
      */
-    public function CourseStudents()
+    public function Course()
+    {
+        return $this->belongsToMany('Course');
+    }
+
+    public function CourseStudent()
     {
         return $this->hasMany('CourseStudent');
+    }
+    public function CourseStudents()
+    {
+    	return $this->hasMany('CourseStudent');
     }
 
     public function getName()
     {
         return $this->name;
     }
-
-    
 }

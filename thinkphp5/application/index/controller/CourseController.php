@@ -1,53 +1,57 @@
 <?php
 namespace app\index\controller;
-use app\common\model\Course;
-use app\common\model\Klass;
-use think\Request;
+use think\Controller;
+use app\common\model\Teacher;//教师模型
+use app\common\model\Course;//教师模型
+use app\common\model\Student;//教师模型
 use app\common\model\CourseStudent;
-use app\common\model\Student;
-use app\common\model\Teacher;
+use think\Request;
+use think\validate;
 
-/**
- * 
- */
-class CourseController extends IndexController
+
+class CourseController extends Controller
 {
-     public function index()
+    
+    public function test()
     {
-        try {
-            // 获取查询信息
-            $id = Request::instance()->param('id');
-            
-            //实例化课程
-            $course = Course::get($id);
-            $pageSize = 5; // 每页显示5条数据
+    	$courses = ['a','b','c'];
+    	foreach ($courses as $key => $courses) {
+    		dump($courses);
+    	}
+    	dump($courses);
+    }
+  public function index()
+    {
+    	try{
+    		$teacher_id=Request::instance()->param('id/d');
+    		$name = Request::instance()->get('name');
+    		$courses = new Course;
+    		$pageSize=5;
 
-            // 实例化students和CourseStudent    
-            // $students = new Student;
-            // $courseStudents =new CourseStudent;
+    	if(!empty($teacher_id))
+    	{
+    	    
+    	    
+    	    $pageSize = 5;
+       	    $courses = Course::where('teacher_id', '=', $teacher_id);
+       	  
+       	    if (!empty($name)) {
 
-            // 定制查询信息
-            if (!empty($id)) {
-
+        	$courses = $courses->where('name', 'like','%'.$name.'%');
             }
 
-            $Students = $course->Students;
-           // $Students = new Teacher();
-            // $arraytest = [new Student(), new Student()]; 
-            //dump($Students);
-            // 按条件查询数据并调用分页
-            //die();
-            $course->student_num = sizeof($Students);
-            // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('course', $course);
+        }
+        $courses = $courses->order('id desc')->paginate($pageSize, false, [
+                'query'=>[
+                    'name' => $name,
+                    ],
+                ]);
+        $page = $courses->render(); 
 
-            // 取回打包后的数据
-            $htmls = $this->fetch();
 
-            // 将数据返回给用户
-            return $htmls;
-
+            $this->assign('courses',$courses);
+            $this->assign('page',$page);
+       	    return $this->fetch();
         // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         } catch (\think\Exception\HttpResponseException $e) {
             throw $e;
@@ -57,117 +61,64 @@ class CourseController extends IndexController
             return $e->getMessage();
         } 
     }
-
-
-    //添加操作
-    public function add()
+    public function insert()
     {
-        $Course=new Course;
-        $Course->name='';
-        $Course->id=0;
-        $this->assign('Course',$Course);
-        $Students = new Student;
-        return $this->assign('students',$Students);
-        return $this->fetch('edit');
-    }
-
-
-     public function save()
-    {
-        // 存课程信息
+        // 实例化Term空对象
         $Course = new Course();
-        $Course->name = Request::instance()->post('name');
-
-        // 新增数据并验证。验证类，自己写下吧。
-        if (!$Course->validate(true)->save()) {
-            return $this->error('保存错误：' . $Course->getError());
-        }
-        //接收klass_id这个数组
-        $studentIds = Request::instance()->post('student_id/a');       // /a表示获取的类型为数组
-
-        // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
-        if (!is_null($studentIds)) {
-            if (!$Course->Students()->saveAll($studentIds)) {
-                return $this->error('课程-班级信息保存错误：' . $Course->Students()->getError());
-            }
-        }
-        //-----新增班级信息结束
-        unset($Course);//在返回前最后被执行
-
-        return $this->success('操作成功', url('index'));
+        
+        // 为对象的属性赋值
+        $Course->id=1;
+        $Course->name=$postData['name'];
+        $Course->teacher_id=$id;
+     
+        // 执行对象的插入数据操作
+        $Course->save();
+        return $Course->name . '成功增加至数据表中。新增ID为:' . $Course->id;
     }
+	public function add()
+    {
+    	$course = new Course();
+        // 获取所有的教师信息
+        $teachers = Teacher::all();
+        $this->assign('teachers', $teachers);
+        $this->assign('course', $course);
 
-
-    //编辑课程信息
+        // 调用edit模板
+        return $this->fetch();
+    }
     public function edit()
     {
-        $id=Request::instance()->param('id/d');
-        $Course=Course::get($id);
-
-        //获取该课程对应的所有学生信息
-        $Students = $Course->Students;
-
-        if(is_null($Course)){
-            return $this->error('不存在Id为:'.$id.'的课程');
+        $id = Request::instance()->param('id/d');
+        //获取所有教师信息
+        $teachers = Teacher::all();
+        $this->assign('teachers',$teachers);
+        //获取用户操作的课程信息
+        if(false==$course=Course::get($id)){
+        	return $this->error('未找到ID为'.$id.'的记录');
         }
-
-        $this->assign('Course',$Course);
-        $this->assign('students',$Students);
+        $this->assign('course',$course);
         return $this->fetch();
     }
 
-    //编辑课程名称，导入学生信息等功能
-    public function courseedit()
-    {
-        $id=Request::instance()->param('id/d');
-        $Course=Course::get($id);
-
-        //获取该课程对应的所有学生信息
-
-        if(is_null($Course)){
-            return $this->error('不存在Id为:'.$id.'的课程');
-        }
-
-        $this->assign('Course',$Course);
-        return $this->fetch();
+    public function update(){
+    	$id = Request::instance()->post('id/d');
+    	//获取传入的课程信息
+    	$course = Course::get($id);
+    	if(is_null($course)){
+    		return $this->error('系统未找到ID为'.$id.'的记录');
+    		//数据更新
+    		$course->name = Request::instance()->post('name');
+    		$course->teacher_id = Request::instance()->post('teacher_id');
+    		if(!$course->validate()->save()){
+    			return $this->error('更新错误：'.$course->getError());
+    		}
+    		else{
+    				return $this->success('操作成功',url('index'));
+    		}
+    	}
     }
 
-    public function update()
-    {
-        // 获取当前课程
-        $id = Request::instance()->post('id/d');
-        if (is_null($Course = Course::get($id))) {
-            return $this->error('不存在ID为' . $id . '的记录');
-        }
-
-        // 更新课程名
-        $Course->name = Request::instance()->post('name');
-        if (is_null($Course->validate(true)->save())) {
-            return $this->error('课程信息更新发生错误：' . $Course->getError());
-        }
-
-        // 删除原有信息
-        $map = ['course_id'=>$id];
-
-        // 执行删除操作。由于可能存在 成功删除0条记录，故使用false来进行判断，而不能使用
-        // if (!KlassCourse::where($map)->delete()) {
-        // 我们认为，删除0条记录，也是成功
-        if (false === $Course->CourseStudents()->where($map)->delete()) {
-            return $this->error('删除班级课程关联信息发生错误' . $Course->CourseStudents()->getError());
-        }
-
-        // 增加新增数据，执行添加操作。
-        $studentIds = Request::instance()->post('student_id/a');
-        if (!is_null($studentIds)) {
-            if (!$Course->Students()->saveAll($studentIds)) {
-                return $this->error('课程-班级信息保存错误：' . $Course->Students()->getError());
-            }
-        }
-
-        return $this->success('更新成功', url('index'));
-    }
-
-     public function delete()
+    public function delete()
     {
         try {
             // 实例化请求类
@@ -205,5 +156,37 @@ class CourseController extends IndexController
 
         // 进行跳转 
         return $this->success('删除成功', $Request->header('referer')); 
+    }
+    /**
+     * 对数据进行保存或更新
+     * @param    Course                  &$Course 教师
+     * @return   bool                             
+     * @author 梦云智 http://www.mengyunzhi.com
+     * @DateTime 2016-10-24T15:24:29+0800
+     */
+    private function saveCourse(Course &$Course) 
+    {
+        // 写入要更新的数据
+        $Course->name = input('post.name');
+
+        // 更新或保存
+        return $Course->validate(true)->save();
+    }
+     public function save()
+    {
+        // 实例化请求信息
+        $Request = Request::instance();
+
+        // 实例化班级并赋值
+        $Course = new Course();
+        $Course->name = $Request->post('name');
+        $Course->teacher_id = $Request->post('teacher_id/d');
+
+        // 添加数据
+        if (!$Course->validate(true)->save()) {
+            return $this->error('数据添加错误：' . $Course->getError());
+        }
+
+        return $this->success('操作成功', url('index'));
     }
 }

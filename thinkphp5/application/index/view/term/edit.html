@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <title>管理员系统</title>
+</head>
+<body class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {php}$action=request()->action()==='add'?'save':'update';{/php}
+            <form action="{:url($action)}" method="post">
+                <label>学期名:</label>
+                <input type="hidden" name="id" value="{$Term->getData('id')}" />
+                <input type="text" name="name" value="{$Term->getData('name')}" />
+                <label>起始时间:</label>
+                <input type="date" name="ptime" value="{$Term->getData('ptime')}" />
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>添加</title>
+</head>
+<body>
+	<form action="{:url('save')}" method="post">
+		<label for="name">姓名</label>
+		<input type="text" name="name" id="name"/>
+		<label for="num">学号</label>
+		<input type="text" name="num" id="num"/>
+		{volist name="Student->Courses()->select()" id="course"}
+		<input type="checkbox" name="course _id[]" id="course_id_{$course->id}" value="{$course->id" />
+		<label for="course_id_{$course->id}">{$course->name}</label>
+		{/volist}
+		<button type="submit">submit</button>
+	</form>
+</body>
+</html>
