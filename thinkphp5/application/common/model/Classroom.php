@@ -1,8 +1,12 @@
 <?php
 namespace app\common\model;
-use think\Model;
-class CourseStudent extends Model{
-	protected $dateFormat = 'Y年m月d日';    // 日期格式
+use think\Model;    // 使用前进行声明
+/**
+ * Student 学生表
+ */
+class Classroom extends Model
+{
+    protected $dateFormat = 'Y年m月d日';    // 日期格式
 
     /**
      * 自定义自转换字换

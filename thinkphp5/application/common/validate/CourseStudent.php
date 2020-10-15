@@ -4,8 +4,8 @@ use think\Validate;
 
 class CourseStudent extends Validate
 {
-    // protected $rule = [
-    //     'klass_id'  => 'require',
-    //     'course_id' => 'require'
-    // ];
+protected $rule = [
+    'student_id'  => 'require',
+    'course_id' => 'require'
+];
 }

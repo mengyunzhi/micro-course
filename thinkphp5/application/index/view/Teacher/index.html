@@ -1,31 +1,89 @@
-{extend name="index"/}
-{block name="title"}
-教师管理
-{/block}
-{block name="content"}
-<div class="col-md-4 text-right" style="float: right;">
-                    <a href="{:url('teacher/add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+<!DOCTYPE html>
+<html lang="zh-hans">
+
+<head>
+    <meta charset="UTF-8">
+    <title>教师管理</title>
+    <link rel="stylesheet" type="text/css" href="/thinkphp5/public/static/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
+                        </div>
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+                                <li><a href="{:url('Term/index')}">学期管理</a></li>
+                                <li><a href="{:url('Teacher/index')}">用户管理</a></li>
+                                <li><a href="{:url('Classroom/index')}">教室管理</a></li>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="{:url('Login/logout')}">注销</a></li>
+                            </ul>
+                        </div>
+                        <!-- /.navbar-collapse -->
+                    </div>
+                    <!-- /.container-fluid -->
+                </nav>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <form class="form-inline" method="post">
+                                <div class="form-group">
+                                    <label class="sr-only" for="name">姓名</label>
+                                    <input name="name" type="text" class="form-control" placeholder="工号..." value="{:input('get.teacher_id')}">
+                                </div>
+                                <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
+                            </form>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+                        </div>
+                    </div>
+                    <hr />
+                    <table class="table table-hover table-bordered">
+                        <tr class="info">
+                            <th>序号</th>
+                            <th>姓名</th>
+                            <th>工号</th>
+                            <th>创建时间</th>
+                            <th>更新时间</th>
+                            <th>操作</th>
+                        </tr>
+                        {volist name="teachers" id="teacher" key="key"}
+                        <tr>
+                            <td>{$key}</td>
+                            <td>{$teacher->getData('name')}</td>
+                            <td>{$teacher->getData('teacher_id')}</td>
+                            <td>{$teacher->create_time}</td>
+                            <td>{$teacher->update_time}</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $teacher->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
+                                <a class="btn btn-success btn-sm" href="{:url('Course/index?id=' . $teacher->getData('id'))}">&nbsp;所教课程</a>
+                                <a class="btn btn-danger btn-sm" href="{:url('course/index?id=' . $teacher->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
+                            </td>
+                        </tr>
+                        {/volist}
+                    </table>
+                    {$teachers->render()}
                 </div>
-<table class="table table-hover table-bordered">
-    <tr class="info">
-        <th>序号</th>
-        <th>课程名称</th>
-        <th>学生人数</th>
-        <th>学期</th>
-        <th>学生列表</th>
-        <th>操作</th>
-    </tr>
-    {volist name="courses" id="_course" key="key"}
-    <tr>
-        <td>{$key}</td>
-        <td>{$_course->getData('name')}</td>
-        <td>{$_course->student_num}</td>
-        <td>{$Teacher->term}</td>
-        <td><a class="btn btn-default" href="{:url('course/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;点击查看</a>&nbsp;</td><td>
-            <a class="btn btn-sm btn-primary" href="{:url('course/courseedit?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class=" btn btn-danger btn-sm" href="{:url('course/delete?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
-    </tr>
-    {/volist}
-</table>
-{/block}
-{block name="page"}
-{/block}
+            </div>
+        </div>
+</body>
+</div>
+</div>
+</div>
+</body>
+
+</html>

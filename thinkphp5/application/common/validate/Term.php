@@ -5,11 +5,11 @@ use think\Validate;    //内置验证类
 /**
  * 
  */
-class Teacher extends Validate
+class Term extends Validate
 {
 	
 	protected $rule = [
-        'name'=>'require|length:2,25',
-        'teacher_id'=>'require|length:6',
+		'name'=>'require|unique:term|length:4,25',
+        'ptime'=>'require|length:2,25',
 ];
 }

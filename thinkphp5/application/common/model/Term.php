@@ -1,7 +1,7 @@
 <?php
 namespace app\common\model;
 use think\Model;
-class Teacher extends Model{
+class Term extends Model{
 	protected $dateFormat = 'Y年m月d日';    // 日期格式
 
     /**
@@ -12,8 +12,4 @@ class Teacher extends Model{
         'create_time' => 'datetime',
         'update_time' => 'datetime',
     ];
-	 public function courses()
-    {
-        return $this->belongsToMany('Course',  config('database.prefix') . 'course');
-    }
 }

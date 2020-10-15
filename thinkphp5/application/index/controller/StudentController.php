@@ -1,40 +1,34 @@
 <?php
 namespace app\index\controller;
+use think\Controller;
 use app\common\model\Student;
-use app\common\model\Course;
+use app\common\model\CourseStudent;
 use think\Request;
-use app\index\controller\Login;
-use app\index\controller\CourseStudent;
-class StudentController extends IndexController
+use app\common\model\Course;
+class StudentController extends Controller
 {
-	public function index()
-	{
+	 public function index()
+    {
         try {
             // 获取查询信息
-            $id = Request::instance()->param('id');
-            
-            //实例化课程
-            $course = Course::get(2);
+            $num = Request::instance()->get('num');
+
             $pageSize = 5; // 每页显示5条数据
 
-            // 实例化students和CourseStudent    
-            // $students = new Student;
-            // $courseStudents =new CourseStudent;
+            // 实例化Teacher
+            $Student = new Student; 
 
             // 定制查询信息
-            if (!empty($id)) {
+            if (!empty($num)) {
+                $Student->where('num', 'like', '%' . $num . '%');
             }
 
-            $Students = $course->Students;
-           // $Students = new Teacher();
-            // $arraytest = [new Student(), new Student()]; 
-            //dump($Students);
+
             // 按条件查询数据并调用分页
-            //die();
+            $students = $Student->paginate($pageSize);
 
             // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('course', $course);
+            $this->assign('students', $students);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -50,109 +44,74 @@ class StudentController extends IndexController
         } catch (\Exception $e) {
             return $e->getMessage();
         } 
-	}
-
+    }
 	public function add()
 	{
-		$Student=new Student;
-		$Student->sex=0;
-		$Student->email='';
-		$Student->num='';
-		$Student->name='';
-		$Student->id=0;
-
-
-		$this->assign('Student',$Student);
-
-		return $this->fetch('edit');
+		$courses = Course::all();
+        $this->assign('courses', $courses);
+		$this->assign('Student',new Student);
+		return $this->fetch();
 	}
 
 	public function edit()
 	{
-		$id=Request::instance()->param('id/d');
+		$id = Request::instance()->post('id/d');
+		$Student = Student::get($id);
 
-        $courses =new Course();
-		//判断是否存在为此id的记录
-
-		if(is_null($Student=Student::get($id)))
-		{
-			return $this->error('未找到ID为'.id.'的记录');
+		if(is_null($Student)){
+			return $this->error('不存在ID为'.$id.'的记录');
 		}
-
-		//取出班级列表
 		$this->assign('Student',$Student);
-        $this->assign('course',$courses);
 		return $this->fetch();
 	}
 
-
+	public function save()
+	{
+		$Student = new Student();
+		$Student->name = Request::instance()->post('name');
+		//新增数据并验证
+		if (!Student::validate(true)->save()) {
+			return $this->error('保存错误'.$Student->getError());
+		}
+		//---------新增课程-----
+		//接收course_id这个数组
+		$courseIds = Request::instance()->post('course_id/a');//a:获取类型为数组
+		if(!is_null($courseIds)){
+			if(!$CourseStudent->validate(true)->saveAll($datas)){
+				return $this->error('课程-学生信息保存错误'.$CourseStudent->getError());
+			}
+		}
+		unset($Student);
+		return $this->success('操作成功'.url('index'));
+	}
 
 	public function update()
-    {
-        // 获取当前学生
-        $id = Request::instance()->post('id/d');
-        if (is_null($Student = Student::get($id))) {
-            return $this->error('不存在ID为' . $id . '的记录');
-        }
-
-        // 更新学生名
-        $Student->name = Request::instance()->post('name');
-        if (is_null($Student->validate(true)->save())) {
-            return $this->error('学生信息更新发生错误：' . $Student->getError());
-        }
-
-        // 删除原有信息
-        $map = ['student_id'=>$id];
-
-        // 执行删除操作。由于可能存在 成功删除0条记录，故使用false来进行判断
-        // 我们认为，删除0条记录，也是成功
-        if (false === $Student->CourseStudents()->where($map)->delete()) {
-            return $this->error('删除学生课程关联信息发生错误' . $Student->CourseStudents()->getError());
-        }
-
-        // 增加新增数据，执行添加操作。
-        if (!$this->saveStudent($Student)) {
-            return $this->error('操作失败' . $Student->getError());
-        }
-        $courseIds = Request::instance()->post('course_id/a');
-        if (!is_null($courseIds)) {
-            if (!$Student->Courses()->saveAll($courseIds)) {
-                return $this->error('学生-课程信息保存错误：' . $Student->Courses()->getError());
-            }
-        }
-
-        return $this->success('更新成功', url('Teacher/index'));
-    }
-
-     public function save()
-    {
-        // 存课程信息
-        $Student = new Student();
-        $Student->name = Request::instance()->post('name');
-
-        // 新增数据并验证。验证类，自己写下吧。
-        if (!$Student->validate(true)->save()) {
-            return $this->error('保存错误：' . $Student->getError());
-        }
-        //接收klass_id这个数组
-        $courseIds = Request::instance()->post('course_id/a');       // /a表示获取的类型为数组
-
-        // 增加新增数据，执行添加操作。
-        if (!$this->saveStudent($Student)) {
-            return $this->error('操作失败' . $Student->getError());
-        }
-        // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
-        if (!is_null($courseIds)) {
-            if (!$Student->Courses()->saveAll($courseIds)) {
-                return $this->error('课程-班级信息保存错误：' . $Student->Courses()->getError());
-            }
-        }
-        //-----新增班级信息结束
-        unset($Student);//在返回前最后被执行
-
-        return $this->success('操作成功', url('index'));
-    }
-
+	{
+		//获取当前学生
+		$id=Request::instance()->post('id/d');
+		if(is_null($Student = Student::get($id))){
+			return $this->error('不存在id为'.$id.'的记录');
+		}
+		//更新学生
+		$Student->name = Request::instance()->post('name');
+		if(is_null($Student->validate(true)->save())){
+			return $this->error('学生信息更改发生错误'.$Student->getError());
+		}
+		$map = ['student_id'=>$id];
+		//执行删除操作，由于可能存在删除0条记录的情况，用false来判断而不能使用
+        // if (!KlassCourse::where($map)->delete()) {因为我们认为删除0条记录也为成功
+		if (false===$Student->CourseStudent()->where($map)->delete()) {
+			return $this->error('删除信息发生错误'.$Student->CourseStudents()->getError());
+		}
+		//增加新数据
+		$courseIds = Request::instance()->post('course_id/a');
+		if(!is_null($courseIds)){
+			if (!$Student->Courses()->saveAll($courseIds)) {
+				return $this->error('信息保存错误'.$Student->Courses()->getError());
+			}
+		}
+		return $this->success('更新成功',url('index'));
+	}
 
 	private function saveStudent(Student &$Student,$isUpdate= false)
     {
@@ -161,9 +120,8 @@ class StudentController extends IndexController
 
         if(!$isUpdate)
         {
+            
             $Student->num=Request::instance()->post('num/d');
-            $Student->sex=Request::instance()->post('sex/d');
-            $Student->email=Request::instance()->post('email');
         }
 
         //更新并保存数据

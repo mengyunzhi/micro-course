@@ -25,7 +25,7 @@
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <a class="navbar-brand" href="#">梦云智</a>
+                            <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
                         </div>
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -35,7 +35,7 @@
                                 <li><a href="{:url('Classroom/index')}">教室管理</a></li>
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a href="#">注销</a></li>
+                                <li><a href="{:url('Login/logout')}">注销</a></li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->
@@ -44,53 +44,48 @@
                 </nav>
             </div>
         </div>
-    </div>
 
-    <body class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <hr />
-                <div class="row">
-                    <div class="col-md-8">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <label class="sr-only" for="name">姓名</label>
-                                <input name="name" type="text" class="form-control" placeholder="课程名..." value="{:input('get.name')}">
-                            </div>
-                            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
-                        </form>
+        <body class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <label class="sr-only" for="name">姓名</label>
+                                    <input name="name" type="text" class="form-control" placeholder="教室编号..." value="{:input('get.nameid')}">
+                                </div>
+                                <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
+                            </form>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+                        </div>
                     </div>
-                    <div class="col-md-4 text-right">
-                        <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
-                    </div>
+                    <hr />
+                    <table class="table table-hover table-bordered">
+                        <tr class="info">
+                            <th>序号</th>
+                            <th>教室编号</th>
+                            <th>起始时间</th>
+                            <th>操作</th>
+                        </tr>
+                        {volist name="classrooms" id="classroom" key="key"}
+                        <tr>
+                            <td>{$key}</td>
+                            <td>{$classroom->getData('name')}</td>
+                            <td>{$classroom->getData('ptime')}</td>
+                            <td>{$classroom->getData('create_time')}</td>
+                            <td>{$classroom->getData('update_time')}</td>
+                            <td><a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;<a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
+                        </tr>
+                        {/volist}
+                    </table>
+                    {$classrooms->render()}
                 </div>
-                <hr />
-                <table class="table table-hover table-bordered">
-                    <tr class="info">
-                        <th>序号</th>
-                        <th>课程名称</th>
-                        <th>教师姓名</th>
-                        <th>操作</th>
-                    </tr>
-                    {volist name="courses" id="course" key="key"}
-                    <tr>
-                        <td>{$key}</td>
-                        <td>{$course->getData('name')}</td>
-                        <td>
-                            {$course->Teacher->name}
-                            
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-                            <a class="btn btn-success btn-sm" href="{:url('Student/index?id=' . $course->getData('id'))}">&nbsp;对应学生名单</a>
-                            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a></td>
-                    </tr>
-                    {/volist}
-                </table>
-                {$courses->render();}
             </div>
-        </div>
-    </body>
+        </body>
 
 </html>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

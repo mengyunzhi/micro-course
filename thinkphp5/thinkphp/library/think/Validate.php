@@ -101,6 +101,21 @@ class Validate
     // 批量验证
     protected $batch = false;
 
+
+    public function reMakeRule($dates = [])
+    {
+        $rule=[];
+        if (is_array($dates)) {
+            foreach ($dates as $key => $dates) {
+                if (array_key_exists($key, $this->rule)) {
+                    $rule[$key] = $this->rule[$key];
+                }
+                # code...
+            }
+        }
+        $this->rule=$rule;
+    }
+
     /**
      * 架构函数
      * @access public
@@ -143,26 +158,6 @@ class Validate
             $this->rule[$name] = $rule;
         }
         return $this;
-    }
-
-    /**
-     * 重新生成规则 （删除规则中不存在的更新字段规则 ）
-     * @param    array                    $datas 要验证的数据
-     * @return                            
-     * @author panjie@yunzhiclub.com http://www.mengyunzhi.com
-     * @DateTime 2016-10-21T13:13:44+0800
-     */
-    public function reMakeRule($datas = [])
-    {
-        $rule = [];
-        if (is_array($datas)) {
-            foreach ($datas as $key => $data) {
-                if (array_key_exists($key, $this->rule)) {
-                    $rule[$key] = $this->rule[$key];
-                }
-            }
-        }
-        $this->rule = $rule;
     }
 
     /**
