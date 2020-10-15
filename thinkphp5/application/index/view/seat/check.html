@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>座位信息查看</title>
+    <link rel="stylesheet" type="text/css" href="/thinkphp5/public/static/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+       <table class="table table-hover table-bordered">
+        <tr>
+            <th>座位号</th>
+            <th>姓名</th>
+            <th>学号</th>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>{$student->getData('name')}</td>
+            <td>{$student->getData('num')}</td>
+
+            
+        </tr>
+
+        
+        
+    </table>
+    <div style="width: 20px">
+        {$this->qrcode()}
+    </div> 
+    </div>
+    
+    
+</body>
+</html>
+
+

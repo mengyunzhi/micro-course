@@ -1,52 +1,31 @@
 <?php
 namespace app\common\model;
-use think\Model;
+use think\Model;    // 使用前进行声明
 /**
- * 班级
+ * Student 学生表
  */
 class Course extends Model
 {
-    private $Teacher;
+    public function students()
+    {
+        return $this->belongsToMany('Student',  config('database.prefix') . 'student');
+    }
+
+     /**
+     * 获取要显示的创建时间
+     * @param  int $value 时间戳
+     * @return string  转换后的字符串
+     * @author panjie <panjie@yunzhiclub.com>
+     */
+    protected $dateFormat = 'Y年m月d日';    // 日期格式
 
     /**
-     * 获取对应的教师（辅导员）信息
-     * @return Teacher 教师
-     * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
+     * 自定义自转换字换
+     * @var array
      */
-    public function getTeacher()
-    {
-        if (is_null($this->Teacher)) {
-            $teacherId = $this->getData('teacher_id');
-            $this->Teacher = Teacher::get($teacherId);
-        }
-        return $this->Teacher;
-    }
-    public function Students()
-    {
-        return $this->belongsToMany('Student');
-    }
-    public function CourseStudents()
-    {
-        return $this->hasMany('CourseStudent');
-    }
-    public function getIsChecked(Student &$Student)
-    {
-        // 取课程ID
-        $courseId = (int)$this->id;
-        $studentId = (int)$Student->id;
-
-        // 定制查询条件
-        $map = array();
-        $map['student_id'] = $studentId;
-        $map['course_id'] = $courseId;
-
-        // 从关联表中取信息
-        $CourseStudent = CourseStudent::get($map);
-        if (is_null($CourseStudent)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
+    protected $type = [
+        'create_time' => 'datetime',
+        'update_time' => 'datetime',
+    ];
+    
 }

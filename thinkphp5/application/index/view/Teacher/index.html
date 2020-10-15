@@ -66,13 +66,14 @@
                             <td>{$key}</td>
                             <td>{$teacher->getData('name')}</td>
                             <td>{$teacher->getData('teacher_id')}</td>
-                            <td>{$teacher->getData('create_time')}</td>
-                            <td>{$teacher->getData('update_time')}</td>
+                            <td>{$teacher->create_time}</td>
+                            <td>{$teacher->update_time}</td>
                             <td><a class="btn btn-danger btn-sm" href="{:url('course/index?id=' . $teacher->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
                                 <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $teacher->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
                                 <a class="btn btn-success btn-sm" href="{:url('Course/index?id=' . $teacher->getData('id'))}">&nbsp;所教课程</a></td>
                         </tr>
                         {/volist}
+                        
                     </table>
                     {$teachers->render()}
                 </div>

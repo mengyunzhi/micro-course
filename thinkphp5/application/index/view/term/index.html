@@ -78,11 +78,13 @@
                             <td>{$key}</td>
                             <td>{$term->getData('name')}</td>
                             <td>{$term->getData('ptime')}</td>
-                            <td>{$term->getData('create_time')}</td>
-                            <td>{$term->getData('update_time')}</td>
+                            <td>{$term->create_time}</td>
+                            <td>{$term->update_time}</td>
                             <td>
                                 <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;</td>
+
+                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
+                            </td>
                         </tr>
                         {/volist}
                     </table>

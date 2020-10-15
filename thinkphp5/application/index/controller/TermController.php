@@ -22,10 +22,9 @@ class TermController extends Controller
             if (!empty($name)) {
                 $Term->where('name', 'like', '%' . $name . '%');
             }
-
+ 
             // 按条件查询数据并调用分页
-             // 按条件查询数据并调用分页
-            $terms = $Term->paginate($pageSize, false, [
+            $terms = $Term->order('id desc')->paginate($pageSize, false, [
                 'query'=>[
                     'name' => $name,
                     ],
@@ -48,20 +47,20 @@ class TermController extends Controller
             return $e->getMessage();
         } 
 	}
-	public function insert()
-    {
-        // 实例化Term空对象
-        $Term = new Term();
+	// public function insert()
+ //    {
+ //        // 实例化Term空对象
+ //        $Term = new Term();
         
-        // 为对象的属性赋值
-        $Term->id=0;
-        $Term->name=$postData['name'];
-		$Term->ptime=$postData['ptime'];
+ //        // 为对象的属性赋值
+ //        $Term->id=1;
+ //        $Term->name=$postData['name'];
+	// 	$Term->ptime=$postData['ptime'];
      
-        // 执行对象的插入数据操作
-        $Term->save();
-        return $Term->name . '成功增加至数据表中。新增ID为:' . $Term->id;
-    }
+ //        // 执行对象的插入数据操作
+ //        $Term->save();
+ //        return $Term->name . '成功增加至数据表中。新增ID为:' . $Term->id;
+ //    }
 	public function add()
     {
         // 实例化

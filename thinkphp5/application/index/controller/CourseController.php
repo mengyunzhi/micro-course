@@ -3,7 +3,6 @@ namespace app\index\controller;
 use think\Controller;
 use app\common\model\Teacher;//教师模型
 use app\common\model\Course;//教师模型
-use app\common\model\Student;//教师模型
 use think\Request;
 use think\validate;
 
@@ -11,10 +10,10 @@ use think\validate;
 class courseController extends Controller
 {
     
-  public function index()
-  {
-   try {
- 	$id=Request::instance()->param('id/d');
+    public function index()
+    {
+
+    	$id=Request::instance()->param('id/d');
     	if(!empty($id))
     	{
     		$Teacher=new Teacher;
@@ -24,41 +23,12 @@ class courseController extends Controller
        	    $this->assign('course',$course);
        	    return $this->fetch();
     	}
-            // 获取查询信息
-            $num = Request::instance()->get('num');
-
-            $pageSize = 5; // 每页显示5条数据
-
-            // 实例化Teacher
-            $Student = new Student; 
-
-            // 定制查询信息
-            if (!empty($num)) {
-                $Student->where('num', 'like', '%' . $num . '%');
-            }
-
-
-            // 按条件查询数据并调用分页
-            $students = $Student->paginate($pageSize);
-
-            // 向V层传数据
-            $this->assign('students', $students);
-
-            // 取回打包后的数据
-            $htmls = $this->fetch();
-
-            // 将数据返回给用户
-            return $htmls;
-
-        // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
-        } catch (\think\Exception\HttpResponseException $e) {
-            throw $e;
-
-        // 获取到正常的异常时，输出异常
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        } 
     }
+
+
+
+
+    //插入
     public function insert()
     {
         // 实例化Term空对象
@@ -73,17 +43,28 @@ class courseController extends Controller
         $Course->save();
         return $Course->name . '成功增加至数据表中。新增ID为:' . $Course->id;
     }
+
+
+
+    //添加
 	public function add()
     {
-    	$Course = new Course();
-        // 获取所有的教师信息
-        $teachers = Teacher::all();
-        $this->assign('teachers', $teachers);
+        // 实例化
+        $Course = new Course;
+
+        // 设置默认值
+        $Course->id = 1;
+        $Course->name = '';
         $this->assign('Course', $Course);
 
         // 调用edit模板
         return $this->fetch('edit');
     }
+
+
+
+
+    //编辑
      public function edit()
     {
         try {
@@ -187,8 +168,12 @@ class courseController extends Controller
         // 成功跳转至index触发器
         return $this->success('操作成功', url('index'));
     }
+
+
+
     public function update()
     {
+
         // 接收数据，取要更新的关键字信息
         $id = Request::instance()->post('id/d');
 
@@ -204,6 +189,7 @@ class courseController extends Controller
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+         return $this->success('操作成功', url('index'));
+       
     }
 }

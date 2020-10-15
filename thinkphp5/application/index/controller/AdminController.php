@@ -24,7 +24,6 @@ class AdminController extends Controller
     	//接受post信息
     	$postData = Request::instance()->post();
     	var_dump($postData);
-        
     	if(Admin::login($postData['username'],$postData['password']))
     	{
     		return $this->success('login success',url('Teacher/index'));

@@ -53,8 +53,8 @@
                         <div class="col-md-8">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <label class="sr-only" for="num">姓名</label>
-                                    <input name="num" type="text" class="form-control" placeholder="学号...">
+                                    <label class="sr-only" for="name">姓名</label>
+                                    <input name="name" type="text" class="form-control" placeholder="学号..." value="{:input('get.num')}">
                                 </div>
                                 <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
                             </form>
@@ -70,7 +70,7 @@
                             <th>姓名</th>
                             <th>学号</th>
                             <th>平时成绩</th>
-                            <th>考勤成绩</th>
+                            <th>期末成绩</th>
                             <th>创建时间</th>
                             <th>更新时间</th>
                             <th>操作</th>
@@ -80,8 +80,9 @@
                             <td>{$key}</td>
                             <td>{$student->getData('name')}</td>
                             <td>{$student->getData('num')}</td>
-                            <td>{$student->getData('gscore')}</td>
+                            <td>{$student->getData('uscore')}</td>
                             <td>{$student->getData('lscore')}</td>
+                            <td>{$student->getData('score')}</td>
                             <td>{$student->getData('create_time')}</td>
                             <td>{$student->getData('update_time')}</td>
                             <td><a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;<a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
