@@ -48,6 +48,11 @@
         <input type="text" name="usmix" value="{$Course->usmix}%" />
         <br>
         <label>
+            <h4>一次签到分数设置=</h4>
+        </label>
+        <input type="text" name="onceusgrade" value="{$Course->onceusgrade}" />
+        <br>
+        <label>
             <h4>上课表现成绩上限设置：</h4>
         </label>
         <input type="text" name="courseup" value="{$Course->courseup}" />
@@ -56,7 +61,7 @@
     <label>
             <h4>上课表现成绩初始值设定：</h4>
         </label>
-        <input type="text" name="courseup" value="{$Course->begincougrade}" />
+        <input type="text" name="begincougrade" value="{$Course->begincougrade}" />
     <button type="submit" onclick="alert('分数占比设置成功')">submit</button>
         
     </form>

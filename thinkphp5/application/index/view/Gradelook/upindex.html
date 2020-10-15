@@ -7,8 +7,7 @@
     <td>{$course->name}</td>
 </table>
 <div class="col-md-4 text-right" style="float: right;">
-                    <a href="{:url('listindex?id=' . $course->getData('id'))}" class="btn btn-primary" >&nbsp;降序排列</a>
-                    <a href="{:url('upindex?id=' . $course->getData('id'))}" class=" btn btn-danger btn-sm">&nbsp;升序排列</a>
+                    <a href="{:url('index?id=' . $course->getData('id'))}" class="btn btn-primary">&nbsp;返回</a>
                 </div>
 <table class="table table-hover table-bordered">
     <tr class="info">
@@ -27,7 +26,7 @@
         <td>{$grade->Student->num}</td>
         <td>{$grade->coursegrade}</td>
         <td>{$grade->usgrade}</td>
-        <td>{$grade->allgrade}</td>
+        <td>{$grade->usgrade*$grade->Course->usmix/100+$grade->coursegrade*(100-$grade->Course->usmix)/100}</td>
         <td><a class="btn btn-default"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}

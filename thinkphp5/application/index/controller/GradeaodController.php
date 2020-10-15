@@ -6,21 +6,26 @@ use think\Request;
 use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
+use app\common\model\Gradeaod;
+use app\common\model\Grade;
 
 
 /**
  * 
  */
-class GradeController extends IndexController
+class GradeaodController extends IndexController
 {
      public function index()
     {
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
+            $course_id = Request::instance()->param('course_id');
+            $grade_id = Request::instance()->param('grade_id');
             
-            //实例化课程
-            $teacher =Teacher::get($id);
+            //实例化学生和成绩
+            $student =Student::get($id);
+            $grade = Grade::get($grade_id);
             $pageSize = 5; // 每页显示5条数据
 
             // 定制查询信息
@@ -28,10 +33,14 @@ class GradeController extends IndexController
 
             }
 
-            //获取该teacher对应的课程
-            $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(5);
-            $this->assign('teacher', $teacher);
-            $this->assign('courses', $courses);
+
+
+            //获取该course对应的加分减分项
+            $Gradeaods = Gradeaod::where('course_id', 'like', '%' . $course_id . '%')->select();
+
+            $this->assign('Student', $student);
+            $this->assign('grade', $grade);
+            $this->assign('gradeaods', $Gradeaods);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -49,34 +58,17 @@ class GradeController extends IndexController
         } 
     }
 
-
-    public function edit()
-    {
-        $id=Request::instance()->param('id/d');
-        $Course=Course::get($id);
-
-        //获取该课程对应的所有学生信息
-
-        if(is_null($Course)){
-            return $this->error('不存在Id为:'.$id.'的课程');
-        }
-
-        $this->assign('Course',$Course);
-        return $this->fetch();
-    }
-    
-
     public function update()
     {
         // 接收数据，取要更新的关键字信息
         $id = Request::instance()->post('id/d');
 
         // 获取当前对象
-        $Course = Course::get($id);
+        $Grade = Grade::get($id);
 
-        if (!is_null($Course)) {
-            if (!$this->saveGrade($Course,true)) {
-                return $this->error('操作失败' . $Course->getError());
+        if (!is_null($Grade)) {
+            if (!$this->saveGrade($Grade,true)) {
+                return $this->error('操作失败' . $Grade->getError());
             }
         } else {
             return $this->error('当前操作的记录不存在');
@@ -85,19 +77,17 @@ class GradeController extends IndexController
         // 成功跳转至index触发器
         return $this->success('操作成功', url('index'));
     }
+    
 
-
-    private function saveGrade(Course &$Course, $isUpdate = false) 
+    private function saveGrade(Grade &$Grade, $isUpdate = false) 
     {
         // 写入要更新的数据
         if (!$isUpdate) {
             
         }
-        $Course->usmix = Request::instance()->post('usmix');
-        $Course->courseup = Request::instance()->post('courseup');
-        $Course->begincougrade = Request::instance()->post('begincougrade');
-        $Course->onceusgrade = Request::instance()->post('onceusgrade');
+        $Grade->coursegrade += Request::instance()->post('gradeaod->aodnum');
+        
         // 更新或保存
-        return $Course->validate(true)->save();
+        return $Grade->validate(true)->save();
     }
 }

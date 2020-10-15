@@ -17,7 +17,7 @@
         <td>{$_grade->Student->getData('name')}</td>
         <td>{$_grade->Student->num}</td>
         <td>{$_grade->coursegrade}</td>
-        <td><a class="btn btn-sm btn-primary" href="">加分</a> &nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href=""><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('Gradeaod/index?id=' . $_grade->Student->id. '&grade_id=' . $_grade->id. '&course_id=' . $course->id)}">加分</a> &nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href=""><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
     </tr>
     {/volist}
 </table>

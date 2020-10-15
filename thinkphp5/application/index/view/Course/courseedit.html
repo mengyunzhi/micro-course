@@ -21,7 +21,7 @@
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="{:url('Teacher/index')}">课程管理</a></li>
                             <li><a href="{:url('Student/index')}">上课管理</a></li>
-                            <li><a href="{:url('glass/index')}">成绩管理</a></li>
+                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="{:url('Login/logout')}">注销</a></li>
@@ -38,6 +38,7 @@
         <input type="hidden" name="id" value="{$Course->getData('id')}" />
         <label for="name">name:</label>
         <input type="text" name="name" id="name" value="{$Course->name}" />
+        <br>
         <label>学生信息导入:</label>
         <input type="file" id="exampleInputFile">
         <button type="submit"  onclick="alert('学生信息导入成功')">submit</button>

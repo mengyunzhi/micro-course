@@ -6,42 +6,34 @@ use think\Request;
 use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
-use app\common\model\Grade;
 
 
 /**
  * 
  */
-class CoursegradeController extends IndexController
+class GradedownController extends IndexController
 {
-     public function index()
+public function index()
     {
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
             
             //实例化课程
-            $course = Course::get($id);
+            $student =Student::get($id);
             $pageSize = 5; // 每页显示5条数据
 
-
-
             // 定制查询信息
-
-            $Students = $course->Students;
-
-            $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
-
-
-
             if (!empty($id)) {
 
             }
 
-            // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('grades', $Grades);
-            $this->assign('course', $course);
+            
+
+            //获取该teacher对应的加分减分项
+            $Gradedowns = Gradedown::where('student_id', 'like', '%' . $id . '%');
+            $this->assign('student', $student);
+            $this->assign('gradedowns', $Gradedowns);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -58,9 +50,4 @@ class CoursegradeController extends IndexController
             return $e->getMessage();
         } 
     }
-
-
-    
-    
-
 }

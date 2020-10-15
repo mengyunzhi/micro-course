@@ -124,6 +124,7 @@ class CourseController extends IndexController
             return $this->error('不存在Id为:'.$id.'的课程');
         }
 
+
         $this->assign('Course',$Course);
         return $this->fetch();
     }
