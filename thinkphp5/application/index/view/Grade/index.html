@@ -8,16 +8,20 @@
         <th>序号</th>
         <th>课程名称</th>
         <th>学生人数</th>
-        <th>学期</th>
+        <th>签到分数占比</th>
+        <th>上课表现</th>
+        <th>成绩列表</th>
         <th>操作</th>
     </tr>
     {volist name="courses" id="_course" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
-        <td>{$_course->getData('student_num')}</td>
-        <td>{$teacher->term}</td>
-        <td><a href="{:url('Gradelook/index?id=' . $_course->id)}">成绩查看</a> &nbsp;&nbsp;</td>
+        <td>{$_course->student_num = sizeof($_course->Students)}</td>
+        <td>{$_course->getData('usmix')}%</td>
+        <td><a class="btn btn-default" href="{:url('Coursegrade/index?id=' . $_course->id)}">增减分数</a> &nbsp;&nbsp;</td>
+        <td><a class="btn btn-default" href="{:url('Gradelook/index?id=' . $_course->id)}">成绩查看</a> &nbsp;&nbsp;</td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('Grade/edit?id=' . $_course->id)}">分数设置</a> &nbsp;&nbsp;</td>
     </tr>
     {/volist}
 </table>

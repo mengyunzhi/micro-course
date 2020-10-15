@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <title>加减分</title>
+</head>
+
+<body class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {php}$action=request()->action()==='add'?'save':'update';{/php}
+            <form action="{:url($action)}" method="post">
+                <label>姓名:{$Student->getData('id')}</label><br>
+                <label>学号:{$Student->getData('num')}</label><br>
+                <label>性别:</label><br>
+                <label>邮箱:{$Student->getData('email')}</label>
+                <input type="email" name="email" value="" />
+                {volist name="gradeaods" id="gradeaod" }
+                    <option value="{$gradeaod->id}" {eq name="gradeaod->id" value="$gradeaod->aodnum" } selected="selected" {/eq}>{$gradeaod->aodname}</option>
+                    {/volist}
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

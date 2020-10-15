@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>{block name="title"}{/block}</title>
     <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    
 </head>
 
 <body class="container">
@@ -32,16 +33,37 @@
                 <!--/.container-fluid-->
             </nav>
         </div>
-    </div>	
+    </div>
     {php}$action=request()->action()==='add'?'save':'update';{/php}
     <form action="{:url($action)}" method="post">
         <input type="hidden" name="id" value="{$Course->getData('id')}" />
-        <label for="name">name:</label>
-        <input type="text" name="name" id="name" value="{$Course->name}" />
+        <label for="name">
+            <h3>name:{$Course->name}</h3>
+        </label>
         <br>
-        <label>学生信息导入:</label>
-        <input type="file" id="exampleInputFile">
-        <button type="submit"  onclick="alert('学生信息导入成功')">submit</button>
+        <h3>成绩占比(总占比为100%):</h3>
+        <label>
+            <h4>签到成绩占比=</h4>
+        </label>
+        <input type="text" name="usmix" value="{$Course->usmix}%" />
+        <br>
+        <label>
+            <h4>一次签到分数设置=</h4>
+        </label>
+        <input type="text" name="onceusgrade" value="{$Course->onceusgrade}" />
+        <br>
+        <label>
+            <h4>上课表现成绩上限设置：</h4>
+        </label>
+        <input type="text" name="courseup" value="{$Course->courseup}" />
+        <br>
+    
+    <label>
+            <h4>上课表现成绩初始值设定：</h4>
+        </label>
+        <input type="text" name="begincougrade" value="{$Course->begincougrade}" />
+    <button type="submit" onclick="alert('分数占比设置成功')">submit</button>
+        
     </form>
 </body>
 

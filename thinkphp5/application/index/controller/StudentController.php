@@ -60,7 +60,7 @@ class StudentController extends IndexController
 		$Student->num='';
 		$Student->name='';
 		$Student->id=0;
-
+        
 
 		$this->assign('Student',$Student);
 
