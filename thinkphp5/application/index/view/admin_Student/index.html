@@ -21,29 +21,29 @@
 <body>
     <div class="container">
         <div class="row">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
+            <div class="col-md-12">
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
+                        </div>
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+                                <li><a href="{:url('Term/index')}">学期管理</a></li>
+                                <li><a href="{:url('AdminTeacher/index')}">用户管理</a></li>
+                                <li><a href="{:url('Classroom/index')}">教室管理</a></li>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="{:url('Login/logout')}">注销</a></li>
+                            </ul>
+                        </div>
+                        <!-- /.navbar-collapse -->
                     </div>
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li><a href="{:url('Term/index')}">学期管理</a></li>
-                            <li><a href="{:url('AdminTeacher/index')}">用户管理</a></li>
-                            <li><a href="{:url('Classroom/index')}">教室管理</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{:url('Login/logout')}">注销</a></li>
-                        </ul>
-                    </div>
-                    <!-- /.navbar-collapse -->
-                </div>
-                <!-- /.container-fluid -->
-            </nav>
+                    <!-- /.container-fluid -->
+                </nav>
+            </div>
         </div>
-    </div>
 
         <body class="container">
             <div class="row">
@@ -53,8 +53,8 @@
                         <div class="col-md-8">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <label class="sr-only" for="name">姓名</label>
-                                    <input name="name" type="text" class="form-control" placeholder="学期名..." value="{:input('get.name')}">
+                                    <label class="sr-only" for="num">姓名</label>
+                                    <input name="num" type="text" class="form-control" placeholder="学号...">
                                 </div>
                                 <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
                             </form>
@@ -67,26 +67,27 @@
                     <table class="table table-hover table-bordered">
                         <tr class="info">
                             <th>序号</th>
-                            <th>学期名</th>
-                            <th>起始时间</th>
+                            <th>姓名</th>
+                            <th>学号</th>
                             <th>创建时间</th>
                             <th>更新时间</th>
                             <th>操作</th>
                         </tr>
-                        {volist name="terms" id="term" key="key"}
+                        {volist name="students" id="student" key="key"}
                         <tr>
                             <td>{$key}</td>
-                            <td>{$term->getData('name')}</td>
-                            <td>{$term->getData('ptime')}</td>
-                            <td>{$term->create_time}</td>
-                            <td>{$term->update_time}</td>
+                            <td>{$student->getData('name')}</td>
+                            <td>{$student->getData('num')}</td>
+                            <td>{$student->create_time}</td>
+                            <td>{$student->update_time}</td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;</td>
+                                <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
+                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
+                                </td>
                         </tr>
                         {/volist}
                     </table>
-                    {$terms->render()}
+                    {$students->render()}
                 </div>
             </div>
         </body>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑</title>
+</head>
+<body>
+    <form action="{:url('update')}" method="post">
+        <input type="hidden" name="id" value="{$course->getData('id')}" />
+        <label for="name">name:</label><input type="text" name="name" id="name" value="{$course->getData('name')}" />
+        <label for="teacher">teacher:</label>
+         <select name="teacher_id" id="teacher">
+           {volist name="teachers" id="_Teacher"}
+            <option value="{$_Teacher->getData('id')}" {eq name="_Teacher->getData('id')" value="$course->getData('teacher_id')"} selected="selected" {/eq}>{$_Teacher->getData('name')}</option>
+           {/volist}
+        </select>
+        <button type="submit">submit</button>
+    </form>
+</body>
+</html>

@@ -4,7 +4,7 @@ use think\Model;
 /**
  * 班级
  */
-class Course extends Model
+class AdminCourse extends Model
 {
 	protected $dateFormat = 'Y年m月d日';    // 日期格式
 
@@ -22,9 +22,8 @@ class Course extends Model
      * @return Teacher 教师
      * @author panjie <panjie@yunzhiclub.com>
      */
-    public function Teacher()
+    public function AdminTeacher()
     {
-        return $this->belongsTo('Teacher');
+        return $this->belongsTo('AdminTeacher');
     }
-    
 }
