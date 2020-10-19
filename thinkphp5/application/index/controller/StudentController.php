@@ -54,6 +54,10 @@ class StudentController extends IndexController
 
 	public function add()
 	{
+        //获取正确课程对应的ID
+        $id = Request::instance()->param('id');
+        //获取该ID对应的课程信息
+        $course = Course::get($id);
 		$Student=new Student;
 		$Student->sex=0;
 		$Student->email='';
@@ -61,7 +65,7 @@ class StudentController extends IndexController
 		$Student->name='';
 		$Student->id=0;
         
-
+        $this->assign('Course',$course);
 		$this->assign('Student',$Student);
 
 		return $this->fetch('edit');
@@ -70,8 +74,10 @@ class StudentController extends IndexController
 	public function edit()
 	{
 		$id=Request::instance()->param('id/d');
+        $course_id=Request::instance()->param('course_id/d');
 
-        $courses =new Course();
+        $Course =Course::get($course_id);
+        $courses = new Course();
 		//判断是否存在为此id的记录
 
 		if(is_null($Student=Student::get($id)))
@@ -82,6 +88,7 @@ class StudentController extends IndexController
 		//取出班级列表
 		$this->assign('Student',$Student);
         $this->assign('course',$courses);
+        $this->assign('Course',$Course);
 		return $this->fetch();
 	}
 
@@ -91,6 +98,7 @@ class StudentController extends IndexController
     {
         // 获取当前学生
         $id = Request::instance()->post('id/d');
+        $courseid = Request::instance()->post('courseid/d');
         if (is_null($Student = Student::get($id))) {
             return $this->error('不存在ID为' . $id . '的记录');
         }
@@ -121,13 +129,14 @@ class StudentController extends IndexController
             }
         }
 
-        return $this->success('更新成功', url('Teacher/index'));
+        return $this->success('更新成功', 'index/Course/index?id=' . $courseid .'&page=3');
     }
 
      public function save()
     {
         // 存课程信息
         $Student = new Student();
+        $courseid = Request::instance()->post('courseid/d');
         $Student->name = Request::instance()->post('name');
 
         // 新增数据并验证。验证类，自己写下吧。
@@ -150,7 +159,7 @@ class StudentController extends IndexController
         //-----新增班级信息结束
         unset($Student);//在返回前最后被执行
 
-        return $this->success('操作成功', url('index'));
+        return $this->success('操作成功', url('index/Course/index?id=' . $courseid .'&page=3'));
     }
 
 

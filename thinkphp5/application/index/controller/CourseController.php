@@ -17,25 +17,22 @@ class CourseController extends IndexController
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
+            $page = Request::instance()->param('page');
             
             //实例化课程
             $course = Course::get($id);
-            $pageSize = 5; // 每页显示5条数据
+            $pageSize = 2; // 每页显示5条数据
 
 
             // 定制查询信息
             if (!empty($id)) {
 
-            }
+            }   
+            $courseStudents = CourseStudent::where('course_id', '=', $id)->page($page, $pageSize)->paginate($pageSize);
+            
 
-            $Students = $course->Students;
-           // $Students = new Teacher();
-            // $arraytest = [new Student(), new Student()]; 
-            //dump($Students);
-            // 按条件查询数据并调用分页
-            //die();
-            // 向V层传数据
-            $this->assign('students', $Students);
+
+            $this->assign('courseStudents', $courseStudents);
             $this->assign('course', $course);
 
             // 取回打包后的数据
@@ -131,7 +128,8 @@ class CourseController extends IndexController
 
     public function update()
     {
-        // 获取当前课程
+        // 获取当前老师和课程ID
+        $teacher_id = Request::instance()->post('teacher_id/d');
         $id = Request::instance()->post('id/d');
         if (is_null($Course = Course::get($id))) {
             return $this->error('不存在ID为' . $id . '的记录');
@@ -161,7 +159,7 @@ class CourseController extends IndexController
             }
         }
 
-        return $this->success('更新成功', url('index'));
+        return $this->success('更新成功', url('Teacher/index?id=' . $teacher_id));
     }
 
      public function delete()

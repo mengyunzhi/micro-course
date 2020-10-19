@@ -19,28 +19,29 @@ class GradeaodController extends IndexController
     {
         try {
             // 获取查询信息
-            $id = Request::instance()->param('id');
+            $id = Request::instance()->get('id');
             $course_id = Request::instance()->param('course_id');
             $grade_id = Request::instance()->param('grade_id');
-            
-            //实例化学生和成绩
+            $aod_id = Request::instance()->param('aod_id');
+
+            //实例化学生和成绩和课程
+            $course = Course::get($course_id);
             $student =Student::get($id);
             $grade = Grade::get($grade_id);
             $pageSize = 5; // 每页显示5条数据
 
-            // 定制查询信息
-            if (!empty($id)) {
 
-            }
-
-
-
+            $aod=array(
+            "course_id"=>$course_id,
+            "aodid"=>$aod_id
+        );
+            
             //获取该course对应的加分减分项
-            $Gradeaods = Gradeaod::where('course_id', 'like', '%' . $course_id . '%')->select();
-
+            $Gradeaods = Gradeaod::where($aod)->select();
             $this->assign('Student', $student);
             $this->assign('grade', $grade);
             $this->assign('gradeaods', $Gradeaods);
+            $this->assign('course', $course);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -61,7 +62,9 @@ class GradeaodController extends IndexController
     public function update()
     {
         // 接收数据，取要更新的关键字信息
+        $Request = Request::instance();
         $id = Request::instance()->post('id/d');
+
 
         // 获取当前对象
         $Grade = Grade::get($id);
@@ -75,7 +78,54 @@ class GradeaodController extends IndexController
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('更新成功', url('Coursegrade/index')); 
+    }
+
+    public function add()
+    {
+        $course_id = Request::instance()->post('course_id/d');
+        $Course=Course::get($course_id);
+        $grade_id = Request::instance()->post('grade_id/d');
+        $Grade = Grade::get($grade_id);
+        $id = Request::instance()->post('id');
+        $Student= Student::get($id);
+
+        //设置默认值
+        $Gradeaod = new Gradeaod();
+
+        $Gradeaod->name = '';
+        $Gradeaod->aodnum = 0;
+        $Gradeaod->aodid= 1;
+        $Gradeaod->course_id= $course_id;
+
+        $this->assign('gradeaod',$Gradeaod);
+        $this->assign('grade',$Grade);
+        $this->assign('Student',$Student);
+
+        //调用edit模板
+        return $this->fetch();
+    }
+
+    public function save()
+    {
+        // 接收数据，取要更新的关键字信息
+        $Request = Request::instance();
+        $id = Request::instance()->post('id/d');
+
+
+        // 获取当前对象
+        $Gradeaod = Gradeaod::get($id);
+
+        if (!is_null($Gradeaod)) {
+            if (!$this->saveGradeaod($Gradeaod,true)) {
+                return $this->error('操作失败' . $Gradeaod->getError());
+            }
+        } else {
+            return $this->error('当前操作的记录不存在');
+        }
+    
+        // 成功跳转至index触发器
+        return $this->success('更新成功', url('index')); 
     }
     
 
@@ -85,9 +135,22 @@ class GradeaodController extends IndexController
         if (!$isUpdate) {
             
         }
-        $Grade->coursegrade += Request::instance()->post('gradeaod->aodnum');
+        $Grade->coursegrade += Request::instance()->post('aodnum');
         
         // 更新或保存
         return $Grade->validate(true)->save();
+    }
+
+    private function saveGradeaod(Gradeaod &$Gradeaod, $isUpdate = false) 
+    {
+        // 写入要更新的数据
+        if (!$isUpdate) {
+            
+        }
+        $Gradeaod->aodname = Request::instance()->post('aodname');
+        $Gradeaod->aodnum = Request::instance()->post('aodnum');
+        
+        // 更新或保存
+        return $Gradeaod->validate(true)->save();
     }
 }

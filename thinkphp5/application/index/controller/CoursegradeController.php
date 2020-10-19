@@ -23,17 +23,12 @@ class CoursegradeController extends IndexController
             //实例化课程
             $course = Course::get($id);
             $pageSize = 5; // 每页显示5条数据
-
-
-
-            // 定制查询信息
-
+            //获取该课程对应的学生
             $Students = $course->Students;
 
             $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
 
-
-
+            //定制查询条件
             if (!empty($id)) {
 
             }
