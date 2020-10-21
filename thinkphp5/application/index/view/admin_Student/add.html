@@ -11,7 +11,7 @@
 		<label for="num">学号</label>
 		<input type="text" name="num" id="num"/>
 		<select name="course_id" id="course">
-            {volist name="courses" id="_Course"}
+            {volist name="Student->Courses()->select()" id="_Course"}
             <option value="{$_Course->getData('id')}">{$_Course->getData('name')}</option>
             {/volist}
         </select>

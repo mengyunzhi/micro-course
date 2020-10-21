@@ -19,10 +19,13 @@ class AdminStudentController extends Controller
 
             // 实例化Teacher
             $Student = new Student; 
+            $coursestudent = new CourseStudent;
 
             // 定制查询信息
             if(!empty($course_id)){
-            	$Student = Student::where('course_id','=',$course_id);
+            	$coursestudent = CourseStudent::where('course_id','=',$course_id);
+                $student_id = $coursestudent::getdate('student_id/d');
+                $Student = Student::where('num','=',$student_id);
             	if (!empt($num)) {
             		$Student = $Student->where('num',' =',$num);
             	}
@@ -86,7 +89,7 @@ class AdminStudentController extends Controller
             }
         }
         // -------------------------- 新增班级课程信息(end) -------------------------- 
-		return $this->success('操作成功'.url('index'));
+		return $this->success('操作成功'.url('Student/index?id=' . $Student->teacher_id));
 	}
 
 	public function update()
@@ -114,7 +117,7 @@ class AdminStudentController extends Controller
 				return $this->error('信息保存错误'.$Student->Courses()->getError());
 			}
 		}
-		return $this->success('更新成功',url('index'));
+		return $this->success('更新成功',url('Student/index?id=' . $Student->teacher_id));
 	}
 
 	private function saveStudent(Student &$Student,$isUpdate= false)

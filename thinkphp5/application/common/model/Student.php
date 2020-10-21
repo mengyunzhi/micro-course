@@ -21,7 +21,7 @@ class Student extends Model
     ];
     public function Courses()
     {
-        return $this->belongsToMany('course',config('datebase.prefix') . 'course_student');
+        return $this->belongsToMany('course',config('database.prefix') . 'course_student');
     }
 
 

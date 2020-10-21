@@ -8,10 +8,11 @@
     <form action="{:url('update')}" method="post">
         <input type="hidden" name="id" value="{$Student->getData('id')}" />
         <label for="name">name:</label><input type="text" name="name" id="name" value="{$Student->name}"/>
-        {volist name="Student->Courses()->select()" id="course"}
-            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}"{eq name="Student->getIsChecked($course)" value="true"}checked="checked"{/eq} />
-            <label for="course_id_{$course->id}">{$course->name}</label>
-        {/volist}
+        <select name="course_id" id="course">
+            {volist name="Student->Courses()->select()" id="_Course"}
+            <option value="{$_Course->getData('id')}">{$_Course->getData('name')}</option>
+            {/volist}
+        </select>
         <button type="submit">submit</button>
     </form>
 </body>
