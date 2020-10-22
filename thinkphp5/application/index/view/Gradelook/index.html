@@ -1,0 +1,37 @@
+{extend name="index"/}
+{block name="title"}
+成绩管理
+{/block}
+{block name="content"}
+<table class="table table-hover table-bordered" style="200px;">
+    <td>{$course->name}</td>
+</table>
+<div class="col-md-4 text-right" style="float: right;">
+    <a href="{:url('listindex?id=' . $course->getData('id'))}" class="btn btn-primary">&nbsp;降序</a>
+    <a href="{:url('upindex?id=' . $course->getData('id'))}" class=" btn btn-danger btn-sm">&nbsp;升序</a>
+</div>
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>姓名</th>
+        <th>学号</th>
+        <th>考勤成绩</th>
+        <th>表现成绩</th>
+        <th>总成绩</th>
+        <th>操作</th>
+    </tr>
+    {volist name="grades" id="grade" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$grade->Student->name}</td>
+        <td>{$grade->Student->num}</td>
+        <td>{$grade->coursegrade}</td>
+        <td>{$grade->usgrade}</td>
+        <td>{$grade->allgrade}</td>
+        <td><a class="btn btn-default" href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
+    </tr>
+    {/volist}
+</table>
+{/block}
+{block name="page"}
+{/block}
