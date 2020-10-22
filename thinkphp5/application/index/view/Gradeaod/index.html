@@ -2,27 +2,78 @@
 <html lang="zh-cn">
 
 <head>
-    <meta charset="utf-8">
-    <title>加减分</title>
+    <meta charset="UTF-8">
+    <title>加减分编辑</title>
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 
 <body class="container">
+    <!--菜单导航-->
     <div class="row">
         <div class="col-md-12">
-            {php}$action=request()->action()==='index'?'update':'save';{/php}
-            <form action="{:url($action)}" method="post">
-                <label>姓名:{$Student->name}</label><br>
-                <label>学号:{$Student->getData('num')}</label><br>
-                <label>性别:{eq name="$Student->getData('sex')" value='0'}男{else /}女{/eq}</label><br>
-                <label>邮箱:{$Student->getData('email')}</label>
-                <br>
-                <label>加减分选择</label>
-                <select name="gradeaod_id">
-                {volist name="gradeaods" id="gradeaod" }
-                    <option value="{$gradeaod->id}" {eq name="gradeaod->aodnum" value="$gradeaod->aodnum" } selected="selected" {/eq}>{$gradeaod->aodname}</option>
-                    {/volist}
-                </select>
-                <button type="submit">保存</button>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">梦云智</a>
+                    </div>
+                    <!--Collect the nav links,forms,and other contend for toggling-->
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li class="active"><a href="{:url('Teacher/index')}">课程管理</a></li>
+                            <li><a href="{:url('')}">上课管理</a></li>
+                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="{:url('Login/logout')}">注销</a></li>
+                        </ul>
+                    </div>
+                    <!--/.navbar-collapse-->
+                </div>
+                <!--/.container-fluid-->
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            {php}$action=request()->action()==='add'?'update':'update';{/php}
+            <form class="form-horizontal" action="{:url($action)}" method="post">
+                <div class="form-group">
+                    <label for="major" class="col-sm-2 control-label" style="font-size: 20px;">姓名:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text"  value="{$Student->name}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
+                        学号:
+                    </label>
+                    <div class="col-sm-10">
+                    <input class="form-control" type="text"  value="{$Student->getData('num')}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
+                        性别:
+                    </label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" value="{eq name="$Student->getData('sex')" value='0'}男{else /}女{/eq}" />
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
+                        加减分选择:
+                    </label>
+                    <div class="col-sm-10">
+                    <select class="form-control"  name="aodnum" id="gradeaod">
+                        {volist name="gradeaods" id="gradeaod" }
+                        <option value="{$gradeaod->aodnum}" {eq name="$gradeaod->aodnum" value="$gradeaod->aodnum" } selected="selected" {/eq}>{$gradeaod->aodname} </option> {/volist} </select> 
+                        <br>
+                        <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">保存</button>
+                </div>
+            </div>
+                            
             </form>
         </div>
     </div>
