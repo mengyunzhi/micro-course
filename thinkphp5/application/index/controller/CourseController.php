@@ -18,20 +18,21 @@ class CourseController extends IndexController
             // 获取查询信息
             $id = Request::instance()->param('id');
             $page = Request::instance()->param('page');
+            $name = Request::instance()->param('name');
             
             //实例化课程
             $course = Course::get($id);
             $pageSize = 2; // 每页显示5条数据
 
-
             // 定制查询信息
-            if (!empty($id)) {
-
-            }   
-            $courseStudents = CourseStudent::where('course_id', '=', $id)->page($page, $pageSize)->paginate($pageSize);
+             
+            $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate($pageSize);
             
-
-
+            if (!empty($name)) {
+            }  
+            $count=0;
+            $this->assign('pageSize', $pageSize);
+            $this->assign('count', $count);
             $this->assign('courseStudents', $courseStudents);
             $this->assign('course', $course);
 

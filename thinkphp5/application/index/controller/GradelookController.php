@@ -173,9 +173,10 @@ class GradeLookController extends IndexController
 
         // 获取当前对象
         $Grade = Grade::get($id);
+        $Course = $Grade->Course;
 
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade,true)) {
+            if (!$this->saveGrade($Grade,$Course,true)) {
                 return $this->error('操作失败' . $Grade->getError());
             }
         } else {
@@ -183,14 +184,19 @@ class GradeLookController extends IndexController
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('操作成功', url('index?id=' . $Course->id));
     }
     
 
-    private function saveGrade(Grade &$Grade, $isUpdate = false) 
+    private function saveGrade(Grade &$Grade,Course &$Course, $isUpdate = false) 
     {
         // 写入要更新的数据
-        $Grade->usgrade = Request::instance()->post('usgrade');
+        $Grade->resigternum = Request::instance()->post('resigternum');
+        if($Grade->resigternum>$Course->resigternum)
+        {
+            $Grade->resigternum=$Course->resigternum;
+        }
+        $Grade->usgrade = $Grade->resigternum/$Course->resigternum*100;
         $Grade->coursegrade = Request::instance()->post('coursegrade');
         $Grade->allgrade=$Grade->usgrade*$Grade->Course->usmix/100+$Grade->coursegrade*(100-$Grade->Course->usmix)/100;
         // 更新或保存

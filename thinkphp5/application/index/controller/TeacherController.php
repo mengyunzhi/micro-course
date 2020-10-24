@@ -15,12 +15,14 @@ class TeacherController extends IndexController
     {
         //接受传来的ID值
          $id = Request::instance()->param(1);
-
+         $name = Request::instance()->param('name');
          echo $id;
 
          //通过接受的id来实例化Teacher
          $Teacher=Teacher::get($id);
-         //不是查询的情况时
+         //查询的情况时
+
+
 
              // 调用父类构造函数(必须)
         parent::__construct();
@@ -45,6 +47,11 @@ class TeacherController extends IndexController
                 'id' => $id,
                 ],
             ]);
+
+         if (!empty($name))
+         {
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
+         }
  
 
         //向V层传数据

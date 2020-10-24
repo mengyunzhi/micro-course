@@ -24,7 +24,7 @@
         <td>{$_courseStudent->student->num}</td>
         <td>{eq name="_courseStudent->student->sex" value='0'}男{else /}女{/eq}</td>
         <td>
-            <a class="btn btn-sm btn-primary" href="{:url('student/edit?id=' . $_courseStudent->student->getData('id') . '&course_id=' . $_courseStudent->course_id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class="btn btn-danger btn-sm" href="{:url('student/delete?id=' . $_courseStudent->student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
+            <a class="btn btn-sm btn-primary" href="{:url('student/edit?id=' . $_courseStudent->student->getData('id') . '&course_id=' . $_courseStudent->course_id . '&page=' . $count/$pageSize)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class="btn btn-danger btn-sm" href="{:url('student/delete?id=' . $_courseStudent->student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
     </tr>
     {/volist}
 </table>

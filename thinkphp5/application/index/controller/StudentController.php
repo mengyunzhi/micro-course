@@ -4,7 +4,8 @@ use app\common\model\Student;
 use app\common\model\Course;
 use think\Request;
 use app\index\controller\Login;
-use app\index\controller\CourseStudent;
+use app\common\model\Grade;
+use app\common\model\CourseStudent;
 class StudentController extends IndexController
 {
 	public function index()
@@ -52,10 +53,14 @@ class StudentController extends IndexController
         } 
 	}
 
+
 	public function add()
 	{
         //获取正确课程对应的ID
         $id = Request::instance()->param('id');
+        $grade = new Grade();
+        $grade->course_id = $id;
+
         //获取该ID对应的课程信息
         $course = Course::get($id);
 		$Student=new Student;
@@ -64,8 +69,10 @@ class StudentController extends IndexController
 		$Student->num='';
 		$Student->name='';
 		$Student->id=0;
+         
         
         $this->assign('Course',$course);
+        $this->assign('grade',$grade);
 		$this->assign('Student',$Student);
 
 		return $this->fetch('edit');
@@ -74,6 +81,8 @@ class StudentController extends IndexController
 	public function edit()
 	{
 		$id=Request::instance()->param('id/d');
+
+        $page=Request::instance()->param('page/d');
         $course_id=Request::instance()->param('course_id/d');
 
         $Course =Course::get($course_id);
@@ -87,6 +96,8 @@ class StudentController extends IndexController
 
 		//取出班级列表
 		$this->assign('Student',$Student);
+        $this->assign('page',$page);
+        
         $this->assign('course',$courses);
         $this->assign('Course',$Course);
 		return $this->fetch();
@@ -98,7 +109,9 @@ class StudentController extends IndexController
     {
         // 获取当前学生
         $id = Request::instance()->post('id/d');
-        $courseid = Request::instance()->post('courseid/d');
+        $page=Request::instance()->param('page/d');
+        $courseId = Request::instance()->post('course_id/d');
+        $courseId = Request::instance()->post('course_id/d');
         if (is_null($Student = Student::get($id))) {
             return $this->error('不存在ID为' . $id . '的记录');
         }
@@ -129,7 +142,7 @@ class StudentController extends IndexController
             }
         }
 
-        return $this->success('更新成功', 'index/Course/index?id=' . $courseid .'&page=3');
+        $this->success('操作成功', url('course/index?id=' . $courseId) . '?page=$page');
     }
 
      public function save()
@@ -138,6 +151,8 @@ class StudentController extends IndexController
         $Student = new Student();
         $courseid = Request::instance()->post('courseid/d');
         $Student->name = Request::instance()->post('name');
+        $grade = new  Grade();
+
 
         // 新增数据并验证。验证类，自己写下吧。
         if (!$Student->validate(true)->save()) {
@@ -155,6 +170,12 @@ class StudentController extends IndexController
             if (!$Student->Courses()->saveAll($courseIds)) {
                 return $this->error('课程-班级信息保存错误：' . $Student->Courses()->getError());
             }
+        }
+
+        //新增成绩，并判断是否生成
+        if(!$this->saveGrade($grade,$Student))
+        {
+            return $this->error('新增成绩失败' . $grade->getError());
         }
         //-----新增班级信息结束
         unset($Student);//在返回前最后被执行
@@ -178,6 +199,21 @@ class StudentController extends IndexController
         //更新并保存数据
         return $Student->validate(true)->save();
     }
+    private function saveGrade(Grade &$Grade,Student &$Student,$isUpdate= false)
+    {
+        //写入要传入的数据
+        $Grade->student_id=$Student->id;
+
+            $Grade->coursegrade=Request::instance()->post('begincougrade/d');
+            $Grade->usgrade=0;
+            $Grade->course_id=Request::instance()->post('courseid');
+            $Grade->registernum=0;
+            $Grade->allgrade=$Grade->usgrade+$Grade->coursegrade;
+
+        //更新并保存数据
+        return $Grade->validate(true)->save();
+    }
+
 
 
     public function delete()
