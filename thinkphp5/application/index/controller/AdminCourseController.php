@@ -102,7 +102,7 @@ class AdminCourseController extends Controller
     			return $this->error('更新错误：'.$course->getError());
     		}
     		else{
-    				return $this->success('操作成功',url('course/index?id=' . $course->teacher_id));
+    				return $this->success('操作成功',$_POST['httpref']);
     		}
     	
     }

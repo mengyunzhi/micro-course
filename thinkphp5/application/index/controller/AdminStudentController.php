@@ -12,29 +12,33 @@ class AdminStudentController extends Controller
     {
         try {
             // 获取查询信息
-            $course_id = Request::instance()->get('id');
+            $course_id = Request::instance()->param('id');
             $num = Request::instance()->get('num');
-
+            $page = Request::instance()->get('page');
             $pageSize = 5; // 每页显示5条数据
 
             // 实例化Teacher
             $Student = new Student; 
             $coursestudent = new CourseStudent;
-
+            $course_id = 1;
             // 定制查询信息
             if(!empty($course_id)){
-            	$coursestudent = CourseStudent::where('course_id','=',$course_id);
-                $student_id = $coursestudent::getdate('student_id/d');
-                $Student = Student::where('num','=',$student_id);
-            	if (!empt($num)) {
-            		$Student = $Student->where('num',' =',$num);
-            	}
+
+            	$coursestudents = CourseStudent::alias('a')->where('a.course_id','=',$course_id);
+                if(!empty($num)){
+                    $coursestudents = $coursestudents->
+                    join('student s','a.student_id = s.id')->where('s.num','=',$num);
+                }
+                $coursestudents = $coursestudents->paginate(2);
+                $page = $coursestudents->render(); 
+                
+              
             }
             // 按条件查询数据并调用分页
-            $students = $Student->paginate($pageSize);
+           
 
             // 向V层传数据
-            $this->assign('students', $students);
+            $this->assign('coursestudents', $coursestudents);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -89,7 +93,7 @@ class AdminStudentController extends Controller
             }
         }
         // -------------------------- 新增班级课程信息(end) -------------------------- 
-		return $this->success('操作成功'.url('Student/index?id=' . $Student->teacher_id));
+		return $this->success('操作成功',$_POST['httpref']);
 	}
 
 	public function update()
@@ -117,7 +121,7 @@ class AdminStudentController extends Controller
 				return $this->error('信息保存错误'.$Student->Courses()->getError());
 			}
 		}
-		return $this->success('更新成功',url('Student/index?id=' . $Student->teacher_id));
+		return $this->success('更新成功',$_POST['httpref']);
 	}
 
 	private function saveStudent(Student &$Student,$isUpdate= false)

@@ -73,21 +73,21 @@
                             <th>更新时间</th>
                             <th>操作</th>
                         </tr>
-                        {volist name="students" id="student" key="key"}
+                        {volist name="coursestudents" id="coursestudent" key="key"}
                         <tr>
                             <td>{$key}</td>
-                            <td>{$student->getData('name')}</td>
-                            <td>{$student->getData('num')}</td>
-                            <td>{$student->create_time}</td>
-                            <td>{$student->update_time}</td>
+                            <td>{$coursestudent->Student->getData('name')}</td>
+                            <td>{$coursestudent->Student->getData('num')}</td>
+                            <td>{$coursestudent->Student->create_time}</td>
+                            <td>{$coursestudent->Student->update_time}</td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
+                                <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
+                                <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
                                 </td>
                         </tr>
                         {/volist}
                     </table>
-                    {$students->render()}
+                    {$coursestudents->render()}
                 </div>
             </div>
         </body>

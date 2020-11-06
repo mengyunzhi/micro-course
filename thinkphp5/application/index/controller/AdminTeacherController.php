@@ -170,7 +170,7 @@ class AdminTeacherController extends Controller
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('操作成功', $_POST['httpref']);
     }
     public function test()
     {

@@ -80,6 +80,7 @@ class TermController extends Controller
      public function edit()
     {
         try {
+            
             // 获取传入ID
             $id = Request::instance()->param('id/d');
 
@@ -198,6 +199,6 @@ class TermController extends Controller
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('操作成功', $_POST['httpref']);
     }
 }
