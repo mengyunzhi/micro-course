@@ -17,7 +17,7 @@ class CourseController extends IndexController
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
-            $page = Request::instance()->param('page');
+            
             $name = Request::instance()->param('name');
             
             //实例化课程
@@ -28,7 +28,7 @@ class CourseController extends IndexController
              
             $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate($pageSize);
             
-            if (!empty($name)) {
+            if (!empty($page)) {
             }  
             $count=0;
             $this->assign('pageSize', $pageSize);
@@ -96,6 +96,7 @@ class CourseController extends IndexController
     public function edit()
     {
         $id=Request::instance()->param('id/d');
+        
         $Course=Course::get($id);
 
         //获取该课程对应的所有学生信息

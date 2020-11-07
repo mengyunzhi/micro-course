@@ -109,7 +109,7 @@ class StudentController extends IndexController
     {
         // 获取当前学生
         $id = Request::instance()->post('id/d');
-        $page=Request::instance()->param('page/d');
+        $page=Request::instance()->post('page/d');
         $courseId = Request::instance()->post('course_id/d');
         $courseId = Request::instance()->post('course_id/d');
         if (is_null($Student = Student::get($id))) {
@@ -142,7 +142,7 @@ class StudentController extends IndexController
             }
         }
 
-        $this->success('操作成功', url('course/index?id=' . $courseId) . '?page=$page');
+        $this->success('操作成功', url('course/index?id=' . $courseId) . '?page=');
     }
 
      public function save()

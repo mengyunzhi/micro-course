@@ -85,6 +85,7 @@ class GradeaodController extends IndexController
     public function add()
     {
         $course_id = Request::instance()->param('course_id/d');
+        $va = Request::instance()->param('va/d');
         $Course = Course::get($course_id);
 
         //设置默认值
@@ -97,6 +98,7 @@ class GradeaodController extends IndexController
         $Gradeaod->id=0;
         $this->assign('gradeaod',$Gradeaod);
         $this->assign('Course',$Course);
+        $this->assign('va',$va);
 
 
         return $this->fetch('edit');

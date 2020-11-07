@@ -2,6 +2,8 @@
 namespace app\index\controller;
 use think\Controller;
 use app\common\model\Teacher;
+use app\common\model\Menu;
+use app\common\view\MenuView;
 
 /**
  *  
@@ -20,6 +22,8 @@ class IndexController extends Controller
 		{
 			return $this->error('plz login first',url('Login/index'));
 		}
+		
+		$this->assign('menuView', new menuView());
 	}
 
 	public function index()
