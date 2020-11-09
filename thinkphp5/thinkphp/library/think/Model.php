@@ -613,7 +613,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @param string    $sequence     自增序列名
      * @return integer|false
      */
-    public function save($data = [], $where = [], $sequence = null)
+     public function save($data = [], $where = [], $sequence = null)
     {
         if (!empty($data)) {
             // 数据自动验证
@@ -628,7 +628,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
                 $this->isUpdate = true;
             }
 
-         // 未传入数据，则依新增与更新分别进行验证 --- 梦云智
+        // 未传入数据，则依新增与更新分别进行验证 --- 梦云智
         } else {
             // 更新，只验证有变化的值
             if ($this->isUpdate && !empty($this->change)) {
@@ -646,7 +646,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
                 return false;
             }
         } 
-
+        
         // 检测字段
         if (!empty($this->field)) {
             $this->db();
@@ -656,7 +656,6 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
                 }
             }
         }
-
         // 数据自动完成
         $this->autoCompleteData($this->auto);
 
@@ -907,10 +906,10 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * 自动验证数据
      * @access protected
      * @param array $data 验证数据
-     * @param  bool $isUpdate 是否为数据的更新操作 --- 梦云智
+     * @param bool $isUpdate是否为数据的更新操作
      * @return bool
      */
-    protected function validateData($data, $isUpdate = false)
+    protected function validateData($data,$isUpdate = false)
     {
         if (!empty($this->validate)) {
             $info = $this->validate;
@@ -923,7 +922,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
                 if (strpos($name, '.')) {
                     list($name, $scene) = explode('.', $name);
                 }
-                $validate = Loader::validate($name);
+                 $validate = Loader::validate($name);
                 if (!empty($scene)) {
                     $validate->scene($scene);
                 }
@@ -1492,6 +1491,25 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     public function __wakeup()
     {
         $this->initialize();
+    } 
+    /**
+     * 重新生成规则 （删除规则中不存在的更新字段规则 ）
+     * @param    array                    $datas 要验证的数据
+     * @return                            
+     * @author panjie@yunzhiclub.com http://www.mengyunzhi.com
+     * @DateTime 2016-10-21T13:13:44+0800
+     */
+    public function reMakeRule($datas = [])
+    {
+        $rule = [];
+        if (is_array($datas)) {
+            foreach ($datas as $key => $data) {
+                if (array_key_exists($key, $this->rule)) {
+                    $rule[$key] = $this->rule[$key];
+                }
+            }
+        }
+        $this->rule = $rule;
     }
 
 }
