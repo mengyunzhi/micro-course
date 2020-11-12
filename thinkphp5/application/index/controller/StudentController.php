@@ -8,33 +8,28 @@ use app\common\model\Grade;
 use app\common\model\CourseStudent;
 class StudentController extends IndexController
 {
-	public function index()
-	{
+        public function index()
+    {
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
             
+            $name = Request::instance()->param('name');
+            
             //实例化课程
-            $course = Course::get(2);
-            $pageSize = 5; // 每页显示5条数据
-
-            // 实例化students和CourseStudent    
-            // $students = new Student;
-            // $courseStudents =new CourseStudent;
+            $course = Course::get($id);
+            $pageSize = 2; // 每页显示5条数据
 
             // 定制查询信息
-            if (!empty($id)) {
-            }
-
-            $Students = $course->Students;
-           // $Students = new Teacher();
-            // $arraytest = [new Student(), new Student()]; 
-            //dump($Students);
-            // 按条件查询数据并调用分页
-            //die();
-
-            // 向V层传数据
-            $this->assign('students', $Students);
+             
+            $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate($pageSize);
+            
+            if (!empty($page)) {
+            }  
+            $count=0;
+            $this->assign('pageSize', $pageSize);
+            $this->assign('count', $count);
+            $this->assign('courseStudents', $courseStudents);
             $this->assign('course', $course);
 
             // 取回打包后的数据
@@ -51,7 +46,7 @@ class StudentController extends IndexController
         } catch (\Exception $e) {
             return $e->getMessage();
         } 
-	}
+    }
 
 
 	public function add()
@@ -110,7 +105,6 @@ class StudentController extends IndexController
         // 获取当前学生
         $id = Request::instance()->post('id/d');
         $page=Request::instance()->post('page/d');
-        $courseId = Request::instance()->post('course_id/d');
         $courseId = Request::instance()->post('course_id/d');
         if (is_null($Student = Student::get($id))) {
             return $this->error('不存在ID为' . $id . '的记录');
@@ -230,16 +224,16 @@ class StudentController extends IndexController
 
             // 获取要删除的对象
             $Student = Student::get($id);
+            $map = ['student_id'=>$id];
 
             // 要删除的对象存在
             if (is_null($Student)) {
                 throw new \Exception('不存在id为' . $id . '的学生，删除失败', 1);
             }
 
-            // 删除对象
-            if (!$Student->delete()) {
-                $message = '删除失败:' . $Teacher->getError();
-            }
+            if (false === $Student->CourseStudents()->where($map)->delete()) {
+            return $this->error('删除学生课程关联信息发生错误' . $Student->CourseStudents()->getError());
+        }
             }
         //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         catch(\think\Exception\HttpResponseException $e){

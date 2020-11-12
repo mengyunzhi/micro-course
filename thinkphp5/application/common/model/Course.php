@@ -1,30 +1,49 @@
 <?php
 namespace app\common\model;
 use think\Model;
+use think\Request;
 /**
  * 班级
  */
 class Course extends Model
 {
-	protected $dateFormat = 'Y年m月d日';    // 日期格式
+    private $Teacher;
 
-    /**
-     * 自定义自转换字换
-     * @var array
-     */
-    protected $type = [
-        'create_time' => 'datetime',
-        'update_time' => 'datetime',
-    ];
-	private $Teacher;
     /**
      * 获取对应的教师（辅导员）信息
      * @return Teacher 教师
-     * @author panjie <panjie@yunzhiclub.com>
+     * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
      */
     public function Teacher()
     {
-        return $this->belongsTo('Teacher');
+        return $this->belongsTo('teacher');
     }
-    
+    public function Students()
+    {
+        return $this->belongsToMany('Student',config('database.prefix').'course_student');
+    }
+    public function CourseStudents()
+    {
+        return $this->hasMany('CourseStudent');
+    }
+    public function getIsChecked(Student &$Student)
+    {
+        // 取课程ID
+        $courseId = (int)$this->id;
+        $studentId = (int)$Student->id;
+
+        // 定制查询条件
+        $map = array();
+        $map['student_id'] = $studentId;
+        $map['course_id'] = $courseId;
+
+        // 从关联表中取信息
+        $CourseStudent = CourseStudent::get($map);
+        if (is_null($CourseStudent)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

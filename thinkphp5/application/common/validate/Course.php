@@ -1,14 +1,7 @@
 <?php
 namespace app\common\validate;
-use think\Validate;    //内置验证类
-
-/**
- * 
- */
+use think\Validate;
 class Course extends Validate
 {
-	
-	protected $rule = [
-		'name'=>'require|unique:term|length:1,25',
-];
+
 }
