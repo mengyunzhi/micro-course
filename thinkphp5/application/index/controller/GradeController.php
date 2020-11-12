@@ -96,7 +96,7 @@ class GradeController extends IndexController
         $Course->usmix = Request::instance()->post('usmix');
         $Course->courseup = Request::instance()->post('courseup');
         $Course->begincougrade = Request::instance()->post('begincougrade');
-        $Course->onceusgrade = Request::instance()->post('onceusgrade');
+        $Course->resigternum = Request::instance()->post('resigternum');
         // 更新或保存
         return $Course->validate(true)->save();
     }

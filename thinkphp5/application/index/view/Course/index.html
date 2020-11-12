@@ -1,33 +1,32 @@
 {extend name="index"/}
 {block name="title"}
-课程管理
+教师管理
 {/block}
 {block name="content"}
 <div class="col-md-4 text-right" style="float: right;">
-    <a href="{:url('student/add?id='.$course->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
-</div>
-<table class="table table-hover table-bordered" style="200px;">
-    <td>{$course->name}</td>
-</table>
+                    <a href="{:url('teacher/add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+                </div>
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>
-        <th>学生姓名</th>
-        <th>学生学号</th>
-        <th>学生性别</th>
+        <th>课程名称</th>
+        <th>学生人数</th>
+        <th>学期</th>
+        <th>学生列表</th>
         <th>操作</th>
     </tr>
-    {volist name="courseStudents" id="_courseStudent" key="key"}
+    {volist name="courses" id="_course" key="key"}
     <tr>
         <td>{$key}</td>
-        <td>{$_courseStudent->student->name}</td>
-        <td>{$_courseStudent->student->num}</td>
-        <td>{eq name="_courseStudent->student->sex" value='0'}男{else /}女{/eq}</td>
-        <td>
-            <a class="btn btn-sm btn-primary" href="{:url('student/edit?id=' . $_courseStudent->student->getData('id') . '&course_id=' . $_courseStudent->course_id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class="btn btn-danger btn-sm" href="{:url('student/delete?id=' . $_courseStudent->student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
+        <td>{$_course->getData('name')}</td>
+        <td>{$_course->student_num = sizeof($_course->Students)}</td>
+        <td>{$Teacher->term}</td>
+        <td><a class="btn btn-default" href="{:url('student/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;点击查看</a>&nbsp;</td><td>
+            <a class="btn btn-sm btn-primary" href="{:url('course/courseedit?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class=" btn btn-danger btn-sm" href="{:url('course/delete?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
     </tr>
     {/volist}
 </table>
-{:$courseStudents->render()}
+{$courses->render()} 
 {/block}
+{block name="page"}
 {/block}

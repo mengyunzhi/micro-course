@@ -1,15 +1,13 @@
 <?php
 namespace app\common\validate;
-use think\Validate;    //内置验证类
+use think\Validate;     // 内置验证类
 
-/**
- * 
- */
 class Teacher extends Validate
 {
-	
-	protected $rule = [
+    protected $rule = [
+    	'username'=>'require|unique:teacher|length:4,25',
         'name'=>'require|length:2,25',
-        'teacher_id'=>'require|length:6',
-];
+        'sex'=>'in:0,1',
+        'email' => 'email',
+    ];
 }

@@ -1,0 +1,17 @@
+$courseMenu = new Menu;
+        $courseMenu->title = '课程管理';
+        $courseMenu->controller = 'Teacher';
+
+        $onClassMenu = new Menu;
+        $onClassMenu->title = '上课管理';
+        $onClassMenu->controller = 'OnClass';
+
+        $gradeMenu = new Menu;
+        $gradeMenu->title = '成绩管理';
+        $gradeMenu->controller = 'Grade';
+
+        $menus = [$courseMenu, $onClassMenu, $gradeMenu];
+        $this->assign('menus', $menus);
+        $this->assign('title', config('app.title'));
+        $menuHtml = $this->fetch('index/menu'); 
+        $this->assign('menuHtml', $menuHtml);   

@@ -12,43 +12,58 @@ use app\common\model\Teacher;
  */
 class CourseController extends IndexController
 {
-     public function index()
+     
+    public function index()
     {
-        try {
-            // 获取查询信息
-            $id = Request::instance()->param('id');
-            $page = Request::instance()->param('page');
-            
-            //实例化课程
-            $course = Course::get($id);
-            $pageSize = 2; // 每页显示5条数据
+        //接受传来的ID值
+         $id = Request::instance()->param(1);
+         $name = Request::instance()->param('name');
+         echo $id;
+
+         //通过接受的id来实例化Teacher
+         $Teacher=Teacher::get($id);
+         //查询的情况时
 
 
-            // 定制查询信息
-            if (!empty($id)) {
 
-            }   
-            $courseStudents = CourseStudent::where('course_id', '=', $id)->page($page, $pageSize)->paginate($pageSize);
-            
+             // 调用父类构造函数(必须)
+        parent::__construct();
+        //验证用户是否登录
+        if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
 
 
-            $this->assign('courseStudents', $courseStudents);
-            $this->assign('course', $course);
+        $pageSize=5;//每页显示5条数据
 
-            // 取回打包后的数据
-            $htmls = $this->fetch();
+        //实例化Course
+        $Course = new Course;
+        
+        //打印$Teacher 至控制台
+        trace($Teacher,'debug');
 
-            // 将数据返回给用户
-            return $htmls;
+        //按条件查询数据并调用分页
+         $courses = $Course->where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
+            'query'=>[
+                'id' => $id,
+                ],
+            ]);
 
-        // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
-        } catch (\think\Exception\HttpResponseException $e) {
-            throw $e;
+         if (!empty($name))
+         {
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
+         }
+ 
 
-        // 获取到正常的异常时，输出异常
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        } 
+        //向V层传数据
+        $this->assign('courses',$courses);
+        $this->assign('Teacher',$Teacher);
+        //取回打包后的数据
+        $htmls=$this->fetch();
+        //将数据返回给用户
+        return $htmls;
+        
     }
 
 
@@ -95,6 +110,7 @@ class CourseController extends IndexController
     public function edit()
     {
         $id=Request::instance()->param('id/d');
+        
         $Course=Course::get($id);
 
         //获取该课程对应的所有学生信息
