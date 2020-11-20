@@ -19,15 +19,13 @@ class GradeLookController extends IndexController
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
-            
+
             //实例化课程
             $course = Course::get($id);
-            $pageSize = 5; // 每页显示5条数据
+            $pageSize = 2; // 每页显示5条数据
             $Students = $course->Students;
 
-            $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
-
-
+            $Grades = Grade::where('course_id', '=',  $id . '%')->paginate($pageSize);
 
             if (!empty($id)) {
 

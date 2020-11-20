@@ -22,7 +22,7 @@ class CoursegradeController extends IndexController
             
             //实例化课程
             $course = Course::get($id);
-            $pageSize = 5; // 每页显示5条数据
+            $pageSize = 2; // 每页显示5条数据
             //获取该课程对应的学生
             $Students = $course->Students;
 

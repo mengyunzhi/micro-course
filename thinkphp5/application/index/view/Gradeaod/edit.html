@@ -19,7 +19,7 @@
                     <!--Collect the nav links,forms,and other contend for toggling-->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="{:url('Teacher/index')}">课程管理</a></li>
+                            <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
                             <li><a href="{:url('')}">上课管理</a></li>
                             <li><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
@@ -49,12 +49,13 @@
                 <label  class="col-sm-2 control-label" style="font-size: 20px;">分值大小:</label>
                 <div class="col-sm-10">
                 <input id="score" class="form-control" type="text" name="aodnum" value="{$va}" />
+                <button  class="btn btn-default" type="button" onclick="setScore(1)">+1</button>
+                <button  class="btn btn-default" type="button" onclick="setScore(2)">+2</button>
+                <button  class="btn btn-default" type="button" onclick="setScore(3)">+3</button>
                 </div>
                 </div>
-                <input type="button"  value="+5" />
-                <a href="?va=10" class="btn btn-default" type="submit">+10</a>
-                <button  class="btn btn-default" type="button" onclick="setScore(15)">+15</button>
-                <div class="col-sm-offset-2 col-sm-10">
+                
+                <div class="col-sm-offset-2 col-sm-10" style="margin-top: 15px;margin-left: 350px;">
                 <button  class="btn btn-default" type="submit">保存</button>
                 </div>
             </form>

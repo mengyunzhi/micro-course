@@ -16,17 +16,14 @@ class CourseController extends IndexController
     public function index()
     {
         //接受传来的ID值
-         $id = Request::instance()->param(1);
+         $id =session('teacherId');
          $name = Request::instance()->param('name');
-         echo $id;
 
-         //通过接受的id来实例化Teacher
+        //通过接受的id来实例化Teacher
          $Teacher=Teacher::get($id);
-         //查询的情况时
+        //查询的情况时
 
-
-
-             // 调用父类构造函数(必须)
+        // 调用父类构造函数(必须)
         parent::__construct();
         //验证用户是否登录
         if(!Teacher::isLogin())
@@ -34,6 +31,7 @@ class CourseController extends IndexController
             return $this->error('plz login first',url('Login/index'));
         }
 
+        $course = Course::get($id);
 
         $pageSize=5;//每页显示5条数据
 
@@ -65,6 +63,7 @@ class CourseController extends IndexController
         return $htmls;
         
     }
+
 
 
     //添加操作

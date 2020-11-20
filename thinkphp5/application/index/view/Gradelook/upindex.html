@@ -25,8 +25,8 @@
         <td>{$grade->Student->name}</td>
         <td>{$grade->Student->num}</td>
         <td>{$grade->coursegrade}</td>
-        <td>{$grade->usgrade}</td>
-        <td>{$grade->usgrade*$grade->Course->usmix/100+$grade->coursegrade*(100-$grade->Course->usmix)/100}</td>
+        <td>{$grade->getUsgrade()}</td>
+        <td>{$grade->getAllgrade()}</td>
         <td><a class="btn btn-default"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}

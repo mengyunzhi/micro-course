@@ -20,18 +20,19 @@
         <th>总成绩</th>
         <th>操作</th>
     </tr>
-    {volist name="grades" id="grade" key="key"}
+    {volist name="grades" id="_grade" key="key"}
     <tr>
         <td>{$key}</td>
-        <td>{$grade->Student->name}</td>
-        <td>{$grade->Student->num}</td>
-        <td>{$grade->usgrade}</td>
-        <td>{$grade->coursegrade}</td>
-        <td>{$grade->allgrade}</td>
-        <td><a class="btn btn-default" href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
+        <td>{$_grade->Student->name}</td>
+        <td>{$_grade->Student->num}</td>
+        <td>{$_grade->getUsgrade()}</td>
+        <td>{$_grade->coursegrade}</td>
+        <td>{$_grade->getAllgrade()}</td>
+        <td><a class="btn btn-default" href="{:url('edit?id=' . $_grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}
 </table>
+{$grades->render()}
 {/block}
 {block name="page"}
 {/block}
