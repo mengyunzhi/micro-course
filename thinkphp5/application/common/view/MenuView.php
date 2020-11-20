@@ -8,7 +8,7 @@ class MenuView {
 	 public function __construct() {
 		 $courseMenu = new Menu;
 		 $courseMenu->title = '课程管理';
-		 $courseMenu->controller = 'Teacher';
+		 $courseMenu->controller = 'Course';
 
 		 $onClassMenu = new Menu;
 		 $onClassMenu->title = '上课管理';

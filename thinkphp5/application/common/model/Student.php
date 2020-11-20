@@ -10,11 +10,19 @@ class Student extends Model
         return $this->belongsToMany('Course',config('database.prefix').'course_student');
     }
 
+    public function getNum()
+    {
+
+    }
+
     public function Course()
     {
         return $this->belongsTo('course');
     }
-
+    public function Grade()
+    {
+        return $this->belongsToMany('Course',config('database.prefix').'grade');
+    }
     //获取是否存在相关信息
      public function getIsChecked(Course &$Course)
     {

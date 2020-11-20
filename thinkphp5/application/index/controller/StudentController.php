@@ -13,11 +13,14 @@ class StudentController extends IndexController
         try {
             // 获取查询信息
             $id = Request::instance()->param('id');
-            
             $name = Request::instance()->param('name');
+            $page = Request::instance()->param('page');
             
             //实例化课程
             $course = Course::get($id);
+            if($course->teacher->id != session('teacherId')){
+                $this->error('无此权限');
+            }
             $pageSize = 2; // 每页显示5条数据
 
             // 定制查询信息
@@ -27,7 +30,7 @@ class StudentController extends IndexController
             if (!empty($page)) {
             }  
             $count=0;
-            $this->assign('pageSize', $pageSize);
+            $this->assign('page', $page);
             $this->assign('count', $count);
             $this->assign('courseStudents', $courseStudents);
             $this->assign('course', $course);
@@ -53,6 +56,7 @@ class StudentController extends IndexController
 	{
         //获取正确课程对应的ID
         $id = Request::instance()->param('id');
+        $page = Request::instance()->param('page');
         $grade = new Grade();
         $grade->course_id = $id;
 
@@ -65,7 +69,7 @@ class StudentController extends IndexController
 		$Student->name='';
 		$Student->id=0;
          
-        
+        $this->assign('page',$page);
         $this->assign('Course',$course);
         $this->assign('grade',$grade);
 		$this->assign('Student',$Student);
@@ -76,8 +80,7 @@ class StudentController extends IndexController
 	public function edit()
 	{
 		$id=Request::instance()->param('id/d');
-
-        $page=Request::instance()->param('page/d');
+        $page = Request::instance()->param('page');
         $course_id=Request::instance()->param('course_id/d');
 
         $Course =Course::get($course_id);
@@ -92,7 +95,6 @@ class StudentController extends IndexController
 		//取出班级列表
 		$this->assign('Student',$Student);
         $this->assign('page',$page);
-        
         $this->assign('course',$courses);
         $this->assign('Course',$Course);
 		return $this->fetch();
@@ -105,9 +107,14 @@ class StudentController extends IndexController
         // 获取当前学生
         $id = Request::instance()->post('id/d');
         $page=Request::instance()->post('page/d');
-        $courseId = Request::instance()->post('course_id/d');
+        $courseId = Request::instance()->post('courseid/d');
         if (is_null($Student = Student::get($id))) {
             return $this->error('不存在ID为' . $id . '的记录');
+        }
+
+        if($page==0)
+        {
+            $page = 1;
         }
 
         // 更新学生名
@@ -116,52 +123,43 @@ class StudentController extends IndexController
             return $this->error('学生信息更新发生错误：' . $Student->getError());
         }
 
-        // 删除原有信息
-        $map = ['student_id'=>$id];
 
         // 执行删除操作。由于可能存在 成功删除0条记录，故使用false来进行判断
         // 我们认为，删除0条记录，也是成功
-        if (false === $Student->CourseStudents()->where($map)->delete()) {
-            return $this->error('删除学生课程关联信息发生错误' . $Student->CourseStudents()->getError());
-        }
 
         // 增加新增数据，执行添加操作。
         if (!$this->saveStudent($Student)) {
             return $this->error('操作失败' . $Student->getError());
         }
-        $courseIds = Request::instance()->post('course_id/a');
-        if (!is_null($courseIds)) {
-            if (!$Student->Courses()->saveAll($courseIds)) {
-                return $this->error('学生-课程信息保存错误：' . $Student->Courses()->getError());
-            }
-        }
 
-        $this->success('操作成功', url('course/index?id=' . $courseId) . '?page=');
+        $this->success('操作成功', url('Student/index?id=' . $courseId) . '?page=' . $page);
     }
 
      public function save()
     {
         // 存课程信息
         $Student = new Student();
-        $courseid = Request::instance()->post('courseid/d');
+        $courseId = Request::instance()->post('courseid/d');
+        $page = Request::instance()->param('page');
         $Student->name = Request::instance()->post('name');
         $grade = new  Grade();
 
 
-        // 新增数据并验证。验证类，自己写下吧。
+        // 新增数据并验证。
         if (!$Student->validate(true)->save()) {
             return $this->error('保存错误：' . $Student->getError());
         }
         //接收klass_id这个数组
-        $courseIds = Request::instance()->post('course_id/a');       // /a表示获取的类型为数组
+        // /a表示获取的类型为数组
 
         // 增加新增数据，执行添加操作。
         if (!$this->saveStudent($Student)) {
             return $this->error('操作失败' . $Student->getError());
         }
-        // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
-        if (!is_null($courseIds)) {
-            if (!$Student->Courses()->saveAll($courseIds)) {
+
+
+        if (!is_null($courseId)) {
+            if (!$Student->Courses()->save($courseId)) {
                 return $this->error('课程-班级信息保存错误：' . $Student->Courses()->getError());
             }
         }
@@ -174,7 +172,7 @@ class StudentController extends IndexController
         //-----新增班级信息结束
         unset($Student);//在返回前最后被执行
 
-        return $this->success('操作成功', url('index/Course/index?id=' . $courseid .'&page=3'));
+        return $this->success('操作成功', url('index/Student/index?id=' . $courseId .'&page=' . $page));
     }
 
 
@@ -201,7 +199,7 @@ class StudentController extends IndexController
             $Grade->coursegrade=Request::instance()->post('begincougrade/d');
             $Grade->usgrade=0;
             $Grade->course_id=Request::instance()->post('courseid');
-            $Grade->registernum=0;
+            $Grade->resigternum=0;
             $Grade->allgrade=$Grade->usgrade+$Grade->coursegrade;
 
         //更新并保存数据
@@ -213,9 +211,11 @@ class StudentController extends IndexController
     public function delete()
     {
         try {
+            $Grade = new Grade;
             // 获取get数据
             $Request = Request::instance();
             $id = Request::instance()->param('id/d');
+            $course_id = Request::instance()->param('course_id/d');
             
             // 判断是否成功接收
             if (0 === $id) {
@@ -224,7 +224,9 @@ class StudentController extends IndexController
 
             // 获取要删除的对象
             $Student = Student::get($id);
-            $map = ['student_id'=>$id];
+            $map = ['student_id'=>$id,
+                    'course_id'=>$course_id
+                    ];
 
             // 要删除的对象存在
             if (is_null($Student)) {
@@ -233,8 +235,13 @@ class StudentController extends IndexController
 
             if (false === $Student->CourseStudents()->where($map)->delete()) {
             return $this->error('删除学生课程关联信息发生错误' . $Student->CourseStudents()->getError());
-        }
             }
+        
+            if (false === $Grade->where($map)->delete()) {
+            return $this->error('删除此学生该课程成绩关联信息发生错误' . $Grade->getError());
+            }
+    }
+            
         //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         catch(\think\Exception\HttpResponseException $e){
             throw $e;

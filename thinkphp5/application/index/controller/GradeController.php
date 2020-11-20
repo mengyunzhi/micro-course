@@ -17,7 +17,7 @@ class GradeController extends IndexController
     {
         try {
             // 获取查询信息
-            $id = Request::instance()->param('id');
+            $id =session('teacherId');
             
             //实例化课程
             $teacher =Teacher::get($id);
@@ -29,7 +29,8 @@ class GradeController extends IndexController
             }
 
             //获取该teacher对应的课程
-            $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(5);
+            $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(2);
+
             $this->assign('teacher', $teacher);
             $this->assign('courses', $courses);
 
