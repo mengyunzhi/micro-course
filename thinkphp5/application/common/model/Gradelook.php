@@ -4,8 +4,5 @@ use think\Model;
 use think\Request;
 class Gradelook
 {
-	public function getUsgrade()
-	{
-		
-	}
+	
 }
