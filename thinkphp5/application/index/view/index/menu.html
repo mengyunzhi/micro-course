@@ -1,25 +1,28 @@
-    <!--菜单导航-->
-    <div class="row">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">{$title}</a>
-                    </div>
-                    <!--Collect the nav links,forms,and other contend for toggling-->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            {volist name="menus" id="_menu"}
-                                <li class="{$_menu->getClass()}"><a href="{:$_menu->getHref()}">{$_menu->title}</a></li>
-                            {/volist}
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{:url('Login/logout')}">注销</a></li>
-                        </ul>
-                    </div>
-                    <!--/.navbar-collapse-->
+<!--菜单导航-->
+<div class="row">
+    <div class="col-md-12">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">{$title}</a>
                 </div>
-                <!--/.container-fluid-->
-            </nav>
-        </div>
+                <!--Collect the nav links,forms,and other contend for toggling-->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
+                        </div>
+                        {volist name="menus" id="_menu"}
+                        <li class="{$_menu->getClass()}"><a href="{:$_menu->getHref()}">{$_menu->title}</a></li>
+                        {/volist}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{:url('Login/logout')}">注销</a></li>
+                    </ul>
+                </div>
+                <!--/.navbar-collapse-->
+            </div>
+            <!--/.container-fluid-->
+        </nav>
     </div>
+</div>

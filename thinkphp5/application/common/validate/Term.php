@@ -11,5 +11,6 @@ class Term extends Validate
 	protected $rule = [
 		'name'=>'require|unique:term|length:4,25',
         'ptime'=>'require|length:2,25',
+        'ftime'=>'require|length:2,25',
 ];
 }

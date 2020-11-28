@@ -72,6 +72,7 @@ class TermController extends Controller
         $Term->id = 0;
         $Term->name = '';
         $Term->ptime = '';
+        $Term->ftime = '';
         $this->assign('Term', $Term);
 
         // 调用edit模板
@@ -80,9 +81,9 @@ class TermController extends Controller
      public function edit()
     {
         try {
-            
             // 获取传入ID
             $id = Request::instance()->param('id/d');
+            $Term = Term::all();
 
             // 判断是否成功接收
             if (is_null($id) || 0 === $id) {
@@ -113,6 +114,44 @@ class TermController extends Controller
         } catch (\Exception $e) {
             return $e->getMessage();
         } 
+    }
+    public function is_open(){
+         try {
+            $Request = Request::instance();
+            
+            // 获取传入ID
+            $id = Request::instance()->param('id/d');
+
+            // 判断是否成功接收
+            if (is_null($id) || 0 === $id) {
+                throw new \Exception('未获取到ID信息', 1);
+            }
+            
+            // 在Term表模型中获取当前记录
+            if (null === $Term = Term::get($id))
+            {
+                // 由于在$this->error抛出了异常，所以也可以省略return(不推荐)
+                $this->error('系统未找到ID为' . $id . '的记录');
+            } 
+            $Term = new Term;
+            $Term = Term::all();
+            foreach ($Term as $Term1) {
+                $Term1->state = '0';
+                $Term1->save();
+            }
+            $Term = Term::get($id);
+            $Term->state = '1';
+            $Term->save();
+
+        // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
+        } catch (\think\Exception\HttpResponseException $e) {
+            throw $e;
+
+        // 获取到正常的异常时，输出异常
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        } 
+        return $this->success('激活成功', $Request->header('referer')); 
     }
     public function delete()
     {
@@ -165,6 +204,7 @@ class TermController extends Controller
         // 写入要更新的数据
         $Term->name = input('post.name');
         $Term->ptime = input('post.ptime');
+        $Term->ftime = input('post.ftime');
 
         // 更新或保存
         return $Term->validate(true)->save();

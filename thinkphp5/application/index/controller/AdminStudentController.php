@@ -20,7 +20,7 @@ class AdminStudentController extends Controller
             // 实例化Teacher
             $Student = new Student; 
             $coursestudent = new CourseStudent;
-            $course_id = 1;
+            //$course_id = 1;
             // 定制查询信息
             if(!empty($course_id)){
 
@@ -39,7 +39,7 @@ class AdminStudentController extends Controller
 
             // 向V层传数据
             $this->assign('coursestudents', $coursestudents);
-
+            //dump($coursestudents);die();
             // 取回打包后的数据
             $htmls = $this->fetch();
 

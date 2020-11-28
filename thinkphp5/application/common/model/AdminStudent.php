@@ -1,5 +1,5 @@
 <?php
-namespace app\common\model;
+namespace app\common\Model;
 use think\Model;
 use app\common\model\CourseStudent;
 

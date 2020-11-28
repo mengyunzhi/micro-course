@@ -1,6 +1,6 @@
 <?php
 namespace app\common\model;
-use think\model;
+use think\Model;
 use app\common\model\CourseStudent;
 
 class Student extends Model
