@@ -10,7 +10,18 @@ class ClassroomController extends Controller
 {
     public function index()
     {
-        $classrooms = Classroom::paginate();
+    	$pageSize = 5;
+      $name = Request::instance()->get('name');
+      $Classroom = new Classroom;
+      //查询
+      if(!empty($name)){
+      	$Classroom->where('name','like','%'.$name.'%');
+      }
+       $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
+                'query'=>[
+                    'name' => $name,
+                    ],
+                ]);
         $this->assign('classrooms', $classrooms);
         return $this->fetch();
     }

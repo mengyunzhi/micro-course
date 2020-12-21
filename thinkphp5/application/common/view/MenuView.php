@@ -6,19 +6,19 @@ class MenuView {
 	 private $viewHtml;
 	 private $menus;
 	 public function __construct() {
-		 $courseMenu = new Menu;
-		 $courseMenu->title = '课程管理';
-		 $courseMenu->controller = 'Course';
+		 $TermMenu = new Menu;
+		 $TermMenu->title = '学期管理';
+		 $TermMenu->controller = 'Term';
 
-		 $onClassMenu = new Menu;
-		 $onClassMenu->title = '上课管理';
-		 $onClassMenu->controller = 'OnClass';
+		 $UserMenu = new Menu;
+		 $UserMenu->title = '用户管理';
+		 $UserMenu->controller = 'AdminTeacher';
 
-		 $gradeMenu = new Menu;
-		 $gradeMenu->title = '成绩管理';
-		 $gradeMenu->controller = 'Grade';
+		 $ClassroomMenu = new Menu;
+		 $ClassroomMenu->title = '教室管理';
+		 $ClassroomMenu->controller = 'Classroom';
 
-		 $this->menus = [$courseMenu, $onClassMenu, $gradeMenu];
+		 $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu];
 		 $this->viewHtml = view('index/menu', 
 		 	['menus' => $this->menus, 
 		 	'title' => config('app.title')]);

@@ -2,6 +2,9 @@
 {block name="title"}
 教师管理
 {/block}
+{block name="search"}
+<input name="teacher_id" type="text" class="form-control" placeholder="工号..." value="{:input('get.teacher_id')}">
+{/block}
 {block name="content"}
 <table class="table table-hover table-bordered">
     <tr class="info">
