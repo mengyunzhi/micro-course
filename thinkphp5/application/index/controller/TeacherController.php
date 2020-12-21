@@ -89,19 +89,7 @@ class TeacherController extends IndexController
      * @author 梦云智 http://www.mengyunzhi.com
      * @DateTime 2016-11-07T12:41:23+0800
      */
-    public function add()
-    {
-        $Course=new Course;
 
-        //设置默认值
-        $Course->id=0;
-        $Course->name='';
-        
-        $this->assign('Course',$Course);
-
-        //调用edit模板
-        return $this->fetch('edit');
-    }
     
 
     /**
