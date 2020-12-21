@@ -1,0 +1,50 @@
+{extend name="index" /}
+{block name="title"}
+座位图
+{/block}
+{block name="content"}
+000代表过道，其他代表座位
+<hr>
+<div class="container">
+    <table>
+        <tr>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px">
+                        <p style="color: black;padding-top: 5px">001</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-default" style="margin-right: 20px">
+                        <p style="color: black;padding-top: 5px">000</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px">
+                        <p style="color: black;padding-top: 5px">002</p>
+                    </button></a></th>
+            <th></th>
+        </tr>
+        <tr>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">003</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px;" >000</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">004</p>
+                    </button></a></th>
+        </tr>
+    </table>
+</div>
+{/block}
+{block name="search"}
+{/block}
+{block name="search1"}
+{/block}
+{block name="hr1"}
+{/block}
+{block name="hr2"}
+{/block}
+{block name="Add"}
+<div class="col-md-4 text-right">
+    <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新建模板</a>
+</div>
+{/block}
+{block name="render"}
+{/block}
