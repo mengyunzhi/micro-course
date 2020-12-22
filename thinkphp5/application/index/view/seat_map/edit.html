@@ -1,5 +1,4 @@
 {extend name="index" \}
-{extend name="index" /}
 {block name="title"}
 模板添加
 {/block}
@@ -17,16 +16,24 @@
 <div class="container">
     <table>
         <tr>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px">
-                        <p style="color: black;padding-top: 5px">001</p>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">003</p>
                     </button></a></th>
-            <th><a href=""><button class="btn btn-default" style="margin-right: 20px">
-                        <p style="color: black;padding-top: 5px">000</p>
+            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px;">000</p>
                     </button></a></th>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px">
-                        <p style="color: black;padding-top: 5px">002</p>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">004</p>
                     </button></a></th>
-            <th></th>
+                    <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">003</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px;">000</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">004</p>
+                    </button></a></th>
         </tr>
         <tr>
             <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
@@ -38,8 +45,17 @@
             <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
                         <p style="color: black;padding-top: 5px">004</p>
                     </button></a></th>
+                    <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">003</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px;">000</p>
+                    </button></a></th>
+            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
+                        <p style="color: black;padding-top: 5px">004</p>
+                    </button></a></th>
         </tr>
     </table>
-    <a href="index"><button type="submit" class="btn btn-default" style="margin-top: 20px">submit</button></a>
+    <a href="{:url('index')}"><button type="submit" class="btn btn-default" style="margin-top: 20px">submit</button></a>
 </div>
 {/block}

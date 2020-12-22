@@ -4,6 +4,9 @@ use think\Controller;
 use app\common\model\Classroom;
 use think\Request;
 use think\validate;
+use app\common\model\SeatMap;
+use app\index\controller\SeatMapController;
+use app\index\controller\SeatController;
 
 
 class ClassroomController extends Controller
@@ -24,5 +27,11 @@ class ClassroomController extends Controller
                 ]);
         $this->assign('classrooms', $classrooms);
         return $this->fetch();
+    }
+    public function add(){
+      return $this->fetch();
+    }
+     public function edit(){
+      return $this->fetch();
     }
 }
