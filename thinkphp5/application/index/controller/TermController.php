@@ -140,6 +140,7 @@ class TermController extends Controller
                 $Term1->save();
             }
             $Term = Term::get($id);
+            Term::$Term_id = $id;
             $Term->state = '1';
             $Term->save();
 
