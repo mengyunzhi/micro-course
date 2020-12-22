@@ -5,6 +5,7 @@ use app\common\model\Classroom;
 use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
+use app\common\model\Course;
 use app\index\controller\SeatMapController;
 use app\index\controller\SeatController;
 
@@ -16,6 +17,7 @@ class ClassroomController extends Controller
     	$pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
+      $Course = Course::get(3);
       //查询
       if(!empty($name)){
       	$Classroom->where('name','like','%'.$name.'%');
@@ -26,6 +28,7 @@ class ClassroomController extends Controller
                     ],
                 ]);
         $this->assign('classrooms', $classrooms);
+        $this->assign('Course', $Course);
         return $this->fetch();
     }
     public function add(){
