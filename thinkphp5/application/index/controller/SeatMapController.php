@@ -5,14 +5,17 @@ use app\common\Classroom;
 use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
+use app\common\model\Course;
 use app\common\model\Seat;
 class SeatMapController extends Controller{
 	
 	public function index(){
 		$id = Request::instance()->get('id\d');
-		if(!is_null($id)){
-			$SeatMap = SeatMap::where('id',"=",$id)->select();
-		}
+		$course_id = Request::instance()->param('course_id');
+		// 实例化课程
+		$Course = Course::get($course_id);
+
+		$this->assign('Course',$Course);
 		return $this->fetch();
 	}
 	public function add(){

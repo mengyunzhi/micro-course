@@ -9,24 +9,13 @@ class AdminTeacherController extends Controller
 	public function index()
 	{
 		try {
-            $id = Request::instance()->get('teacher_id/d');
             $pageSize = 5; // 每页显示5条数据
 
             // 实例化Teacher
             $Teacher = new Teacher; 
 
             // 调用分页
-           if (!empty($id)) {
-                $Teacher->where('teacher_id', 'like', '%' . $id . '%');
-            }
-
-            // 按条件查询数据并调用分页
-             // 按条件查询数据并调用分页
-            $teachers = $Teacher->order('id desc')->paginate($pageSize, false, [
-                'query'=>[
-                    'teacher_id' => $id,
-                    ],
-                ]);
+            $teachers = $Teacher->paginate($pageSize);
 
             // 向V层传数据
             $this->assign('teachers', $teachers);
@@ -117,9 +106,9 @@ class AdminTeacherController extends Controller
         // 写入要更新的数据
         $Teacher->name = input('post.name');
         $Teacher->teacher_id = input('post.teacher_id');
-        dump($Teacher);
+
         // 更新或保存
-        return $Teacher->save();
+        return $Teacher->validate(true)->save();
     }
      public function save()
     {
@@ -153,7 +142,7 @@ class AdminTeacherController extends Controller
 		    }
 		    //删除对象
 		    if (!$Teacher->delete()) {
-			    return $this->error('删除失败'.$Teacher->getError());
+			    return $this->error('删除失败'.$Teacher->       getError());
 		    }//获取内置异常时直接向上抛出，交php处理 
 	    }catch (\think\Exception\HttpResponseException $e) {
             throw $e;

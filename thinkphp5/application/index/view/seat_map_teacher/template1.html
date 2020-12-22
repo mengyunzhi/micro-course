@@ -13,16 +13,21 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <table class="table table-hover table-bordered" style="200px;">
-    <td>当前所上课程：{$Course->name}</td>
-</table>
     <div class="row">
         <hr>
+        <div class=" text-left">
+            <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新建模板</a>
+        </div>
+        <div class=" text-right">
+            <a href="{:url('template2')}" class="btn btn-primary"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;上一个模板</a>
+            <hr>
+            <a href="{:url('template2')}" class="btn btn-primary"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;下一个模板</a>
+        </div>
         <div class="container">
-            <h3 style="margin-left: 545px;margin-bottom: 50px;">A101</h3>
+            <h3 style="margin-left: 545px;margin-bottom: 50px;">模板一</h3>
             <table class="table table-bordered table-condensed ">
                 <tr>
-                    <td class="success"><a href="{:url('student/look?id=92&course_id=3')}">000</a></td>
+                    <td class="success">000</td>
                     <td class="danger">000</td>
                     <td class="success">000</td>
                     <td class="success">000</td>
@@ -175,6 +180,7 @@
                     <td class="success">000</td>
                 </tr>
             </table>
+            <a href="{:url('classroom/edit')}" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>&nbsp;选择</a>
         </div>
     </div>
 </body>

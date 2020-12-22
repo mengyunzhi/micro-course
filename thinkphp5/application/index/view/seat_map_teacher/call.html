@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{block name="title"}标题{/block}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="">
+</head>
+
+<body class="container">
+    <?php use app\common\view\MenuView; ?>
+    <?php $MenuView = new MenuView; ?>
+    <?php echo $MenuView->render(); ?>
+    <table class="table table-hover table-bordered" style="200px;">
+        <td>当前所上课程：{$Course->name}</td>
+    </table>
+    <div class="row">
+        <hr>
+        <div class="container">
+            <h3 style="margin-left: 545px;margin-bottom: 50px;">A101</h3>
+            <table class="table table-bordered table-condensed ">
+                <tr>
+                    <td class="success" >000</td>
+                    <td class="danger">001</td>
+                    <td class="success">002</td>
+                    <td class="success">003</td>
+                    <td class="success">004</td>
+                    <td class="success">005</td>
+                    <td style="border: none;"></td>
+                    <td class="success">006</td>
+                    <td class="success">007</td>
+                    <td class="success">008</td>
+                    <td class="danger">009</td>
+                    <td class="success">010</td>
+                    <td class="success">011</td>
+                </tr>
+                <tr>
+                    <td class="success">012</td>
+                    <td class="danger">013</td>
+                    <td class="success">014</td>
+                    <td class="success">015</td>
+                    <td class="success">016</td>
+                    <td class="success">017</td>
+                    <td style="border: none;"></td>
+                    <td class="success">018</td>
+                    <td class="success">019</td>
+                    <td class="success">020</td>
+                    <td class="danger">021</td>
+                    <td class="success">022</td>
+                    <td class="success">023</td>
+                </tr>
+                <tr>
+                    <td class="success">024</td>
+                    <td class="danger">025</td>
+                    <td class="success">026</td>
+                    <td class="success">027</td>
+                    <td class="success">028</td>
+                    <td class="success">029</td>
+                    <td style="border: none;"></td>
+                    <td class="success">030</td>
+                    <td class="success">031</td>
+                    <td class="success">032</td>
+                    <td class="danger">033</td>
+                    <td class="success">034</td>
+                    <td class="success">035</td>
+                </tr>
+                <tr>
+                    <td class="success">036</td>
+                    <td class="danger">037</td>
+                    <td class="success">038</td>
+                    <td class="success">039</td>
+                    <td class="success">040</td>
+                    <td class="success">041</td>
+                    <td style="border: none;"></td>
+                    <td class="success">042</td>
+                    <td class="success">043</td>
+                    <td class="success">044</td>
+                    <td class="danger">045</td>
+                    <td class="success">046</td>
+                    <td class="success">047</td>
+                </tr>
+                <tr>
+                    <td class="success">048</td>
+                    <td class="danger">049</td>
+                    <td class="success">050</td>
+                    <td class="success">051</td>
+                    <td class="success">052</td>
+                    <td class="success">053</td>
+                    <td style="border: none;"></td>
+                    <td class="success">054</td>
+                    <td class="success">055</td>
+                    <td class="success">056</td>
+                    <td class="danger">057</td>
+                    <td class="success">058</td>
+                    <td class="success">059</td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="success" style="background-color: red"><a href="{:url('student/look?id=92&course_id=3')}">060</a></td>
+                    <td class="danger">061</td>
+                    <td class="success">062</td>
+                    <td class="success">063</td>
+                    <td class="success">064</td>
+                    <td class="success">065</td>
+                    <td style="border: none;"></td>
+                    <td class="success">066</td>
+                    <td class="success">067</td>
+                    <td class="success">068</td>
+                    <td class="danger">069</td>
+                    <td class="success">070</td>
+                    <td class="success">071</td>
+                </tr>
+                <tr>
+                    <td class="success">072</td>
+                    <td class="danger">073</td>
+                    <td class="success">074</td>
+                    <td class="success">075</td>
+                    <td class="success">076</td>
+                    <td class="success">077</td>
+                    <td style="border: none;"></td>
+                    <td class="success">078</td>
+                    <td class="success">079</td>
+                    <td class="success">080</td>
+                    <td class="danger">081</td>
+                    <td class="success">082</td>
+                    <td class="success">083</td>
+                </tr>
+                <tr>
+                    <td class="success">084</td>
+                    <td class="danger">085</td>
+                    <td class="success">086</td>
+                    <td class="success">087</td>
+                    <td class="success">088</td>
+                    <td class="success">089</td>
+                    <td style="border: none;"></td>
+                    <td class="success">090</td>
+                    <td class="success">091</td>
+                    <td class="success">092</td>
+                    <td class="danger">093</td>
+                    <td class="success">094</td>
+                    <td class="success">095</td>
+                </tr>
+                <tr>
+                    <td class="success">096</td>
+                    <td class="danger">097</td>
+                    <td class="success">098</td>
+                    <td class="success">099</td>
+                    <td class="success">100</td>
+                    <td class="success">101</td>
+                    <td style="border: none;"></td>
+                    <td class="success">102</td>
+                    <td class="success">103</td>
+                    <td class="success">104</td>
+                    <td class="danger">105</td>
+                    <td class="success">106</td>
+                    <td class="success">107</td>
+                </tr>
+                <tr>
+                    <td class="success">108</td>
+                    <td class="danger">109</td>
+                    <td class="success">110</td>
+                    <td class="success">111</td>
+                    <td class="success">112</td>
+                    <td class="success">113</td>
+                    <td style="border: none;"></td>
+                    <td class="success">114</td>
+                    <td class="success">115</td>
+                    <td class="success">116</td>
+                    <td class="danger">117</td>
+                    <td class="success">118</td>
+                    <td class="success">119</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-4 text-right" style="float: right;">
+        <a href="{:url('course/index')}" class=" btn btn-danger btn-sm">&nbsp;下课</a>
+    </div>
+</body>
+<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+
+</html>

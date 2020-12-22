@@ -46,4 +46,9 @@ class Course extends Model
         }
     }
 
+    public function Term()
+    {
+        return $this->belongsTo('term');
+    }
+
 }

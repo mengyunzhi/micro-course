@@ -21,6 +21,8 @@ class GradeController extends IndexController
             
             //实例化课程
             $teacher =Teacher::get($id);
+            // dump($teacher);
+            // die();
             $pageSize = 5; // 每页显示5条数据
 
             // 定制查询信息
@@ -29,10 +31,10 @@ class GradeController extends IndexController
             }
 
             //获取该teacher对应的课程
-            $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(2);
+            $Courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(2);
 
             $this->assign('teacher', $teacher);
-            $this->assign('courses', $courses);
+            $this->assign('courses', $Courses);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
