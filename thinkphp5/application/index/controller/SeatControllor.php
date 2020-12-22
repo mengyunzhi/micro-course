@@ -1,11 +1,11 @@
 <?php
-namespace app\index\controllor;
+namespace app\index\controller;
 use app\common\model\Seat;
 use app\common\validate\Seat;
 /**
  * 
  */
-class SeatControllor extends controllor
+class SeatController extends controller
 {
 	
 
