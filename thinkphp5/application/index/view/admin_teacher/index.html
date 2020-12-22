@@ -11,6 +11,8 @@
         <th>序号</th>
         <th>姓名</th>
         <th>工号</th>
+        <th>创建时间</th>
+        <th>更新时间</th>
         <th>操作</th>
     </tr>
     {volist name="teachers" id="teacher" key="key"}
@@ -18,6 +20,8 @@
         <td>{$key}</td>
         <td>{$teacher->getData('name')}</td>
         <td>{$teacher->getData('teacher_id')}</td>
+        <td>{$teacher->create_time}</td>
+        <td>{$teacher->update_time}</td>
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $teacher->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
             <a class="btn btn-success btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">&nbsp;所教课程</a>

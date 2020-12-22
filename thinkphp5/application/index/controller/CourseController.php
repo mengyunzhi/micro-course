@@ -6,7 +6,7 @@ use think\Request;
 use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
-
+use app\common\model\Term;
 
 /**
  * 
@@ -68,14 +68,22 @@ class CourseController extends IndexController
 
 
     //添加操作
-    public function add()
+        public function add()
     {
+        $id = Request::instance()->param('id');
+        $Term = Term::where('app', 'like', '%' . 1 . '%')->paginate();
+        $Teacher = Teacher::get($id);
         $Course=new Course;
-        $Course->name='';
+
+        //设置默认值
         $Course->id=0;
+        $Course->name='';
+        
         $this->assign('Course',$Course);
-        $Students = new Student;
-        return $this->assign('students',$Students);
+        $this->assign('Term',$Term);
+        $this->assign('Teacher',$Teacher);
+
+        //调用edit模板
         return $this->fetch('edit');
     }
 
@@ -85,15 +93,20 @@ class CourseController extends IndexController
         // 存课程信息
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
+        $Course->teacher_id = Request::instance()->post('id');
+        
+        $Course->term_id = Request::instance()->post('term_id');
+        
+        $Course->student_num = 0;
 
-        // 新增数据并验证。验证类，自己写下吧。
+        // 新增数据并验证。验证类
         if (!$Course->validate(true)->save()) {
             return $this->error('保存错误：' . $Course->getError());
         }
-        //接收klass_id这个数组
+        //接受学生导入信息
         $studentIds = Request::instance()->post('student_id/a');       // /a表示获取的类型为数组
 
-        // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
+        
         if (!is_null($studentIds)) {
             if (!$Course->Students()->saveAll($studentIds)) {
                 return $this->error('课程-班级信息保存错误：' . $Course->Students()->getError());
