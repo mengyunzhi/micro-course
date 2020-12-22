@@ -9,6 +9,10 @@ use app\common\model\Seat;
 class SeatMapController extends Controller{
 	
 	public function index(){
+		$id = Request::instance()->get('id\d');
+		if(!is_null($id)){
+			$SeatMap = SeatMap::where('id',"=",$id)->select();
+		}
 		return $this->fetch();
 	}
 	public function add(){
@@ -16,5 +20,11 @@ class SeatMapController extends Controller{
 	}
 	public function edit(){
 		return $this->fetch();
+	}
+	public function template1(){
+		return $this->fetch();
+	}
+	public function template2(){
+		return  $this->fetch();
 	}
 }
