@@ -5,6 +5,7 @@ use app\common\model\Classroom;
 use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
+use app\common\model\Course;
 use app\index\controller\SeatMapController;
 use app\index\controller\SeatController;
 use app\common\model\Teacher;
@@ -22,6 +23,9 @@ class ClassroomController extends Controller
             return $this->error('plz login first',url('Login/index'));
         }
 
+
+      $Course = Course::get(3);
+
       //查询
       if(!empty($name)){
       	$Classroom->where('name','like','%'.$name.'%');
@@ -32,6 +36,7 @@ class ClassroomController extends Controller
                     ],
                 ]);
         $this->assign('classrooms', $classrooms);
+        $this->assign('Course', $Course);
         return $this->fetch();
     }
     public function add(){

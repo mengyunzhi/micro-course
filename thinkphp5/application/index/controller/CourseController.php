@@ -7,7 +7,6 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Term;
-
 /**
  * 
  */
@@ -71,16 +70,20 @@ class CourseController extends IndexController
         public function add()
     {
         $id = Request::instance()->param('id');
-        $Term = Term::where('app', 'like', '%' . 1 . '%')->paginate();
+        $Term = Term::where('app', 'like', '%' . 1 . '%')->paginate();      
         $Teacher = Teacher::get($id);
         $Course=new Course;
+        $Course->name = '';
 
         //设置默认值
-        $Course->id=0;
-        $Course->name='';
-        
+        // $Course->id=0;
+        // $Course->name='';
+        // dump($Term);
+        // dump($Teacher);
+        // dump($Course);
+        // die();
         $this->assign('Course',$Course);
-        $this->assign('Term',$Term);
+        $this->assign('Term',$Term[0]);
         $this->assign('Teacher',$Teacher);
 
         //调用edit模板
@@ -94,9 +97,7 @@ class CourseController extends IndexController
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
         $Course->teacher_id = Request::instance()->post('id');
-        
         $Course->term_id = Request::instance()->post('term_id');
-        
         $Course->student_num = 0;
 
         // 新增数据并验证。验证类
@@ -123,7 +124,6 @@ class CourseController extends IndexController
     public function edit()
     {
         $id=Request::instance()->param('id/d');
-        
         $Course=Course::get($id);
 
         //获取该课程对应的所有学生信息
@@ -188,7 +188,7 @@ class CourseController extends IndexController
             }
         }
 
-        return $this->success('更新成功', url('Teacher/index?id=' . $teacher_id));
+        return $this->success('更新成功', url('index'));
     }
 
      public function delete()

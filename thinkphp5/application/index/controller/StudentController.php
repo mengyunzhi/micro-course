@@ -58,6 +58,28 @@ class StudentController extends IndexController
         } 
     }
 
+    public function look()
+    {
+        // 获取学生对应的ID
+        $id = Request::instance()->param('id');
+        $course_id = 3;
+        
+        // 实例化对象
+        $Student = Student::get($id);
+        $Course = Course::get($course_id);
+        $grade=array(
+            "course_id"=>$course_id,
+            "student_id"=>$id
+        );
+
+        $Grade = Grade::where($grade)->select();
+
+        $this->assign('Student',$Student);
+        $this->assign('Course',$Course);
+        $this->assign('Grade',$Grade[0]);
+        return $this->fetch();
+    }
+
 
 	public function add()
 	{
@@ -150,7 +172,8 @@ class StudentController extends IndexController
         $page = Request::instance()->param('page');
         $Student->name = Request::instance()->post('name');
         $grade = new  Grade();
-
+        $Course = Course::get($courseId);
+        $Course->student_num++;
 
         // 新增数据并验证。
         if (!$Student->validate(true)->save()) {
@@ -224,6 +247,11 @@ class StudentController extends IndexController
             $id = Request::instance()->param('id/d');
             $course_id = Request::instance()->param('course_id/d');
             
+            // 实例化课程
+            $Course = Course::get($course_id);
+            //该课程学生总数减一
+            $Course->student_num--;
+
             // 判断是否成功接收
             if (0 === $id) {
                 throw new \Exception("未获取到ID信息", 1);
