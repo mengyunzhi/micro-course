@@ -15,9 +15,9 @@
     <?php echo $MenuViewTeacher->render(); ?>
     <form class="form-horizontal" action="{:url('SeatMapTeacher/index')}" method="post">
         <table class="table table-hover table-bordered" style="200px;">
-            <td><select class="form-control" name="aodnum" id="gradeaod">
+            <td><select class="form-control" name="course_id" >
                     {volist name="courses" id="course" }
-                    <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}>{$course->name} </option> {/volist} </select> </td> </table> 签到时间设置:  <input type="datetime-local" name="">----<input type="datetime-local" name="">
+                    <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}>{$course->name} </option> {/volist} </select> </td> </table> 签到时间设置:  <input type="datetime-local" name="beginTime">----<input type="datetime-local" name="outTime">
                         <div class="form-group">
                             <div style="margin-left: 200px;margin-top: 50px;">
                                 <button type="submit" onclick="开始上课" class="btn btn-default">开始上课</button>

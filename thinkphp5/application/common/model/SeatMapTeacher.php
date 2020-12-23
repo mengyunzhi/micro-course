@@ -5,5 +5,8 @@ use think \ db \ Query;
 
 class SeatMapTeacher extends Model
 {
-	
+	public function Students()
+	{
+		return $this->belonsto('student');
+	}
 }
