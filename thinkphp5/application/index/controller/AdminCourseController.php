@@ -7,6 +7,7 @@ use app\common\model\Student;//教师模型
 use app\common\model\CourseStudent;
 use think\Request;
 use think\validate;
+use app\common\model\Term;
 
 
 class AdminCourseController extends Controller
@@ -14,15 +15,14 @@ class AdminCourseController extends Controller
   public function index()
     {
     	try{
+            $Term = new Term;
     		$teacher_id=Request::instance()->param('id/d');
     		$name = Request::instance()->get('name');
     		$courses = new Course;
     		$pageSize=5;
-
+            $Term = $Term->where('state','=',1);
     	if(!empty($teacher_id))
     	{
-    	    
-    	    
     	    $pageSize = 5;
        	    $courses = Course::where('teacher_id', '=', $teacher_id);
        	  
@@ -32,6 +32,7 @@ class AdminCourseController extends Controller
             }
 
         }
+        $courses = $courses->where('term_id','=',Term::$Term_id);
         $courses = $courses->order('id desc')->paginate($pageSize, false, [
                 'query'=>[
                     'name' => $name,

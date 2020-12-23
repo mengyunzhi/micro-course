@@ -64,6 +64,8 @@
                         </tr>
                         {volist name="teachers" id="teacher" key="key"}
                         <tr>
+                            <?php if($teacher->getData('name')=='admin'): ?>
+                            <?php $key++; ?>
                             <td>{$key}</td>
                             <td>{$teacher->getData('name')}</td>
                             <td>{$teacher->getData('teacher_id')}</td>

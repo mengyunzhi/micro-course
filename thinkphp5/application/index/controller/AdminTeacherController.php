@@ -4,6 +4,7 @@ use think\Controller;
 use app\common\model\Teacher;//教师模型
 use think\Request;
 use think\validate;
+use think\controller\Term;
 class AdminTeacherController extends Controller
 {
 	public function index()
@@ -13,6 +14,11 @@ class AdminTeacherController extends Controller
 
             // 实例化Teacher
             $Teacher = new Teacher; 
+            
+            if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
 
             // 调用分页
             $teachers = $Teacher->paginate($pageSize);
