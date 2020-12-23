@@ -15,20 +15,20 @@ class PreClassController extends IndexController
 {
      public function index()
     {
-       
-            // 获取老师对应的ID
-            $id =session('teacherId');
 
-            // 实例化老师	
-            $Teacher = Teacher::get($id);
+        // 获取老师对应的ID
+        $id =session('teacherId');
 
-            //获取该老师对应的课程信息
-            $Courses = Course::where('teacher_id','=',$id)->select();
+        // 实例化老师	
+        $Teacher = Teacher::get($id);
 
-            $this->assign('courses',$Courses);
-            $this->assign('Teacher',$Teacher);
+        //获取该老师对应的课程信息
+        $Courses = Course::where('teacher_id','=',$id)->select();
 
-            return $this->fetch();
+        $this->assign('courses',$Courses);
+        $this->assign('Teacher',$Teacher);
+
+        return $this->fetch();
     }
 }
             
