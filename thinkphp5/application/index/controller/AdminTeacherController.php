@@ -15,6 +15,11 @@ class AdminTeacherController extends Controller
 
             // 实例化Teacher
             $Teacher = new Teacher; 
+            
+            if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
 
             // 调用分页
            if (!empty($id)) {

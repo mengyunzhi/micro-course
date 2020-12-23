@@ -7,7 +7,7 @@ use think\validate;
 use app\common\model\SeatMap;
 use app\index\controller\SeatMapController;
 use app\index\controller\SeatController;
-
+use app\common\model\Teacher;
 
 class ClassroomController extends Controller
 {
@@ -16,6 +16,12 @@ class ClassroomController extends Controller
     	$pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
+
+      if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
+
       //查询
       if(!empty($name)){
       	$Classroom->where('name','like','%'.$name.'%');

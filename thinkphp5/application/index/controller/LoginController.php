@@ -19,6 +19,10 @@ class LoginController extends Controller
         
         // 直接调用M层方法，进行登录。
         if (Teacher::login($postData['username'], $postData['password'])) {
+            if($postData['username']=='admin'){
+
+                return $this->success('login success', url('Term/index'));
+            }
             return $this->success('login success', url('Course/index'));
         } else {
             return $this->error('username or password incorrent', url('index'));

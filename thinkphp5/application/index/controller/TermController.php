@@ -4,7 +4,8 @@ use think\Controller;
 use app\common\model\Term;//教师模型
 use think\Request;
 use think\validate;
-class TermController extends Controller
+use app\common\model\Teacher;
+class TermController extends IndexController
 {
 	public function index()
 	{
@@ -17,6 +18,10 @@ class TermController extends Controller
 
             // 实例化Term
             $Term = new Term; 
+            if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
 
             // 定制查询信息
             if (!empty($name)) {
