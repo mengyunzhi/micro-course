@@ -2,82 +2,96 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>座位管理</title>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/seat.css">
-    <script src="./seat.js"></script>
-    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
-    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <title>Document</title>
+    <style>
+
+        .box{
+            width:400px;
+            
+            border:1px solid #999;
+            position:absolute;
+            left:50%;
+            top:50%;
+            text-align: center;
+            padding:20px;
+            /*margin-left:-200px;
+            margin-top:-150px;*/
+            -webkit-transform:translate(-50%, -50%);
+            -moz-transform:translate(-50%, -50%);
+            -ms-transform:translate(-50%, -50%);
+            -o-transform:translate(-50%, -50%);
+            transform:translate(-50%, -50%);
+            
+        }
+
+        .content{
+            border:1px solid #999;
+            padding:20px;
+            font-size:30px;
+        }
+        .box button{
+            font-family: "Microsoft YaHei";
+            font-size:20px;
+            margin-top:10px;
+            width:100%;
+            border:1px solid #999;
+            cursor:pointer;
+            line-height: 40px;
+            outline:none;
+        }
+    </style>
 </head>
 <body>
-
-<!--座位管理-->
-<div class="row container">
-    <!--需要操作的演出厅-->
-    <div class="col-md-3">
+    <div class="box">
+        <div class="content" id="content">随机点名器</div>
+        <button onclick="gotoRand()" id="btn">开 始</button>
     </div>
 
-    <!--对座位的管理操作-->
-    <div class="col-md-6">
-        <div id = "screen">
-            <p>屏幕</p>
-            <img src="./image/rectangle.png" alt="">
-        </div>
-        <div id = "seat" ></div>
+    <script>
 
-    </div>
-    <div class="col-md-3">
-        <!--图标说明-->
-        <div id = "icon">
-            <ul>
-                <li class="active">图标说明</li>
-                <li>选中座位 <img src="./image/select.png" alt=""></li>
-                <li>座位正常 <img src="./image/seat.png" alt=""></li>
-                <li>座位坏掉 <img src="./image/broken.png" alt=""></li>
-                <li>改为过道 <img src="./image/aisle.png" alt=""></li>
-            </ul>
-        </div>
-    </div>
-</div>
+        //声明 所有的人名 组成的数组
+        var nameList = ['小丽丽', '小艳艳', '小翠翠', '小静静', '曹操', '潘金莲', '西门庆', '马奶奶', '林丛', '奥巴马'];
+
+        //声明时间的变量
+        var timer = null;
+
+        //开始 随机的函数
+        function gotoRand(){
+            //获取button 元素
+            var button = document.getElementById('btn');
+
+            //判断 是开始还是结束
+            if (timer === null) {
+                //开启定时
+                timer = setInterval(getName, 100);
+                //把button的内容改掉
+                button.innerHTML = "暂 停";
+            } else {
+                //清除定时
+                clearInterval(timer);
+                //修改button的内容
+                button.innerHTML = "开 始";
+                //把timer赋值为null
+                timer = null;
+            }
+
+            
+        }
 
 
-<!--更改座位状态-->
+        //随机获取姓名函数
+        function getName(){
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" id = 'modal'>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title" id="myModalLabel">
-                    更改座位状态
-                </h4>
-            </div>
-            <div class="modal-body">
-                <p id = 'title'></p>
-                <form role="form">
-                    <div class="form-group">
-                        <select class="form-control" id = 'seatState'>
-                            <option value = 'active'>座位正常</option>
-                            <option value = 'broken'>座位坏掉</option>
-                            <option value = 'aisle'>改为过道</option>
-                        </select>
-                    </div>
-                </form>
+            //取随机数
+            var index = Math.floor(Math.random() * 10000000 % nameList.length);
+            //取出姓名放入 div中
+            document.getElementById('content').innerHTML = nameList[index];
+        }
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                </button>
-                <button type="button" class="btn btn-primary" id = 'update' data-dismiss="modal">
-                    提交更改
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
+    </script>
+
+    
 
 </body>
 </html>
