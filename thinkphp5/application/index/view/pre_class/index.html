@@ -13,7 +13,7 @@
     <?php use app\common\view\MenuViewTeacher; ?>
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
-    <form class="form-horizontal" action="{:url('SeatMapTeacher/index')}" method="post">
+    <form class="form-horizontal" action="{:url('OnClass/index')}" method="post">
         <table class="table table-hover table-bordered" style="200px;">
             <td><select class="form-control" name="course_id" >
                     {volist name="courses" id="course" }

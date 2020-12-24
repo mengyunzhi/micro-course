@@ -24,6 +24,8 @@ class GradeaodController extends IndexController
             $course_id = Request::instance()->param('course_id');
             $grade_id = Request::instance()->param('grade_id');
             $aod_id = Request::instance()->param('aod_id');
+            // 获取加减分情况，方便操作后进行跳转(两种情况：一种直接进行加减分，一种是上课进行加减分后重新跳转到上课的那个界面)
+            $onclass_id = 0;
 
             //实例化学生和成绩和课程
             $course = Course::get($course_id);
