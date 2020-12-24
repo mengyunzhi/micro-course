@@ -16,45 +16,18 @@
 <div class="container">
     <label style="font-size: 15px;">接下来你需要根据需要选择自己的过道：</label>
     <table>
-        <tr>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">003</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px;">000</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">004</p>
-                    </button></a></th>
-                    <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">003</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px;">000</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">004</p>
-                    </button></a></th>
-        </tr>
-        <tr>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">003</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px;">000</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">004</p>
-                    </button></a></th>
-                    <th><a href=""><button class="btn btn-success" style="margin-right: 20px;margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">003</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-default" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px;">000</p>
-                    </button></a></th>
-            <th><a href=""><button class="btn btn-success" style="margin-right: 20px; margin-top: 20px">
-                        <p style="color: black;padding-top: 5px">004</p>
-                    </button></a></th>
+            {volist name="seats" id="seat" key="key"}
+                {if($seat->y==0)}
+                    <tr>
+                {/if}
+                <th><button class="{$seat->getclass($seat->id)}" style="margin-right: 20px;margin-top: 20px;height:49px;width: 49px;">
+                        <p style="color: black;padding-top: 5px"><?php echo(($seat->x*$SeatMap->y_map+$seat->y)) ?></p>
+                    </button>
+                </th>
+                {if($seat->y==$SeatMap->y_map)}
+                    </tr>
+                {/if}
+            {/volist}
         </tr>
     </table>
     <div style="margin-left: auto;margin-right: auto;">

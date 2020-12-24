@@ -18,7 +18,6 @@ class Teacher extends Model
         
         if (!is_null($Teacher)) {
             // 验证密码是否正确
-            var_dump($password);
             if ($Teacher->checkPassword($password)) {
                 // 登录
                 session('teacherId', $Teacher->getData('id'));
