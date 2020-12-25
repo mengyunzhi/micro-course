@@ -30,7 +30,8 @@ class OnClassController  extends IndexController
         $courseId = 1;
         // $classroomId = Request::instance()->param('classroomId');
 
-        if ($reClass === '') {
+        //此处使用===会导致
+        if ($reClass == '') {
             // 将上课时间转换为秒，方便下面进行运算
             $beginTime = strtotime($beginTime);
             $outTime = strtotime($outTime);
@@ -41,8 +42,6 @@ class OnClassController  extends IndexController
         $Course = Course::get($courseId);
 
         // 增加判断签到时间必须设置
-
-
         $this->timeJudge($beginTime, $outTime);
         
         // 存取时间和课程id,并更新和保存
@@ -53,14 +52,14 @@ class OnClassController  extends IndexController
         }
 
         // 将时间戳转换为自己想要的时间
-        $beginTime = date('Y年m月d日H时i分',$beginTime);
-        $outTime = date('Y年m月d日H时i分',$outTime);
+        $beginTime = date('Y年m月d日H时i分', $beginTime);
+        $outTime = date('Y年m月d日H时i分', $outTime);
 
         // 获取已签到学生（由于还未完整完成数据传输，此时首先调用所有学生信息进行调试）
         $Students = Student::all();
 
         // 获取学生们对应的学号，方便进行随机点名
-        for($i=0;$i<sizeof($Students);$i++) {
+        for($i = 0; $i < sizeof($Students); $i++) {
             $nums[$i] = $Students[$i]->num; 
         }
 
@@ -117,7 +116,7 @@ class OnClassController  extends IndexController
         $pageSize = 2;
 
         // 根据课程获取该课程所对应的中间表信息
-        $CourseStudents = CourseStudent::where('course_id','=',$courseId)->paginate($pageSize);
+        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->paginate($pageSize);
         
         // 新建Students对象数组
         $Students = new Student();
@@ -139,7 +138,7 @@ class OnClassController  extends IndexController
     /**
     * 查看签到人数、具有返回按钮返回到上课签到界面
     */
-    public function looksign() {
+    public function lookSign() {
         // 接收传来的教室编号，获取该课程所对应的ID
         // $classroomId = Request::instance()->param('classroom_id');
         // $courseId = Request::instance()->param('course_id');
@@ -173,11 +172,11 @@ class OnClassController  extends IndexController
         $this->unsignStu($CourseStudents, $Seats, $Students);
 
         // 将学生、教室、课程信息传入V层进行渲染
-        $this->assign('courseStudents',$CourseStudents);
-        $this->assign('Students',$Students);
-        $this->assign('Classroom',$Classroom);
-        $this->assign('course',$Course);
-        $this->assign('Classroom',$Classroom);
+        $this->assign('courseStudents', $CourseStudents);
+        $this->assign('Students', $Students);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('course', $Course);
+        $this->assign('Classroom', $Classroom);
 
         // 返回渲染后的学生信息
         return $this->fetch();

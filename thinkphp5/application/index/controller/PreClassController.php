@@ -10,7 +10,7 @@ use app\common\model\Teacher;
 
 
 /**
- * 
+ * 课前类，负责统计课前签到时间设置及签到课程选择
  */
 class PreClassController extends IndexController
 {
@@ -33,10 +33,10 @@ class PreClassController extends IndexController
         $Teacher = Teacher::get($id);
 
         // 获取该老师对应的课程信息
-        $Courses = Course::where('teacher_id','=',$id)->select();
+        $Courses = Course::where('teacher_id', '=', $id)->select();
 
-        $this->assign('courses',$Courses);
-        $this->assign('Teacher',$Teacher);
+        $this->assign('courses', $Courses);
+        $this->assign('Teacher', $Teacher);
 
         return $this->fetch();
     }
