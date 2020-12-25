@@ -80,6 +80,12 @@ class OnClassController  extends IndexController
         return $this->fetch();
     }
 
+
+    public function getStudents() {
+         $Students = Student::all();
+         return json($Students);
+    }
+
     /**
     * 下课所对应的action
     */
