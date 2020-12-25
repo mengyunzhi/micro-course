@@ -21,19 +21,16 @@ class OnClassController  extends IndexController
         // 接收教室id，接收上课签到时间
         // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
         $classroom_id = 1;
+        $Classroom = Classroom::get($classroom_id);
         // $classroom_id = Request::instance()->param('classroomId');
         $beginTime = Request::instance()->param('beginTime');
         $course_id = 1;
-        // $course_id = Request::instance()->param('course_id');
+        // $course_id = Request::instance()->param('courseId');
         $outTime = Request::instance()->param('outTime');
 
         // 将上课时间转换为秒，方便下面进行运算
         $beginTime=strtotime($beginTime);
         $outTime=strtotime($outTime);
-
-        //存取时间和课程id
-        $this->saveTime($beginTime, $outTime);
-        $this->saveCourse($course_id);
 
         // 重新定义新的课前类，方便错误跳转，同时定义课程对象
         $Preclass = new PreClass;
@@ -53,19 +50,23 @@ class OnClassController  extends IndexController
             return $this->error('签到开始时间大于签到截止时间'.$Preclass->getError());
         }
 
-        //将时间戳转换为自己想要的时间
+        // 存取时间和课程id
+        $this->saveTime($Classroom, $beginTime, $outTime);
+        $this->saveCourse($Classroom, $course_id);
+
+        // 将时间戳转换为自己想要的时间
         $beginTime = date('Y年m月d日H时i分',$beginTime);
         $outTime = date('Y年m月d日H时i分',$outTime);
 
-        //获取已签到学生（由于还未完整完成数据传输，此时首先调用所有学生信息进行调试）
+        // 获取已签到学生（由于还未完整完成数据传输，此时首先调用所有学生信息进行调试）
         $Students = Student::all();
 
-        //获取学生们对应的学号，方便进行随机点名
+        // 获取学生们对应的学号，方便进行随机点名
         for($i=0;$i<sizeof($Students);$i++) {
             $nums[$i] = $Students[$i]->num; 
         }
 
-        //传入已签到学生(还未完成扫码签到，暂时搁置)
+        // 传入已签到学生(还未完成扫码签到，暂时搁置)
 
         // 实例化老师    
         $Teacher = Teacher::get($id);
@@ -75,6 +76,7 @@ class OnClassController  extends IndexController
         // 将上课签到时间和截止时间以及学号数组和课程信息传入V层
         $this->assign('Course',$Course);
         $this->assign('nums',$nums);
+        $this->assign('Classroom',$Classroom);
         $this->assign('beginTime',$beginTime);
         $this->assign('outTime',$outTime);
         return $this->fetch();
@@ -177,12 +179,15 @@ class OnClassController  extends IndexController
     * 时间函数，用于保存该教室签到起始时间和签到结束时间
     * @param $beginTime为签到起始时间，$outTime为签到结束时间
     */
-    public function saveTime($beginTime, $outTime) {
-        $this->beginTime = $beginTime;
-        $this->outTime = $outTime;
+    public function saveTime(Classroom &$Classroom, $beginTime, $outTime) {
+        // 新建preclass对象，方便错误信息跳转
+        $Preclass = new PreClass;
+
+        $Classroom->begin_time = $beginTime;
+        $Classroom->out_time = $outTime;
 
         // 判断是否保存成功
-        if ($this->beginTime == '' || $this->outTime == '') {
+        if ($Classroom->begin_time == '' || $Classroom->out_time == '') {
             return $this->error('签到信息保存失败，请重新设置签到信息' . $Preclass->getError());
         }
     }
@@ -191,11 +196,14 @@ class OnClassController  extends IndexController
     * 保存签到课程信息。
     * @param $courseId为签到课程信息
     */
-    public function saveCourse($courseId) {
-        $this->courseId = $courseId;
+    public function saveCourse(Classroom &$Classroom,$courseId) {
+        // 新建preclass对象，方便错误信息跳转
+        $Preclass = new PreClass;
+
+        $Classroom->course_id = $courseId;
 
         //判断课程id是否保存成功
-        if ($this->courseId == 0) {
+        if ($Classroom->course_id == 0) {
             return $this->error('课程信息保存失败，请重新选择上课课程' . $Preclass->getError());
         }
     }
