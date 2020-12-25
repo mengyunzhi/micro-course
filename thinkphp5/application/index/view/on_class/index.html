@@ -50,11 +50,14 @@
     
     <div class="box"  style="float: left;">
         <div class="content" id="content">点名</div>
-        <button v-on:click="onButtonClick">{{buttonTitle}}</button>
+        <button @click="onButtonClick">{{buttonTitle}}</button>
         {{currentStudent.name}} - {{currentStudent.num}}
     </div>
     <script>
+        // 定义一个用于VUE的对象
         const RollCall = {
+
+            // 数据
             data() {
                 return {
                     currentStudent: {},
@@ -63,6 +66,8 @@
                     buttonTitle: '开始'
                 }
             },
+
+            // 方法
             methods: {
                 onButtonClick() {
                     this.buttonTitle = this.buttonTitle === '开始' ? '结束' : '开始';
@@ -73,14 +78,16 @@
                         this.timer = setInterval(() => {
                             var index = Math.floor(Math.random() * 10000000) % this.students.length;
                             this.currentStudent = this.students[index];
-                    }, 100);
+                        }, 100);
                     }
                 }
             }
         };
 
+        // 创建vue app，并绑定到html中 
         const app = Vue.createApp(RollCall).mount('#roll-call');
 
+        // 获取后台数据，并传给RollCall中的data中的students
         fetch('{:url("getStudents")}')
             .then(res => res.json())
             .then(data => app.$data.students = data);
