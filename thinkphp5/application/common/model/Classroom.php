@@ -2,7 +2,7 @@
 namespace app\common\model;
 use think\Model;    // 使用前进行声明
 /**
- * Student 学生表
+ * classroom 教室表
  */
 class Classroom extends Model
 {
@@ -16,4 +16,12 @@ class Classroom extends Model
         'create_time' => 'datetime',
         'update_time' => 'datetime',
     ];
+
+    /**
+    * 获取对应课程的函数
+    */
+    public function Course()
+    {
+    	return $this->belongsto('course');
+    }
 }
