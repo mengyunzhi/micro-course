@@ -25,8 +25,9 @@ class PreClassController extends IndexController
         $Classroom = Classroom::get($classroomId);
 
         //增加判断是否是在上课签到时间
-        time()
-        if ($Classroom->be)
+        if ($Classroom->$beginTime < time() && $Classroom->$outTime > time()) {
+            
+        }
 
         // 实例化老师	
         $Teacher = Teacher::get($id);
