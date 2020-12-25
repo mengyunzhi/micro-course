@@ -18,6 +18,7 @@ class PreClassController extends IndexController
 
         // 获取老师对应的ID
         $id =session('teacherId');
+
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
         $classroomId = 1;
@@ -26,9 +27,7 @@ class PreClassController extends IndexController
         $Classroom = Classroom::get($classroomId);
 
         // 增加判断是否是在上课签到时间
-        if (!is_null($this->isSign($Classroom, $id))) {
-            return $this->success('当前正在已在签到时间', url('Onclass/index?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->Course->id . '&beginTime=' . $Classroom->begin_time . '&outTime=' . $Classroom->out_time));
-        }
+        $this->isSign($Classroom, $id);
 
         // 实例化老师	
         $Teacher = Teacher::get($id);
@@ -44,15 +43,16 @@ class PreClassController extends IndexController
 
     /**
     * 判断该教室是否是在签到时间
+    * @param Classroom为教室对象，teacherId为教师对应的id
     */
-    protected function isSign(Classroom &$Classroom,$teacherId) {
+    protected function isSign($Classroom, $teacherId) {
+        // 增加判断当前时间和签到起始时间与签到截止时间的关系
         if ($Classroom->begin_time < time() && $Classroom->out_time > time()) {
+            // 增加判断是否老师为当前签到时间对应的老师
             if ($teacherId == $Classroom->Course->Teacher->id) {
-                return 1;
+                return $this->success('当前处于签到时间', url('OnClass/index?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->Course->id . '&beginTime=' . $Classroom->begin_time . '&outTime=' . $Classroom->out_time . '&reclass=' . 1));;
             }
-        } else {
-            return null;
-        }
+        } 
     }
 }
             

@@ -18,41 +18,40 @@ class OnClassController  extends IndexController
         // 获取老师对应的ID
         $id =session('teacherId');
 
+        // 接收reclass，该变量是用来判断是第一次设置签到时间
+        $reclass = Request::instance()->param('reclass');
+
         // 接收教室id，接收上课签到时间
         // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
         $classroom_id = 1;
         $Classroom = Classroom::get($classroom_id);
-        // $classroom_id = Request::instance()->param('classroomId');
-        $beginTime = Request::instance()->param('beginTime');
-        $course_id = 1;
         // $course_id = Request::instance()->param('courseId');
         $outTime = Request::instance()->param('outTime');
+        $beginTime = Request::instance()->param('beginTime');
+        $course_id = 1;
+        // $classroom_id = Request::instance()->param('classroomId');
 
-        // 将上课时间转换为秒，方便下面进行运算
-        $beginTime=strtotime($beginTime);
-        $outTime=strtotime($outTime);
+        if ($reclass == '') {
+            // 将上课时间转换为秒，方便下面进行运算
+            $beginTime = strtotime($beginTime);
+            $outTime = strtotime($outTime);
+        }        
 
         // 重新定义新的课前类，方便错误跳转，同时定义课程对象
         $Preclass = new PreClass;
         $Course = Course::get($course_id);
 
         // 增加判断签到时间必须设置
-        if($beginTime == ''||$outTime == '') {
-            return $this->error('签到时长不得为空'.$Preclass->getError());
-        }
-        // 增加判断签到时长不得大于两个小时
-        if($outTime - $beginTime >= 7200) {
-            return $this->error('签到时长不得高于两个小时'.$Preclass->getError());
-        }
 
-        // 增加判断开始签到时间不得大于截止签到时间
-        if($beginTime>=$outTime) {
-            return $this->error('签到开始时间大于签到截止时间'.$Preclass->getError());
-        }
 
-        // 存取时间和课程id
+        $this->timeJudge($beginTime, $outTime);
+        
+        // 存取时间和课程id,并更新和保存
         $this->saveTime($Classroom, $beginTime, $outTime);
         $this->saveCourse($Classroom, $course_id);
+        if (is_null($Classroom->validate(true)->save())) {
+            return $this->error('签到时间或课程信息数据保存失败' . $Preclass->getError());
+        }
 
         // 将时间戳转换为自己想要的时间
         $beginTime = date('Y年m月d日H时i分',$beginTime);
@@ -71,14 +70,14 @@ class OnClassController  extends IndexController
         // 实例化老师    
         $Teacher = Teacher::get($id);
         // 实例化课程
-        $Courses = Course::where('teacher_id','=',$id)->select();
+        $Courses = Course::where('teacher_id', '=', $id)->select();
 
         // 将上课签到时间和截止时间以及学号数组和课程信息传入V层
-        $this->assign('Course',$Course);
-        $this->assign('nums',$nums);
-        $this->assign('Classroom',$Classroom);
-        $this->assign('beginTime',$beginTime);
-        $this->assign('outTime',$outTime);
+        $this->assign('Course', $Course);
+        $this->assign('nums', $nums);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('beginTime', $beginTime);
+        $this->assign('outTime', $outTime);
         return $this->fetch();
     }
 
@@ -87,12 +86,24 @@ class OnClassController  extends IndexController
     */
     public function afterclass()
     {
-        // 接收教室对应的id
-        // 接收课程对应的id
+        // 接收教室对应的id,接收课程对应的id
+        // $classroomId = Request::instance()->param('$classroomId');
+        $classroomId = 1;
+        $courseId = 1;
+
+        //实例化课程和教室
+        $Classroom = Classroom::get($classroomId);
+        $Course = Course::get($courseId);
 
         // 将该教室所有的座位信息进行编辑，使其isseated状态变为0(未被坐)
+        $Seats = Seat::where('classroom_id', '=', $classroomId)->select();
+        $number = sizeof($Seats);
+        for ($i = 0; $i < $number; $i++) {
+            $Seats[$i]->isseated = 0;
+        }
 
         // 获取该课程对应的学生，统计应到学生人数
+        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
 
         // 返回提示信息：课程结束：应到多少人实到多少人，自动跳转到course/index界面
     }
@@ -175,13 +186,9 @@ class OnClassController  extends IndexController
         // 新建preclass对象，方便错误信息跳转
         $Preclass = new PreClass;
 
+        // 进行赋值
         $Classroom->begin_time = $beginTime;
         $Classroom->out_time = $outTime;
-
-        // 判断是否保存成功
-        if ($Classroom->begin_time == '' || $Classroom->out_time == '') {
-            return $this->error('签到信息保存失败，请重新设置签到信息' . $Preclass->getError());
-        }
     }
 
     /**
@@ -192,11 +199,32 @@ class OnClassController  extends IndexController
         // 新建preclass对象，方便错误信息跳转
         $Preclass = new PreClass;
 
-        $Classroom->course_id = $courseId;
+        // 进行赋值由于未传值，故用3表示
+        // $Classroom->course_id = $courseId;
+        $Classroom->course_id = 3;
+    }
 
-        //判断课程id是否保存成功
-        if ($Classroom->course_id == 0) {
-            return $this->error('课程信息保存失败，请重新选择上课课程' . $Preclass->getError());
+    /**
+    * 签到时间是否合格验证
+    * @param $beginTime为签到起始时间，$outTime为签到截止时间
+    */
+    protected function timeJudge($beginTime, $outTime) {
+        // 定义课前对象
+        $Preclass = new PreClass;
+        // 主要为三个时间判断
+        // 第一个时间判断为未设置签到时间直接点开始上课
+        if($beginTime == 0 || $outTime == 0) {
+            return $this->error('签到时长不得为空' . $Preclass->getError());
         }
+        // 增加判断签到时长不得大于两个小时
+        if($outTime - $beginTime >= 7200) {
+            return $this->error('签到时长不得高于两个小时' . $Preclass->getError());
+        }
+        // 增加判断开始签到时间不得大于截止签到时间
+        if($beginTime>=$outTime) {
+            return $this->error('签到开始时间大于签到截止时间' . $Preclass->getError());
+        }
+
+        //
     }
 }
