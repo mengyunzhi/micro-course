@@ -83,6 +83,14 @@ class OnClassController  extends IndexController
     }
 
     /**
+     * todo: 获取当前正在上课的学生，用于VUE实现的随机点名
+     */
+    public function getStudents() {
+         $Students = Student::all();
+         return json($Students);
+    }
+
+    /**
     * 下课所对应的action
     */
     public function afterclass()

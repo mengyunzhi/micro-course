@@ -30,6 +30,7 @@ class PreClassController extends IndexController
             return $this->success('当前正在已在签到时间', url('Onclass/index?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->Course->id . '&beginTime=' . $Classroom->begin_time . '&outTime=' . $Classroom->out_time));
         }
 
+
         // 实例化老师	
         $Teacher = Teacher::get($id);
 
