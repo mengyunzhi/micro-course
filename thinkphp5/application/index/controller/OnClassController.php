@@ -80,7 +80,9 @@ class OnClassController  extends IndexController
         return $this->fetch();
     }
 
-
+    /**
+     * todo: 获取当前正在上课的学生
+     */
     public function getStudents() {
          $Students = Student::all();
          return json($Students);
