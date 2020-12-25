@@ -40,7 +40,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.0.1/vue.global.js"></script>
 </head>
 
-<body class="container" id="roll-call">
+<body class="container">
     <?php use app\common\view\MenuViewTeacher; ?>
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
@@ -48,7 +48,7 @@
         <td><label style="font-size: 15px;">签到课程:{:$Course->name}             签到时间为:由 {:$beginTime} 至 {:$outTime}</label> </td>
     </table>
     
-    <div class="box"  style="float: left;">
+    <div class="box" id="roll-call" style="float: left;">
         <div class="content" id="content">点名</div>
         <button @click="onButtonClick">{{buttonTitle}}</button>
         {{currentStudent.name}} - {{currentStudent.num}}
