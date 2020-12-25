@@ -43,7 +43,8 @@ class PreClassController extends IndexController
 
     /**
     * 判断该教室是否是在签到时间
-    * @param Classroom为教室对象，teacherId为教师对应的id
+    * @param Classroom为教室对象
+    * @param teacherId为教师对应的id
     */
     protected function isSign($Classroom, $teacherId) {
         // 增加判断当前时间和签到起始时间与签到截止时间的关系

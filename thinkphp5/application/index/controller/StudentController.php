@@ -62,7 +62,8 @@ class StudentController extends IndexController
     */
     public function look()
     {
-        // 获取学生对应的id和课程对应id
+        // 获取学生对应的id和课程对应id,实例化请求
+        $Request = Request::instance();
         $id = Request::instance()->param('id');
         $courseId = Request::instance()->param('course_id');
         
@@ -74,12 +75,16 @@ class StudentController extends IndexController
             "student_id"=>$id
         );
 
-        // select方法获取的是对象数组，下面传值时要传入首地址
+        // select方法获取的是对象数组，下面传值时要传入首地址,增加判断是否有该学生的成绩信息
         $Grade = Grade::where($grade)->select();
+        $number = sizeof($Grade);
+        if ($number == 0) {
+            return $this->error('未查到该学生对应该课程的成绩', $Request->header('referer'));
+        }
 
-        $this->assign('Student',$Student);
-        $this->assign('Course',$Course);
-        $this->assign('Grade',$Grade[0]);
+        $this->assign('Student', $Student);
+        $this->assign('Course', $Course);
+        $this->assign('Grade', $Grade[0]);
         return $this->fetch();
     }
 
