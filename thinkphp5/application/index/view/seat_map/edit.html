@@ -14,23 +14,27 @@
 {/block}
 {block name="content"}
 <div class="container">
-    <label style="font-size: 15px;">接下来你需要根据需要选择自己的过道：</label>
+    <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
+    <hr>
     <table>
-            {volist name="seats" id="seat" key="key"}
-                {if($seat->y==0)}
-                    <tr>
-                {/if}
-                <th><button class="{$seat->getclass($seat->id)}" style="margin-right: 20px;margin-top: 20px;height:49px;width: 49px;">
-                        <p style="color: black;padding-top: 5px"><?php echo(($seat->x*$SeatMap->y_map+$seat->y)) ?></p>
-                    </button>
-                </th>
-                {if($seat->y==$SeatMap->y_map)}
-                    </tr>
-                {/if}
-            {/volist}
+        <label class="container"><h3 style="text-align: center;">讲台</h3></label>
+        {volist name="seatAisles" id="seatAisle" key="key"}
+        {if($seatAisle->y==0)}
+        <tr>
+            {/if}
+            <td>
+                <a href="{:url('isSeat?id=' . $seatAisle->getData('id'))}">
+                    {eq name='seatAisle->getData("state")' value='0'}
+                    <button class="btn btn-success">座位</button>{else /}
+                    <button class="btn btn-default">过道</button>{/eq}
+                </a>
+            </td>
+            {if($seatAisle->y==$SeatMap->y_map)}
         </tr>
+        {/if}
+        {/volist}
     </table>
     <div style="margin-left: auto;margin-right: auto;">
-    <a href="{:url('index')}"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
+        <a href="{:url('index')}"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
 </div>
 {/block}

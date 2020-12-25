@@ -6,45 +6,137 @@ use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
 use app\common\model\Course;
-use app\common\model\Seat;
-class SeatMapController extends Controller{
+use app\common\model\SeatAisle;
+class SeatMapController extends Controller
+{
 	
 	public function index(){
 
-		$id = Request::instance()->get('id\d');
+		$id = Request::instance()->param('id');
+		$seatMap1 = SeatMap::order('id')->select();
+		// 若是最后一个则下一个模板为最开始的模板
+		if($id == -2 || is_null($id)) {
+			$seatmap = $seatMap1[0];
+			$id = $seatmap->id;
+		}
+		// 若是第一个模板则上一个模板是最后的模板
+		if($id == -1) {
+			$seatMap = SeatMap::order('id desc')->select();
+			$seatmap = $seatMap[0];
+			$id = $seatmap->id;
+		}
 		$course_id = Request::instance()->param('course_id');
 		// 实例化课程
 		$Course = Course::get($course_id);
-
+		$SeatMap = SeatMap::get($id);
+		$seatAisle = new SeatAisle;
+		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
+		$this->assign('seatMap1', $seatMap1);
+		$this->assign('SeatMap',$SeatMap);
+		$this->assign('seatAisles', $seatAisle);
 		$this->assign('Course',$Course);
 		return $this->fetch();
 
 	}
+	/**
+	 * 增加模板
+	 */
 	public function add(){
 
 		return $this->fetch();
 
 	}
-	public function edit(){
-		$id = Request::instance()->param('id');
-		$seat = new Seat;
-		$seat = Seat::where('seat_map_id','=',$id)->select();
-		$this->assign('seats',$seat);
+	/**
+	 * 编辑模板座位图的过道以及座位
+	 */
+	public function edit() {
+		$id = Request::instance()->param('id/d');
+		$seatAisle = new SeatAisle;
+		$seatAisle = SeatAisle::where('seat_map_id','=',$id)->select();
+		$this->assign('seatAisles',$seatAisle);
 		$SeatMap = new SeatMap;
 		$SeatMap = SeatMap::get($id);
 		$this->assign('SeatMap',$SeatMap);
 		return $this->fetch();
 	}
-	public function save(){
+	/**
+	 * 保存模板的行和列
+	 */
+	public function save() {
 		$SeatMap = new SeatMap;
-		$SeatMap->x_map = Request::instance()->post('x_map');
-		$SeatMap->y_map = Request::instance()->post('y_map');
-		if(!$SeatMap->save()){
+		$SeatMap->x_map = Request::instance()->post('xMap');
+		$SeatMap->y_map = Request::instance()->post('yMap');
+		if(!$SeatMap->save()) {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
 		$id = $SeatMap->id;
-		return $this->success('请选择座位和过道',url('Seat/add?id='.$id));
+		$SeatMap = SeatMap::all();
+		var_dump($id);
+		// 将新增的模板设置为最后一个
+		foreach ($SeatMap as $seatMap) {
+			if($seatMap->id != $id) {
+				$seatMap->is_last = 0;
+				$seatMap->save();
+			}
+		}
+		$this->addseatAisle($id, url('edit?id=' . $id));
 	}
+	/**
+	 * 存储座位模板的座位
+	 */
+	public function addseatAisle($seatMapId, $url) {
+		$seatmap = SeatMap::get($seatMapId);
+
+		// 建立模板座位图
+		for($i = 0; $i < $seatmap->x_map; $i++) {
+			for($j = 0; $j < $seatmap->y_map; $j++) {
+				$seatAisle = new seatAisle;
+				if(!$this->saveSeatAisle($seatMapId, $seatAisle, $i, $j)) {
+					return $this->error('座位保存失败' . $seatAisle->getError());
+				}
+			}
+		}
+
+		return $this->success('请选择过道', $url);
+	}
+	/**
+	 * 保存单个座位
+	 * @param $seatMapId 对应模板的id
+	 * @param $url 要跳到的链接
+	 */
+	public function saveSeatAisle($seatMapId,$seatAisle,$i,$j) {
+		$seatAisle->x = $i;
+		$seatAisle->y = $j;
+		$seatAisle->seat_map_id = $seatMapId;
+		return $seatAisle->save();
+	}
+
+	/**
+	 *  过道和座位的切换
+	 * 默认座位，state = 0; 过道state = 1
+	 */
+	public function isSeat() {
+		$Request = Request::instance();
+		$id = Request::instance()->param('id/d');
+		$SeatAisle = new SeatAisle;
+		$SeatAisle = SeatAisle::get($id);
+
+		// 如果是座位则切换为过道
+		if($SeatAisle->state == "1") {
+
+			$SeatAisle->state = "0";
+		}
+		// 反之切换为座位
+		else {
+
+			$SeatAisle->state = "1";
+		}
+		if(!$SeatAisle->save()) {
+			$this->error('系统未找到ID为' . $id . '的记录');
+		}
+		return $this->success('设置成功', $Request->header('referer')); 
+	}
+
 	public function template1(){
 
 		return $this->fetch();
@@ -54,5 +146,39 @@ class SeatMapController extends Controller{
 
 		return  $this->fetch();
 
+	}
+	/**
+	 * 删除座位模板
+	 */
+	public function delete() {
+		$id = Request::instance()->param('id');
+		if($this->DeleteSeatAisle($id)) {
+			$seatMap = SeatMap::get($id);
+
+			// 如果是最后一个则其前一个座位变为最后一个
+			if($seatMap->isLast = 1) {
+				$seatMap1 = SeatMap::get($id-1); 
+				$seatMap1->isLast = 1;
+			}
+
+			// 如果是第一个则其后一个座位变为第一个
+			if($seatMap->isFirst = 1) {
+				$seatMap1 = SeatMap::get($id+1); 
+				$seatMap1->isFirst = 1;
+			}
+			if($SeatMap->delete()) {
+				return $this->success('删除成功', url('index'));
+			}
+		}
+	}
+	/**
+	 * 挨个删除座位
+	 */
+	public function DeleteSeatAisle($id) {
+		$seatAisles = SeatAisle::where('seat_map_id', '=', $id)->select();
+		foreach ($seatAisles as $seatAisle) {
+			$seatAisle->delete();
+		}
+		return 1;
 	}
 }

@@ -25,7 +25,7 @@ class AdminCourseController extends Controller
     	{
     	    $pageSize = 5;
        	    $courses = Course::where('teacher_id', '=', $teacher_id);
-       	  
+       	    
        	    if (!empty($name)) {
 
         	$courses = $courses->where('name', 'like','%'.$name.'%');
