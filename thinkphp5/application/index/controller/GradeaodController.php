@@ -119,7 +119,7 @@ class GradeaodController extends IndexController
 
         // 获取当前对象
         $Gradeaod = new  Gradeaod();
-        if (!$this->saveGradeaod($Gradeaod,true)) {
+        if (!$this->saveGradeaod($Gradeaod, true)) {
             return $this->error('操作失败' . $Gradeaod->getError());
         }
     
