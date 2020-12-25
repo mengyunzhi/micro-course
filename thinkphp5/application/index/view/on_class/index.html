@@ -9,8 +9,7 @@
     <link rel="stylesheet" type="text/css" href="">
     <style>
     .box {
-        width: 150px;
-
+        width: 120px;
         border: 1px solid #999;
         text-align: center;
     }
@@ -18,6 +17,7 @@
     .content {
         border: 1px solid #999;
         padding: 10px;
+        padding-top: 0px;
         font-size: 30px;
     }
 
@@ -33,7 +33,7 @@
     }
 
     .tdBg {
-        background-color: pink;
+        background-color: black;
     }
     </style>
 </head>
@@ -43,9 +43,73 @@
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
     <table class="table table-hover table-bordered" style="200px;">
-        <td><label style="font-size: 15px;">签到课程:{:$Course->name}</label> </td>
-    </table> 签到时间为:<label style="font-size: 15px;">由 {:$beginTime} 至 {:$outTime}</label>
-    <div class="row">
+        <td><label style="font-size: 15px;">签到课程:{:$Course->name}             签到时间为:由 {:$beginTime} 至 {:$outTime}</label> </td>
+    </table>
+    
+    <div class="box"  style="float: left;">
+        <div class="content" id="content">点名</div>
+        <button onclick="gotoRand()" id="btn">开 始</button>
+    </div>
+    <script>
+    //声明 所有的学号组成的数组
+    var nameList = []; 
+    {volist name="nums" id="_stduent"}
+        nameList.push('{:$_stduent}'); 
+    {/volist}
+        console.log(nameList);
+
+        //声明时间的变量
+        var timer = null;
+
+        //开始 随机的函数
+        function gotoRand() {
+            //获取button 元素
+            var button = document.getElementById('btn');
+            var length = nameList.length;
+            var number = null;
+            var allTd = document.getElementsByTagName("td");
+            //判断 是开始还是结束
+            if (timer === null) {
+                //开启定时
+                timer = setInterval(() => {
+                    number = getName();
+                    number = number % 100;
+                    for (var i = 0; i < allTd.length; i++) {
+                        if (i == number) {
+                            allTd[i].className = "tdBg";
+                        } else {
+                            allTd[i].className = "";
+                        }
+                    }
+                }, 100);
+                // 想要将随机数对应的学号转换为该学生对应的座位，目前是希望通过获取该学号对应的横纵坐标实现。但是现在的问题是没法将237行代码获取的随机值获取到
+                
+                //把button的内容改掉
+                button.innerHTML = "暂 停";
+            } else {
+                //清除定时
+                clearInterval(timer);
+                //修改button的内容
+                button.innerHTML = "开 始";
+                //把timer赋值为null
+                timer = null;
+            }
+        }
+
+
+        //随机获取姓名函数
+        function getName() {
+            //取随机数
+            var index = Math.floor(Math.random() * 10000000 % nameList.length);
+            //取出学号放入 div中
+            document.getElementById('content').innerHTML = nameList[index];
+            return nameList[index];
+        }
+    </script>
+    <div class="col-md-4 text-right" style="float: right;">
+        <a href="{:url('course/index')}" class=" btn btn-danger btn-sm"><button style="width: 100px;background-color: red">&nbsp;下课</button></a>
+    </div>
+    <div class="row" style="margin-top: 25px;">
         <hr>
         <div class="container">
             <h3 style="margin-left: 545px;margin-bottom: 20px;margin-top: -10px;">A101</h3>
@@ -207,71 +271,10 @@
         </div>
     </div>
     <div class="col-md-4 text-right" style="float: left;">
-        <a href="{:url('call')}" class="btn btn-sm btn-primary">&nbsp;随机点名</a>
+        <a href="{:url('looksign')}" class="btn btn-info">&nbsp;查看签到情况</a>
     </div>
-    <div class="box">
-        <div class="content" id="content">点名</div>
-        <button onclick="gotoRand()" id="btn">开 始</button>
-    </div>
-    <script>
-    //声明 所有的学号组成的数组
-    var nameList = []; 
-    {volist name="nums" id="_stduent"}
-        nameList.push('{:$_stduent}'); 
-    {/volist}
-        console.log(nameList);
-
-        //声明时间的变量
-        var timer = null;
-
-        //开始 随机的函数
-        function gotoRand() {
-            //获取button 元素
-            var button = document.getElementById('btn');
-            var length = nameList.length;
-            var number = null;
-            var allTd = document.getElementsByTagName("td");
-            //判断 是开始还是结束
-            if (timer === null) {
-                //开启定时
-                timer = setInterval(getName, 10);
-                // 想要将随机数对应的学号转换为该学生对应的座位，目前是希望通过获取该学号对应的横纵坐标实现。但是现在的问题是没法将237行代码获取的随机值获取到
-                for (var i = 0; i < allTd.length; i++) {
-                    if (i == i) {
-                        {
-                            console.log(i);
-                            console.log(allTd[3].className);
-                            allTd[3].className = "tdBg";
-                            console.log(allTd[3].className);
-                        }
-                    } else {
-                        allTd[i].className = "";
-                    }
-                }
-                //把button的内容改掉
-                button.innerHTML = "暂 停";
-            } else {
-                //清除定时
-                clearInterval(timer);
-                //修改button的内容
-                button.innerHTML = "开 始";
-                //把timer赋值为null
-                timer = null;
-            }
-        }
-
-
-        //随机获取姓名函数
-        function getName() {
-            //取随机数
-            var index = Math.floor(Math.random() * 10000000 % nameList.length);
-            //取出学号放入 div中
-            document.getElementById('content').innerHTML = nameList[index];
-        }
-    </script>
-    <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('course/index')}" class=" btn btn-danger btn-sm">&nbsp;下课</a>
-    </div>
+    
+    
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>

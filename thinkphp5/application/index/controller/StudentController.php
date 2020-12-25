@@ -14,7 +14,6 @@ class StudentController extends IndexController
             // 获取查询信息
             $id = Request::instance()->param('id');
             $num = Request::instance()->param('name');
-
             $page = Request::instance()->param('page');
             
             //实例化课程
