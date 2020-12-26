@@ -17,7 +17,7 @@
         <td>{$Student->name}</td>
         <td>{$Student->num}</td>
         <td>{eq name="Student->sex" value='0'}男{else /}女{/eq}</td>
-        <td><a class="btn btn-sm btn-primary" href="/index/Gradeaod/index?id={$Grade->Student->id}&aod_id=1&grade_id={$Grade->id}&course_id={$Course->id}">加分</a> &nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href="{:url('Gradeaod/index?id=' . $Grade->Student->id. '&grade_id=' . $Grade->id. '&aod_id=0&course_id=' . $Course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('Gradeaod/index?id=' . $Grade->Student->id. '&grade_id=' . $Grade->id. '&aod_id=1&course_id=' . $Course->id . '&onclass=' . 1)}">加分</a> &nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href="{:url('Gradeaod/index?id=' . $Grade->Student->id. '&grade_id=' . $Grade->id. '&aod_id=0&course_id=' . $Course->id . '&onclass=' . 1)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
     </tr>
 </table>
 {/block}

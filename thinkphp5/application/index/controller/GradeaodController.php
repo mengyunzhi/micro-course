@@ -12,7 +12,7 @@ use app\common\model\Grade;
 
 
 /**
- * 
+ * 负责平时成绩的加减和保存
  */
 class GradeaodController extends IndexController
 {
@@ -24,6 +24,9 @@ class GradeaodController extends IndexController
             $course_id = Request::instance()->param('course_id');
             $grade_id = Request::instance()->param('grade_id');
             $aod_id = Request::instance()->param('aod_id');
+            $onClassId = Request::instance()->param('onclass');
+
+            // 获取加减分情况，方便操作后进行跳转(两种情况：一种直接进行加减分，一种是上课进行加减分后重新跳转到上课的那个界面)
 
             //实例化学生和成绩和课程
             $course = Course::get($course_id);
@@ -41,6 +44,7 @@ class GradeaodController extends IndexController
             $Gradeaods = Gradeaod::where($aod)->select();
             $this->assign('Student', $student);
             $this->assign('grade', $grade);
+            $this->assign('onclassId', $onClassId);
             $this->assign('gradeaods', $Gradeaods);
             $this->assign('course', $course);
 
@@ -65,7 +69,7 @@ class GradeaodController extends IndexController
         // 接收数据，取要更新的关键字信息
         $Request = Request::instance();
         $id = Request::instance()->post('id/d');
-
+        $onClassId = Request::instance()->post('onclassId');
 
         // 获取当前对象
         $Grade = Grade::get($id);
@@ -76,6 +80,12 @@ class GradeaodController extends IndexController
             }
         } else {
             return $this->error('当前操作的记录不存在');
+        }
+
+        // 增加判断：是否是上课时进行加减分
+        
+        if ($onClassId === 1) {
+            return $this->success('操作成功', url('PreClass/index?classroomId=' . 1));
         }
     
         // 成功跳转至index触发器
@@ -109,9 +119,9 @@ class GradeaodController extends IndexController
 
         // 获取当前对象
         $Gradeaod = new  Gradeaod();
-            if (!$this->saveGradeaod($Gradeaod,true)) {
-                return $this->error('操作失败' . $Gradeaod->getError());
-            }
+        if (!$this->saveGradeaod($Gradeaod, true)) {
+            return $this->error('操作失败' . $Gradeaod->getError());
+        }
     
         // 成功跳转至index触发器
         return $this->success('更新成功', url('coursegrade/index?course_id=' . $Gradeaod->course_id)); 
