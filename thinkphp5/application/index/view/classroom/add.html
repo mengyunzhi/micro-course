@@ -20,9 +20,19 @@
                     <label for="name">教室编号</label>
                     <input type="text" class="form-control" id="name" placeholder="教室编号">
                 </div>
-                <a class="btn btn-primary" href="{:url('SeatMap/template1')}" style="margin-top: 20px;"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;选择模板</a>
+                <div class="form-group">
+                    <label for="name">对应模板编号</label>
+                    <select class="form-control" >
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </div>
+                <a class="btn btn-success" href="{:url('SeatMap/index')}" style="margin-top: 20px;"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;查看模板</a>
                 <hr>
-                <a href="{:url('index')}" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>&nbsp;submit</a>
+                <button type="submit" class="btn btn-primary">submit</button>
             </form>
             </form>
         </div>

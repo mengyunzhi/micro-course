@@ -1,3 +1,4 @@
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:79:"D:\xampp\htdocs\thinkphp5\public/../application/index\view\classroom\index.html";i:1602934108;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -30,12 +31,12 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
-                                <li><a href="{:url('Term/index')}">学期管理</a></li>
-                                <li><a href="{:url('Teacher/index')}">用户管理</a></li>
-                                <li><a href="{:url('Classroom/index')}">教室管理</a></li>
+                                <li><a href="<?php echo url('Term/index'); ?>">学期管理</a></li>
+                                <li><a href="<?php echo url('AdminTeacher/index'); ?>">用户管理</a></li>
+                                <li><a href="<?php echo url('Classroom/index'); ?>">教室管理</a></li>
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
-                                <li><a href="{:url('Login/logout')}">注销</a></li>
+                                <li><a href="<?php echo url('Login/logout'); ?>">注销</a></li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->
@@ -54,13 +55,13 @@
                             <form class="form-inline">
                                 <div class="form-group">
                                     <label class="sr-only" for="name">姓名</label>
-                                    <input name="name" type="text" class="form-control" placeholder="教室编号..." value="{:input('get.nameid')}">
+                                    <input name="name" type="text" class="form-control" placeholder="教室编号..." value="<?php echo input('get.nameid'); ?>">
                                 </div>
                                 <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
                             </form>
                         </div>
                         <div class="col-md-4 text-right">
-                            <a href="{:url('add')}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+                            <a href="<?php echo url('add'); ?>" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
                         </div>
                     </div>
                     <hr />
@@ -68,21 +69,17 @@
                         <tr class="info">
                             <th>序号</th>
                             <th>教室编号</th>
-                            <th>起始时间</th>
                             <th>操作</th>
                         </tr>
-                        {volist name="classrooms" id="classroom" key="key"}
+                        <?php if(is_array($classrooms) || $classrooms instanceof \think\Collection): $key = 0; $__LIST__ = $classrooms;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$classroom): $mod = ($key % 2 );++$key;?>
                         <tr>
-                            <td>{$key}</td>
-                            <td>{$classroom->getData('name')}</td>
-                            <td>{$classroom->getData('ptime')}</td>
-                            <td>{$classroom->getData('create_time')}</td>
-                            <td>{$classroom->getData('update_time')}</td>
-                            <td><a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;<a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
+                            <td><?php echo $key; ?></td>
+                            <td><?php echo $classroom->getData('name'); ?></td>
+                            <td><a class="btn btn-danger btn-sm" href="<?php echo url('delete?id=' . $classroom->getData('id')); ?>"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;<a class="btn btn-sm btn-primary" href="<?php echo url('edit?id=' . $classroom->getData('id')); ?>"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
                         </tr>
-                        {/volist}
+                        <?php endforeach; endif; else: echo "" ;endif; ?>
                     </table>
-                    {$classrooms->render()}
+                    <?php echo $classrooms->render(); ?>
                 </div>
             </div>
         </body>

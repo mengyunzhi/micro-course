@@ -13,13 +13,6 @@ class Seat extends Model
 	public function SeatMap(){
 		return $this->hasMany('SeatMap');
 	}
-	public function getclass($id){
-		$seat = Seat::get($id);
-		if($seat->state==1) {
-			return 'btn btn-success';
-		}
-		else {
-			return 'btn btn-default';
-		}
-	}
+	//0是座位,1是过道
+	
 }

@@ -13,168 +13,82 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <table class="table table-hover table-bordered" style="200px;">
-        <td>当前所上课程：{$Course->name}</td>
-    </table>
     <div class="row">
-        <hr>
+        <div class="col-md-8">
+            <form class="form-inline">
+                <div class="form-group">
+                    {block name="search"}
+                    <label class="sr-only" for="name">姓名</label>
+                    <input name="name" type="text" class="form-control" placeholder="学期名..." value="{:input('get.name')}">
+                    {/block}
+                </div>
+                {block name="search1"}
+                <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
+                {/block}
+            </form>
+        </div>
+        <div class="row">
+            <hr style="margin-top: 50px;">
+            <br>
+            <a href="{:url('add')}" class="btn btn-primary" style="float: left;"><i class="glyphicon glyphicon-plus"></i>&nbsp;新建模板</a>
+            <a href="{:url('delete?id='. $SeatMap->id)}" class="btn btn-danger" style="float: right;"><i class="glyphicon glyphicon-plus"></i>&nbsp;删除</a>
+        </div>
+        <h3 style="margin-left: 545px;margin-bottom: 50px;">
+            <?php echo('模板' . $SeatMap->getData('id')) ?>
+            <hr>
+            <p style="color: green;">讲台</p>
+        </h3>
         <div class="container">
-            <h3 style="margin-left: 545px;margin-bottom: 50px;">A101</h3>
             <table class="table table-bordered table-condensed ">
+                {volist name="seatAisles" id="seatAisle" key="key"}
+                {if($seatAisle->y === 0)}
                 <tr>
-                    <td class="success"><a href="{:url('student/look?id=92&course_id=3')}">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
+                    {/if}
+                <tr></tr>
+                <a href="{:url('isSeat?id=' . $seatAisle->getData('id'))}">
+                    {eq name='seatAisle->getData("state")' value='0'}
+                    <button class="btn btn-success">座位</button>{else /}
+                    <button class="btn btn-default">过道</button>{/eq}
+                </a>
                 </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
+                {if($seatAisle->y === $SeatMap->y_map)}
                 </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
-                <tr>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td style="border: none;"></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="danger"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                    <td class="success"><a href="">000</a></td>
-                </tr>
+                {/if}
+                {/volist}
             </table>
+        </div>
+        <hr>
+        <?php $i = 0; ?>
+        <?php for(; $seatMap1[$i]->id != $SeatMap->id; $i++); ?>
+
+        <div class="row">
+            <!-- 既不是第一个也不是最后一个模板 -->
+            {if($SeatMap->is_last != 1 && $SeatMap->is_first != 1)}
+            <?php $id1 = $seatMap1[$i-1]->id;
+            $id2 = $seatMap1[$i+1]->id; ?>
+            {/if}
+            <!-- 最后一个模板 -->
+            {if($SeatMap->is_last ===  1 && $SeatMap->is_first != 1)}
+            <?php $id1 = $seatMap1[$i-1]->id;
+            $id2 = -2; ?>
+            {/if}
+            <!-- 第一个模板 -->
+            {if ($SeatMap->is_first ===  1 && $SeatMap->is_last != 1)}
+            <?php $id1 = -1;
+            $id2 = $seatMap1[$i+1]->id; ?>
+            {/if}
+            {if ($SeatMap->is_first ===  1 && $SeatMap->is_last ===  1)}
+            <?php $id1 = $SeatMap->id;
+            $id2 = $SeatMap->id; ?>
+            {/if}
+            <a href="{:url('index?id=' . $id1)}" class="btn btn-primary " style="float: left;">
+                <i class="glyphicon glyphicon-hand-right"></i>
+                &nbsp;上一个模板
+            </a>
+            <a href="{:url('index?id=' . $id2)}" class="btn btn-primary " style="float: right;">
+                <i class="glyphicon glyphicon-hand-right "></i>
+                &nbsp;下一个模板
+            </a>
         </div>
     </div>
 </body>

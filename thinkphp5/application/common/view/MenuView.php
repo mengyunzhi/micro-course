@@ -18,7 +18,12 @@ class MenuView {
 		 $ClassroomMenu->title = '教室管理';
 		 $ClassroomMenu->controller = 'Classroom';
 
-		 $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu];
+		 $SeatmapMenu = new Menu;
+		 $SeatmapMenu->title = '座位图模板管理';
+		 $SeatmapMenu->controller = 'SeatMap'
+		 ;
+
+		 $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu, $SeatmapMenu];
 		 $this->viewHtml = view('index/menu', 
 		 	['menus' => $this->menus, 
 		 	'title' => config('app.title')]);
