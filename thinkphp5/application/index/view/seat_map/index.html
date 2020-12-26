@@ -34,14 +34,14 @@
             <a href="{:url('delete?id='. $SeatMap->id)}" class="btn btn-danger" style="float: right;"><i class="glyphicon glyphicon-plus"></i>&nbsp;删除</a>
         </div>
         <h3 style="margin-left: 545px;margin-bottom: 50px;">
-            <?php echo('模板'.$SeatMap->getData('id')) ?>
+            <?php echo('模板' . $SeatMap->getData('id')) ?>
             <hr>
             <p style="color: green;">讲台</p>
         </h3>
         <div class="container">
             <table class="table table-bordered table-condensed ">
                 {volist name="seatAisles" id="seatAisle" key="key"}
-                {if($seatAisle->y==0)}
+                {if($seatAisle->y === 0)}
                 <tr>
                     {/if}
                 <tr></tr>
@@ -51,7 +51,7 @@
                     <button class="btn btn-default">过道</button>{/eq}
                 </a>
                 </tr>
-                {if($seatAisle->y==$SeatMap->y_map)}
+                {if($seatAisle->y === $SeatMap->y_map)}
                 </tr>
                 {/if}
                 {/volist}
@@ -68,16 +68,16 @@
             $id2 = $seatMap1[$i+1]->id; ?>
             {/if}
             <!-- 最后一个模板 -->
-            {if($SeatMap->is_last == 1 && $SeatMap->is_first != 1)}
+            {if($SeatMap->is_last ===  1 && $SeatMap->is_first != 1)}
             <?php $id1 = $seatMap1[$i-1]->id;
             $id2 = -2; ?>
             {/if}
             <!-- 第一个模板 -->
-            {if ($SeatMap->is_first == 1 && $SeatMap->is_last != 1)}
+            {if ($SeatMap->is_first ===  1 && $SeatMap->is_last != 1)}
             <?php $id1 = -1;
             $id2 = $seatMap1[$i+1]->id; ?>
             {/if}
-            {if ($SeatMap->is_first == 1 && $SeatMap->is_last == 1)}
+            {if ($SeatMap->is_first ===  1 && $SeatMap->is_last ===  1)}
             <?php $id1 = $SeatMap->id;
             $id2 = $SeatMap->id; ?>
             {/if}

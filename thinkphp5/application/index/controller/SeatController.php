@@ -25,27 +25,14 @@ class SeatController extends controller
 	* @param $seatMapId 对应模板的id
 	* @param $url 要跳到的链接
 	*/
-	public function add($seatMapId, $url) {
-		$seatmap = SeatMap::get($seatMapId);
-
-		// 实例化seatmap对象
-		for($i = 0; $i < $seatmap->x_map; $i++) {
-			for($j = 0; $j < $seatmap->y_map; $j++) {
-				$seat = new Seat;
-				if(!$this->saveSeat($seatMapId, $seat, $i, $j)) {
-					return $this->error('座位保存失败' . $Seat->getError());
-				}
-			}
-		}
-
-		return $this->success('', $url);
+	public function add() {
+	
 	}
-
-	public function saveSeat($seatmap_id,$seat,$i,$j) {
-		$seat->x = $i;
-		$seat->y = $j;
-		$seat->save();
-		return 1;
+	/**
+	 * 挨个copy座位
+	 */
+	public function saveSeat() {
+		
 	}
 
 	public function edit(){

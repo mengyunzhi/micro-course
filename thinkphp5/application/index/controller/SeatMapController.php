@@ -9,20 +9,22 @@ use app\common\model\Course;
 use app\common\model\SeatAisle;
 class SeatMapController extends Controller
 {
+	protected $seatMapAsc = SeatMap::order('id')->select();
+	protected $seatMapDesc = SeatMap::order('id desc')->select();
 	
 	public function index(){
 
 		$id = Request::instance()->param('id');
-		$seatMap1 = SeatMap::order('id')->select();
+		
 		// 若是最后一个则下一个模板为最开始的模板
 		if($id == -2 || is_null($id)) {
-			$seatmap = $seatMap1[0];
+			$seatmap = $seatMapAsc[0];
 			$id = $seatmap->id;
 		}
 		// 若是第一个模板则上一个模板是最后的模板
 		if($id == -1) {
-			$seatMap = SeatMap::order('id desc')->select();
-			$seatmap = $seatMap[0];
+			
+			$seatmap = $seatMapDesc[0];
 			$id = $seatmap->id;
 		}
 		$course_id = Request::instance()->param('course_id');
@@ -32,6 +34,7 @@ class SeatMapController extends Controller
 		$seatAisle = new SeatAisle;
 		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
 		$this->assign('seatMap1', $seatMap1);
+		$this->assign('seatMap2', $seatMap2);
 		$this->assign('SeatMap',$SeatMap);
 		$this->assign('seatAisles', $seatAisle);
 		$this->assign('Course',$Course);
@@ -48,15 +51,16 @@ class SeatMapController extends Controller
 	}
 	/**
 	 * 编辑模板座位图的过道以及座位
+	 * 设置每个座位是过道还是座位
 	 */
 	public function edit() {
 		$id = Request::instance()->param('id/d');
-		$seatAisle = new SeatAisle;
-		$seatAisle = SeatAisle::where('seat_map_id','=',$id)->select();
-		$this->assign('seatAisles',$seatAisle);
+		$SeatAisle = new SeatAisle;
+		$SeatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
+		$this->assign('seatAisles', $SeatAisle);
 		$SeatMap = new SeatMap;
 		$SeatMap = SeatMap::get($id);
-		$this->assign('SeatMap',$SeatMap);
+		$this->assign('SeatMap', $SeatMap);
 		return $this->fetch();
 	}
 	/**
@@ -113,7 +117,8 @@ class SeatMapController extends Controller
 
 	/**
 	 *  过道和座位的切换
-	 * 默认座位，state = 0; 过道state = 1
+	 * 默认为座位，即state = 0; 
+	 * 过道state = 1
 	 */
 	public function isSeat() {
 		$Request = Request::instance();
@@ -156,17 +161,17 @@ class SeatMapController extends Controller
 			$seatMap = SeatMap::get($id);
 
 			// 如果是最后一个则其前一个座位变为最后一个
-			if($seatMap->isLast = 1) {
+			if($seatMap->isLast === 1) {
 				$seatMap1 = SeatMap::get($id-1); 
 				$seatMap1->isLast = 1;
 			}
 
 			// 如果是第一个则其后一个座位变为第一个
-			if($seatMap->isFirst = 1) {
+			if($seatMap->isFirst === 1) {
 				$seatMap1 = SeatMap::get($id+1); 
 				$seatMap1->isFirst = 1;
 			}
-			if($SeatMap->delete()) {
+			if($seatMap->delete()) {
 				return $this->success('删除成功', url('index'));
 			}
 		}

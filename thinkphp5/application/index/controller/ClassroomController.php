@@ -43,18 +43,21 @@ class ClassroomController extends Controller
       return $this->fetch();
     }
 
-    //教室编辑
-    //座位图修改：若只是修改部分是否为过道/座位
-    //则直接调用seatmap_change方法修改，否则修改对应模板号
-    //若修改模板号则需要将之前教室对应的座位删除掉
-     public function edit(){
+    /**
+     * 教室编辑
+     * 座位图修改：若只是修改部分是否为过道/座位
+     * 则直接调用seatmap_change方法修改，否则修改对应模板号，若修改模板号则需要将之前教室对应的座位删除掉
+     */
+     public function edit() {
       $id = Request::instance()->param('id/d');
       $classroom = Classroom::get($id);
-      $this->assign('classroom',$classroom);
+      $this->assign('classroom', $classroom);
       return $this->fetch();
     }
 
-    //小部分修改教室座位图
+    /**
+     * 小部分修改教室座位图
+     */
     public function seatmap_change(){
 
       return $this->fetch();
