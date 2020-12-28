@@ -7,13 +7,13 @@ use think\validate;
 use app\common\model\SeatMap;
 use app\common\model\Course;
 use app\common\model\SeatAisle;
-class SeatMapController extends Controller
-{
-	protected $seatMapAsc = SeatMap::order('id')->select();
-	protected $seatMapDesc = SeatMap::order('id desc')->select();
-	
+/**
+ * 座位图模板
+ */
+class SeatMapController extends Controller {
 	public function index(){
-
+		$seatMapAsc = SeatMap::order('id')->select();
+		$seatMapDesc = SeatMap::order('id desc')->select();
 		$id = Request::instance()->param('id');
 		
 		// 若是最后一个则下一个模板为最开始的模板
@@ -33,13 +33,26 @@ class SeatMapController extends Controller
 		$SeatMap = SeatMap::get($id);
 		$seatAisle = new SeatAisle;
 		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
-		$this->assign('seatMap1', $seatMap1);
-		$this->assign('seatMap2', $seatMap2);
+		$this->assign('seatMap1', $seatMapAsc);
+		$this->assign('seatMap2', $seatMapDesc);
 		$this->assign('SeatMap',$SeatMap);
 		$this->assign('seatAisles', $seatAisle);
 		$this->assign('Course',$Course);
 		return $this->fetch();
 
+	}
+	/**
+	 * 返回数据库里面id升序的数组
+	 */
+	public function asc() {
+		return(SeatMap::order('id')->select());
+		
+	}
+	/**
+	 * 返回数据库id降序的数组
+	 */
+	public function desc() {
+		return(SeatMap::order('id desc')->select());
 	}
 	/**
 	 * 增加模板
@@ -70,15 +83,15 @@ class SeatMapController extends Controller
 		$SeatMap = new SeatMap;
 		$SeatMap->x_map = Request::instance()->post('xMap');
 		$SeatMap->y_map = Request::instance()->post('yMap');
+		dump($SeatMap);
 		if(!$SeatMap->save()) {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
 		$id = $SeatMap->id;
 		$SeatMap = SeatMap::all();
-		var_dump($id);
 		// 将新增的模板设置为最后一个
 		foreach ($SeatMap as $seatMap) {
-			if($seatMap->id != $id) {
+			if($seatMap->id != $isd) {
 				$seatMap->is_last = 0;
 				$seatMap->save();
 			}
@@ -161,15 +174,19 @@ class SeatMapController extends Controller
 			$seatMap = SeatMap::get($id);
 
 			// 如果是最后一个则其前一个座位变为最后一个
-			if($seatMap->isLast === 1) {
-				$seatMap1 = SeatMap::get($id-1); 
-				$seatMap1->isLast = 1;
+			if($seatMap->is_last === 1) {
+				$SeatMap = $this->desc();
+
+				$SeatMap[1]->is_last = 1;
+				$SeatMap[1]->save();
 			}
 
+
 			// 如果是第一个则其后一个座位变为第一个
-			if($seatMap->isFirst === 1) {
-				$seatMap1 = SeatMap::get($id+1); 
-				$seatMap1->isFirst = 1;
+			if($seatMap->is_first === 1) {
+				$SeatMap = $this->asc();
+				$SeatMap[1]->is_first = 1;
+				$SeatMap[1]->save();
 			}
 			if($seatMap->delete()) {
 				return $this->success('删除成功', url('index'));

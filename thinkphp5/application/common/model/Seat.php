@@ -10,9 +10,4 @@ class Seat extends Model
   {
     return $this->belongsto('student');
   }
-	public function SeatMap(){
-		return $this->hasMany('SeatMap');
-	}
-	//0是座位,1是过道
-	
 }

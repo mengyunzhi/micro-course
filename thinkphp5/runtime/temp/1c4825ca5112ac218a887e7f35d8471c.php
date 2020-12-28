@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\add.html";i:1608815028;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\add.html";i:1609143969;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,25 +39,23 @@
 <div class="container" style="margin-top: 40px">
     <div class="row">
         <div class="col-md-12">
-            <form>
+            <form action="save" method="post">
                 <div class="form-group">
                     <label for="name">教室编号</label>
-                    <input type="text" class="form-control" id="name" placeholder="教室编号">
+                    <input type="text" class="form-control" name="name" placeholder="教室编号">
                 </div>
+
                 <div class="form-group">
-                    <label for="name">对应模板编号</label>
-                    <select class="form-control" >
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <label for="seat_map_id">对应模板编号</label>
+                    <select class="form-control" name="seat_map_id">
+                        <?php if(is_array($seatMaps) || $seatMaps instanceof \think\Collection): $key = 0; $__LIST__ = $seatMaps;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$SeatMap): $mod = ($key % 2 );++$key;?>
+                        <option><?php echo $SeatMap->id; ?></option>
+                        <?php endforeach; endif; else: echo "" ;endif; ?>
                     </select>
                 </div>
                 <a class="btn btn-success" href="<?php echo url('SeatMap/index'); ?>" style="margin-top: 20px;"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;查看模板</a>
                 <hr>
-                <button type="submit" class="btn btn-primary">submit</button>
-            </form>
+                <button type="submit">保存</button>
             </form>
         </div>
     </div>
