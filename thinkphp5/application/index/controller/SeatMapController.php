@@ -71,6 +71,8 @@ class SeatMapController extends Controller {
 		$SeatAisle = new SeatAisle;
 		$SeatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
 		$this->assign('seatAisles', $SeatAisle);
+		// dump($SeatAisle);
+		// die();
 		$SeatMap = new SeatMap;
 		$SeatMap = SeatMap::get($id);
 		$this->assign('SeatMap', $SeatMap);
@@ -83,7 +85,6 @@ class SeatMapController extends Controller {
 		$SeatMap = new SeatMap;
 		$SeatMap->x_map = Request::instance()->post('xMap');
 		$SeatMap->y_map = Request::instance()->post('yMap');
-		dump($SeatMap);
 		if(!$SeatMap->save()) {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
@@ -91,7 +92,7 @@ class SeatMapController extends Controller {
 		$SeatMap = SeatMap::all();
 		// 将新增的模板设置为最后一个
 		foreach ($SeatMap as $seatMap) {
-			if($seatMap->id != $isd) {
+			if($seatMap->id != $id) {
 				$seatMap->is_last = 0;
 				$seatMap->save();
 			}
