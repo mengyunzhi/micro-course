@@ -45,7 +45,7 @@
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
     <table class="table table-hover table-bordered" style="200px;">
-        <td><label style="font-size: 15px;">签到课程:{:$Course->name}             签到时间为:由 {:$beginTime} 至 {:$outTime}</label> </td>
+        <td><label style="font-size: 15px;">签到课程:{:$Course->name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可签到时间: {:$beginTime} 至 {:$outTime}</label> </td>
     </table>
     
     <div class="box" id="roll-call" style="float: left;">
@@ -94,7 +94,7 @@
     
     </script>
     <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('course/index')}" ><button style="width: 100px;"  class="btn btn-danger">&nbsp;下课</button></a>
+        <a href="{:url('afterClass')}" ><button style="width: 100px;"  class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
     </div>
     <div class="row" style="margin-top: 25px;">
         <hr>
@@ -102,7 +102,7 @@
             <h3 style="margin-left: 545px;margin-bottom: 20px;margin-top: -10px;">A101</h3>
             <table class="table table-bordered table-condensed ">
                 <tr>
-                    <td class="success"><a href="{:url('student/look?id=92&course_id=3&onclass=1')}">000</a></td>
+                    <td class="success"><a href="{:url('student/look?id=92&course_id=3&onclass=1&classroomId=1')}">000</a></td>
                     <td class="danger">001</td>
                     <td class="success">002</td>
                     <td class="success">003</td>

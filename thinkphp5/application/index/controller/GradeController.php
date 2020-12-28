@@ -9,7 +9,7 @@ use app\common\model\Teacher;
 
 
 /**
- * 
+ * 成绩管理，负责总成绩的展示和编辑部分
  */
 class GradeController extends IndexController
 {
