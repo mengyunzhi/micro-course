@@ -172,10 +172,11 @@ class OnClassController  extends IndexController
         // 根据课程获取该课程所对应的中间表信息
         $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         
+        // 新建学生和上课缓存数组
         $Students = [];
         $ClassCaches = [];
         
-        //将Students，CourseStudents,Seats传入求未签到学生的函数
+        // 将Students，CourseStudents,Seats传入求未签到学生的函数
         $this->unsignStu($CourseStudents, $Seats, $Students);
         $this->aodHappened($courseId, $beginTime, $ClassCaches);
 

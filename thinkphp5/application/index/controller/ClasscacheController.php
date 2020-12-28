@@ -8,8 +8,7 @@ use app\common\model\Onclass;
 /**
 * 负责对上课缓存进行增删改查操作
 */
-class Classcache extends IndexController
-{
+class Classcache extends IndexController {
 	public function index() {
 		// 接收上课教室、上课课程、上课学生的id、上课签到时间
 		$courseId = Request::instance()->param('courseId');
@@ -33,7 +32,7 @@ class Classcache extends IndexController
 	* @param $signTime 签到所对应的时间戳
 	* @param $ClassCache 将要被保存的缓存对象
 	*/
-	public function saveClassCache($courseId, $classroomId, $studentId, $signTime,Classcache &$ClassCache) {
+	public function saveClassCache($courseId, $classroomId, $studentId, $signTime, Classcache &$ClassCache) {
 		// 将参数表中的参数赋值给新建的classcache对象
 		$ClassCache->course_id = $courseId;
 		$ClassCache->classroom_id = $classroomId;
