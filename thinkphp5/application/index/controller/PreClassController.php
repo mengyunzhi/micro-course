@@ -10,7 +10,7 @@ use app\common\model\Teacher;
 
 
 /**
- * 课前类，负责统计课前签到时间设置及签到课程选择
+ * 课前管理部分，负责统计课前签到时间设置及签到课程选择
  */
 class PreClassController extends IndexController
 {

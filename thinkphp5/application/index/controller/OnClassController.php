@@ -10,7 +10,11 @@ use app\common\model\SeatMapTeacher;
 use app\common\model\Classroom;
 use app\common\model\Seat;
 use app\common\model\PreClass;
+use app\common\model\Classcache;
 
+/**
+* 用于负责上课管理的各部分功能
+*/
 class OnClassController  extends IndexController
 {
     public function index() {
@@ -30,8 +34,8 @@ class OnClassController  extends IndexController
         $courseId = 1;
         // $classroomId = Request::instance()->param('classroomId');
 
-        //此处使用===会导致
-        if ($reClass == '') {
+        //此处使用===会导致错误，增加判断传值是否字符串类型
+        if (empty($reClass)) {
             // 将上课时间转换为秒，方便下面进行运算
             $beginTime = strtotime($beginTime);
             $outTime = strtotime($outTime);
@@ -83,55 +87,58 @@ class OnClassController  extends IndexController
     /**
     * 下课所对应的action
     */
-    public function afterclass() {
+    public function afterClass() {
+        // 实例化请求
+        $Request = Request::instance();
+
         // 接收教室对应的id,接收课程对应的id
         // $classroomId = Request::instance()->param('$classroomId');
         $classroomId = 1;
         $courseId = 1;
 
-        // 实例化课程和教室
+        // 实例化课程和教室和beginTime
         $Classroom = Classroom::get($classroomId);
         $Course = Course::get($courseId);
+        $beginTime = $Classroom->begin_time;
 
-        // 将该教室所有的座位信息进行编辑，使其isseated状态变为0(未被坐)
-        $Seats = Seat::where('classroom_id', '=', $classroomId)->select();
-        $number = sizeof($Seats);
-        for ($i = 0; $i < $number; $i++) {
-            $Seats[$i]->isseated = 0;
-        }
-
-        // 签到时间截止(设置签到截止时间为当前时间)
-        $Classroom->out_time = time();
-
-        // 构造查询条件数组,根据教室id和是否被坐
+        // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
         $que = array(
             "classroom_id"=>$classroomId,
             "isseated"=>1
         );
-   
+        
         // 根据该教室座位找出已被坐的座位
-        $Seats = Seat::where($que)->paginate($pageSize);
+        $Seats = Seat::where($que)->select();
 
-        // 每页规定两个信息
-        $pageSize = 2;
+        // 调用clearClassroom方法，对classroom对象信息进行重置
+        if(!$this->clearClassroom($Classroom)) {
+            return $this->error('教室信息重置失败', $Request->header('referer'));
+        }
 
         // 根据课程获取该课程所对应的中间表信息
-        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->paginate($pageSize);
+        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         
-        // 新建Students对象数组
+        // 新建Students对象数组,新建加减分情况数组
         $Students = new Student();
+        $ClassCaches = new Classcache();
 
-        // 将Students，CourseStudents,Seats传入求未签到学生的函数
+        // 调用unsignStu函数和aodHappened函数获取未签到学生和上课缓存信息
         $this->unsignStu($CourseStudents, $Seats, $Students);
+        $this->aodHappened($courseId, $beginTime, $ClassCaches);
 
-        // 返回提示信息：课程结束：应到多少人实到多少人，自动跳转到course/index界面   
+        // 返回提示信息：课程结束：显示应到多少人实到多少人，加减分情况
+        $this->assign('students', $Students);
+        $this->assign('courseStudents', $CourseStudents);
+        $this->assign('ClassCaches', $ClassCaches);
+        $this->assign('Course', $Course);
 
+        return $this->fetch();
     }
 
     /** 
     * 上课进行加减分操作对应的action，与gradeaod部分重合
     */
-    public function gradeaod() {
+    public function gradeAod() {
         // 功能与gradeaod重复，目前不打算新写，但对于跳转选择还是无法实现。
     }
 
@@ -143,7 +150,7 @@ class OnClassController  extends IndexController
         // $classroomId = Request::instance()->param('classroom_id');
         // $courseId = Request::instance()->param('course_id');
         $classroomId = 1;
-        $courseId = 1;
+        $courseId = 3;
 
         // 定义分页变量
         $pageSize = 2;
@@ -151,29 +158,31 @@ class OnClassController  extends IndexController
         // 实例化班级和课程
         $Classroom = Classroom::get($classroomId);
         $Course = Course::get($courseId);
+        $beginTime = $Classroom->begin_time;
 
         // 构造查询条件数组,根据教室id和是否被坐
         $que = array(
             "classroom_id"=>$classroomId,
             "isseated"=>1
         );
-   
-        // 根据该教室座位找出已被坐的座位
-        $Seats = Seat::where($que)->paginate($pageSize);
 
-        // 每页规定两个信息
-        $pageSize = 2;
+        // 根据该教室座位找出已被坐的座位
+        $Seats = Seat::where($que)->select();
 
         // 根据课程获取该课程所对应的中间表信息
-        $CourseStudents = CourseStudent::where('course_id','=',$courseId)->paginate($pageSize);
+        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         
-        $Students = new Student();
+        $Students = [];
+        $ClassCaches = [];
+        
         //将Students，CourseStudents,Seats传入求未签到学生的函数
         $this->unsignStu($CourseStudents, $Seats, $Students);
+        $this->aodHappened($courseId, $beginTime, $ClassCaches);
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);
         $this->assign('Students', $Students);
+        $this->assign('ClassCaches', $ClassCaches);
         $this->assign('Classroom', $Classroom);
         $this->assign('course', $Course);
         $this->assign('Classroom', $Classroom);
@@ -185,8 +194,9 @@ class OnClassController  extends IndexController
 
     /**
     * 时间函数，用于保存该教室签到起始时间和签到结束时间
-    * @param $beginTime为签到起始时间
-    * @param $outTime为签到结束时间
+    * @param $beginTime 签到起始时间
+    * @param $outTime 签到结束时间
+    * @param $Classroom 时间保存到的教室对象
     */
     public function saveTime(Classroom &$Classroom, $beginTime, $outTime) {
         // 新建preclass对象，方便错误信息跳转
@@ -199,7 +209,8 @@ class OnClassController  extends IndexController
 
     /**
     * 保存签到课程信息。
-    * @param $courseId为签到课程信息
+    * @param $courseId 签到课程信息
+    * @param $Classroom 课程存储对应的教室
     */
     public function saveCourse(Classroom &$Classroom,$courseId) {
         // 新建preclass对象，方便错误信息跳转
@@ -213,16 +224,17 @@ class OnClassController  extends IndexController
 
     /**
     * 签到时间是否合格验证
-    * @param $beginTime为签到起始时间
-    * @param $outTime为签到截止时间
+    * @param $beginTime 签到起始时间
+    * @param $outTime 签到截止时间
     */
     protected function timeJudge($beginTime, $outTime) {
         // 定义课前对象
         $PreClass = new PreClass;
+        $Request = Request::instance();
         // 主要为三个时间判断
         // 第一个时间判断为未设置签到时间直接点开始上课
         if($beginTime === 0 || $outTime === 0) {
-            return $this->error('签到时长不得为空' . $PreClass->getError());
+            return $this->error('签到时长不得为空' . $Request->header('referer'));
         }
         // 增加判断签到时长不得大于两个小时
         if($outTime - $beginTime >= 7200) {
@@ -238,11 +250,11 @@ class OnClassController  extends IndexController
 
     /**
     * 获取未签到学生
-    * @param $CourseStudents为根据课程id得出的中间表
-    * @param $Seats为传入的已被坐的座位
-    * @param $Students为传入的用于存储未签到学生的对象数组
+    * @param $CourseStudents 根据课程id得出的中间表
+    * @param $Seats 传入的已被坐的座位
+    * @param $Students 传入的用于存储未签到学生的对象数组
     */
-    public function unsignStu($CourseStudents, $Seats, Student &$Students) {
+    public function unsignStu($CourseStudents, $Seats, &$Students) {
         // 获取学生人数，并通过学生总人数和已签学生人数获取未签学生信息
         //number为学生总人数，havenumber为已签到学生人数，count负责计数方便将学生信息存入学生对象数组
         $count = 0;
@@ -254,9 +266,84 @@ class OnClassController  extends IndexController
                 if ($CourseStudents[$i]->student == $Seats[$j]->student) {
                     $flag = 0;
                 }
-            }
-            if($flag == 1) {
+            } 
+            if($flag === 1) {
                 $Students[$count++] = $CourseStudents[$i]->student; 
+                // dump($Students);
+            }
+        }
+    }
+
+    /**
+    * 获取加减分情况,理论上有课程id和上课起始时间就行
+    * @param courseId 上课的课程
+    * @param beginTime 上课签到起始时间
+    * @param Classcache 将要存储所查出上课信息数组
+    */
+    protected function aodHappened($courseId, $beginTime, &$ClassCaches) {
+        // 构造查询条件数组
+        $que = array(
+            'course_id'=>$courseId,
+            'begin_time'=>$beginTime
+        );
+
+        // 定义分页页数为2
+        $pageSize = 2;
+
+        // 新建一个对象数组 
+        $ClassCachesTemplate = []; 
+
+        // 根据上课课程和上课签到起始时间获取classcache信息数组，并按加减分数进行降序排列
+        $ClassCachesTemplate = Classcache::order('aodnum desc')->where($que)->paginate($pageSize);
+        $ClassCaches = $ClassCachesTemplate;
+        // rsort($Classcaches);
+    }
+
+    /**
+    * 清除教室中保留的上节课信息
+    * @param $Classroom 被清除教室对象
+    */
+    protected function clearClassroom(Classroom &$Classroom) {
+        // 实例化请求
+        $Request = Request::instance();
+
+        // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
+        $que = array(
+            "classroom_id"=>$Classroom->id,
+            "isseated"=>1
+        );
+        
+        // 根据该教室座位找出已被坐的座位
+        $Seats = Seat::where($que)->select();
+
+        // 调用clearSeats方法对已做座位进行信息清空
+        $this->clearSeats($Seats);
+
+        // 将该教室对象的各个数据进行清空
+        $Classroom->begin_time = 0;
+        $Classroom->out_time = 0;
+        $Classroom->course_id = 0;
+
+        // 更新并保存数据
+        $Classroom->validate(true)->save();
+        return 1;
+    }
+
+    /**
+    * 清除教室对应的座位的座位信息
+    * @param $Seats 将被清除的座位对象数组
+    */
+    protected function clearSeats(array &$Seats) {
+        // 将该教室的各个座位的信息清空
+        // 首先得出该教室中的座位个数
+        $number = sizeof($Seats);
+
+        // 对该教室的每个座位信息进行逐个清空
+        for ($i = 0; $i < $number; $i++) {
+            $Seats[$i]->isseated = 0;
+            $Seats[$i]->student_id = 0;
+            if (!$Seats[$i]->validate(true)->save()) {
+                return $this->error('座位信息重置失败', $Request->header('referer'));
             }
         }
     }

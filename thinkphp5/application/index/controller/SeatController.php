@@ -6,8 +6,9 @@ use think\Controller;
 use think\Request;
 use think\validate;
 use app\index\controller\SeatMapController;
+
 /**
- * 
+ * 座位管理，负责座位的信息更新和信息重置等
  */
 class SeatController extends controller
 {
