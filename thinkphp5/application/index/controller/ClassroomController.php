@@ -5,11 +5,16 @@ use app\common\model\Classroom;
 use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
+use app\common\model\Seat;
+use app\common\model\SeatAisle;
 use app\common\model\Course;
 use app\index\controller\SeatMapController;
 use app\index\controller\SeatController;
 use app\common\model\Teacher;
 
+/**
+ * 教室管理
+ */
 class ClassroomController extends Controller
 {
     public function index()
@@ -39,8 +44,49 @@ class ClassroomController extends Controller
         $this->assign('Course', $Course);
         return $this->fetch();
     }
-    public function add(){
+
+    /**
+     * 增加教室
+     */
+    public function add() {
+      $seatMap = SeatMap::all();
+      $this->assign('seatMaps', $seatMap);
       return $this->fetch();
+    }
+
+    /**
+     * 保存教室
+     */
+    public function save() {
+      $Classroom = new Classroom;
+      $Classroom->name = input('post.name');
+      $Classroom->seat_map_id = input('post.seat_map_id');
+      if(!$Classroom->save()) {
+        return $this->error('教室未被正确保存');
+      }
+      if(!$this->saveSeat($Classroom->seat_map_id, $Classroom->id)) {
+        return $this->error('教师座位未被正确保存');
+      }
+      return $this->success('保存成功', url('index'));
+    }
+
+    /**
+     * 保存教室座位图（挨个保存教室座位）
+     */
+    public function saveSeat($seatMapId, $classroomId) {
+      $seatAisles = new SeatAisle;
+      $seatAisles = SeatAisle::where('seat_map_id', '=', $seatMapId)->select();
+      foreach ($seatAisles as $seatAisle ) {
+        $Seat = new Seat;
+        $Seat->x = $SeatAisle->x;
+        $Seat->y = $SeatAisle->y;
+        $Seat->is_seat = $SeatAisle->state;
+        $Seat->classroom_id = $classroomId;
+        if(!$Seat->save()) {
+          return error('座位' . $Seat->id . '未被正确保存');
+        }
+      }
+      return 1;
     }
 
     /**
@@ -56,13 +102,43 @@ class ClassroomController extends Controller
     }
 
     /**
-     * 小部分修改教室座位图
+     * 小部分修改教室座位图，只修改个别座位
      */
     public function seatmap_change(){
 
       return $this->fetch();
     }
+
+    /**
+     * 显示教室的座位图（不是模板）
+     */
     public function seating_plan(){
+      $id = Request::instance()->param('id');
+      $Seat = new Seat;
+      $Seat = Seat::where('classroom_id', '=', $id)->select();
+      $Classroom = Classroom::get($id);
+      $SeatMap = new SeatMap;
+      $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
+      if(empty($SeatMap)) {
+        return $this->error('本教室座位图还未创建');
+      }
+      $this->assign('Seat', $Seat);
+      $this->assign('Classroom', $Classroom);
+      $this->assign('SeatMap', $SeatMap);
       return $this->fetch();
+    }
+
+    /**
+     * 删除教室
+     */
+    public function delete() {
+
+    }
+
+    /**
+     * 删除教室的座位
+     */
+    public function deleteSeat() {
+      
     }
 }

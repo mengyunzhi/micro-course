@@ -19,17 +19,17 @@
     <table>
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
         {volist name="seatAisles" id="seatAisle" key="key"}
-        {if($seatAisle->y==0)}
+        {if($seatAisle->y === ($SeatMap->y_map-1))}
         <tr>
             {/if}
-            <td>
+            <th>
                 <a href="{:url('isSeat?id=' . $seatAisle->getData('id'))}">
                     {eq name='seatAisle->getData("state")' value='0'}
-                    <button class="btn btn-success">座位</button>{else /}
-                    <button class="btn btn-default">过道</button>{/eq}
+                    <button class="btn btn-success">座位<?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{else /}
+                    <button class="btn btn-default">过道<?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{/eq}
                 </a>
-            </td>
-            {if($seatAisle->y==$SeatMap->y_map)}
+            </th>
+            {if($seatAisle->y === 0)}
         </tr>
         {/if}
         {/volist}
