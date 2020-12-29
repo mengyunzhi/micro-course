@@ -16,7 +16,7 @@
 <div class="container">
     <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
     <hr>
-    <table>
+    <table style="margin: auto;">
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
         {volist name="seatAisles" id="seatAisle" key="key"}
         {if($seatAisle->y === ($SeatMap->y_map-1))}

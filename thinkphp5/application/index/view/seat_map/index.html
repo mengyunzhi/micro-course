@@ -44,12 +44,12 @@
                 {if($seatAisle->y === ($SeatMap->y_map-1))}
                     <tr>
                 {/if}
-                <td>
-                    {eq name='seatAisle->getData("state")' value='0'}
-                    <button class="btn btn-success" style="padding-left: 10px;padding-right: 10px;">座位</button>{else /}
-                    <button class="btn btn-default" style="padding-left: 10px;padding-right: 10px;">过道</button>{/eq}
                 
-                </td>
+                    {eq name='seatAisle->getData("state")' value='0'}
+                    <td class="success" style="padding-left: 10px;padding-right: 10px;">{$key}</td>{else /}
+                    <td style="padding-left: 10px;padding-right: 10px;">{$key}</td>{/eq}
+                
+                
                 {if($seatAisle->y === 0)}
                 </tr>
                 {/if}

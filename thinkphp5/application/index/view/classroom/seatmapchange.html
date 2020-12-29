@@ -1,0 +1,48 @@
+{extend name="index" \}
+{block name="title"}
+模板添加
+{/block}
+{block name="search"}
+{/block}
+{block name="search1"}
+{/block}
+{block name="hr1"}
+{/block}
+{block name="hr2"}
+{/block}
+{block name="Add"}
+{/block}
+{block name="content"}
+<div class="container">
+    <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
+    <hr>
+    <table>
+        <label class="container">
+            <h3 style="text-align: center;">讲台</h3>
+        </label>
+        {volist name="seats" id="seat" key="key"}
+        {if($seat->y === ($SeatMap->y_map-1))}
+        <tr>
+            {/if}
+            <th>
+                <a href="{:url('isSeat?id=' . $seat->getData('id') ,'&classroomId=' . $Classroom->id)}">
+                    {eq name='seat->getData("is_seat")' value='0'}
+                    <button class="btn btn-success">座位
+                        <?php echo($seat->x); echo($seat->y) ?>
+                    </button>
+                    {else /}
+                    <button class="btn btn-default">过道
+                        <?php echo($seat->x); echo($seat->y) ?>
+                    </button>
+                    {/eq}
+                </a>
+            </th>
+            {if($seat->y === 0)}
+        </tr>
+        {/if}
+        {/volist}
+    </table>
+    <div style="margin-left: auto;margin-right: auto;">
+        <a href="{:url('edit?id=' . $Classroom->id)}"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
+</div>
+{/block}
