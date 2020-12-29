@@ -66,6 +66,7 @@ class ClassroomController extends Controller
 
     /**
      * update和save共用的保存教室的方法
+     * @param $Classroom 教室对象
      */
     public function saveSeatMap($Classroom) {
       if(!$Classroom->save()) {
@@ -79,6 +80,8 @@ class ClassroomController extends Controller
 
     /**
      * 保存教室座位图（利用foreach循环挨个保存教室座位）
+     * @param $seatMapId 座位图是id
+     * @param $classroomId 教室id
      */
     public function saveSeat($seatMapId, $classroomId) {
       $seatAisles = new SeatAisle;
@@ -156,7 +159,7 @@ class ClassroomController extends Controller
     /**
      * 显示教室的座位图（不是模板）
      */
-    public function seating_plan(){
+    public function seating_plan() {
       $id = Request::instance()->param('id');
       $Seat = new Seat;
       $Seat = Seat::where('classroom_id', '=', $id)->select();
@@ -215,10 +218,9 @@ class ClassroomController extends Controller
         $classroomId = input('param.classroomId');
         $Seat = new Seat;
         $Seat = Seat::get($id);
-        if($Seat->is_seat == "1") {
+        if($Seat->is_seat === "1") {
           $Seat->is_seat = "0";
-        }
-        else {
+        } else {
           $Seat->is_seat = "1";
         }
         if(!$Seat->save()) {
@@ -226,6 +228,7 @@ class ClassroomController extends Controller
         }
         return $this->success('保存成功', url('seatMapChange?id=' . $classroomId));
   }
+
   /**
    * 思路同上 1为有人，0为无人,默认为0
    */
@@ -233,36 +236,10 @@ class ClassroomController extends Controller
     $id = Request::instance()->param('id\d');
     $Seat = new Seat;
     $Seat = Seat::get($id);
-    if($Seat->isseated == "1")
+    if($Seat->isseated === "1")
     $Seat->isseated = "0";
     else 
     $Seat->isseat = "1";
     $this->save();
-  }
-  /**
-   * test
-   */
-  public function test() {
-    $Seats = [];
-    for($i = 0; $i < 3; $i++) {
-      for($j = 0; $j < 3; $j++) {
-        $Seat = new Seat;
-        $Seat->x = $i;
-        $Seat->y = $j;
-        array_push($Seats, $Seat);
-      }
-    }
-    shuffle($Seats);
-
-    $newSeats = [];
-    foreach ($Seats as $seat)  {
-      $newSeats[$seat->x][$seat->y] = $seat;
-    }
-    ksort ($newSeats);
-    foreach ($newSeats as $value) {
-      dump($value);
-      ksort($value);
-      dump($value);
-    }
   }
 }
