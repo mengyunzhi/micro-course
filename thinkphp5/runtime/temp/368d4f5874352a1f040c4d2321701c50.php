@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\edit.html";i:1608815180;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\edit.html";i:1609246588;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,28 +39,33 @@
 <div class="container" style="margin-top: 40px">
     <div class="row">
         <div class="col-md-12">
-            <form>
+            <form action="<?php echo url('update'); ?>" method="post">
                 <div class="form-group">
+                    <input type="hidden" name="id" value="<?php echo $Classroom->id; ?>">
                     <label for="name">教室编号</label>
-                    <input type="text" class="form-control" id="name" placeholder="教室编号">
+                    <input type="text" class="form-control" name="name" placeholder="教室编号" value="<?php echo $Classroom->name; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="name">对应模板编号</label>
-                    <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
+                    <label for="seat_map_id">对应模板编号</label>
+                    <select class="form-control" name="seat_map_id">
+                        <?php if(is_array($seatMaps) || $seatMaps instanceof \think\Collection): $key = 0; $__LIST__ = $seatMaps;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$SeatMap): $mod = ($key % 2 );++$key;?>
+                        <option value="<?php echo $SeatMap->id; ?>">
+                            <?php echo $SeatMap->id; ?>
+                        </option>
+                        <?php endforeach; endif; else: echo "" ;endif; ?>
                     </select>
                 </div>
-                <a class="btn btn-primary" href="<?php echo url('SeatMap/index'); ?>" style="margin-top: 20px;"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;查看模板</a>
                 <hr>
-                <a class="btn btn-primary" href="<?php echo url('seatmap_change?id='.$classroom->id); ?>" style="margin-top: 20px;"><i class="glyphicon glyphicon-hand-right"></i>&nbsp;更改本教室座位图</a>
-                <hr>
-                <a href="<?php echo url('index'); ?>" class="btn btn-success"><i class="glyphicon glyphicon-plus"></i>&nbsp;submit</a>
+                <button type="submit">保存</button>
             </form>
-            </form>
+            <a class="btn btn-success" href="<?php echo url('SeatMap/index'); ?>" style="margin-top: 20px;">
+                <i class="glyphicon glyphicon-hand-right">
+                </i>&nbsp;查看模板
+            </a>
+            <hr>
+            <a class="btn btn-primary" href="<?php echo url('seatMapChange?id=' . $Classroom->id); ?>" style="margin-top: 20px;">
+                <i class="glyphicon glyphicon-hand-right"></i>&nbsp;更改本教室座位图
+            </a>
         </div>
     </div>
 </div>
