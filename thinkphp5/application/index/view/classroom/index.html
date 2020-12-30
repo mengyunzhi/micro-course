@@ -17,9 +17,23 @@
         <td>{$key}</td>
         <td>{$classroom->getData('name')}</td>
         <td>
-            <a class="btn btn-success btn-sm" href="{:url('seating_plan?id=' . $classroom->getData('id') . '&course_id=' . $Course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看座位图</a>
-            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>
-            <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $classroom->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
+            <a class="btn btn-success btn-sm" href="{:url('seating_plan?id=' . $classroom->getData('id') . '&course_id=' . $Course->id)}">
+                <i class="glyphicon glyphicon-eye-open"></i>
+                &nbsp;查看座位图
+            </a>
+            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}">
+                <i class="glyphicon glyphicon-trash"></i>
+                &nbsp;删除
+            </a>
+            <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $classroom->getData('id'))}">
+                <i class="glyphicon glyphicon-pencil"></i>
+                &nbsp;编辑
+            </a>
+            <a class="btn btn-sm btn-warning" href="{:url('QRCode?id=' . $classroom->getData('id'))}">
+                <i class="glyphicon glyphicon-pencil"></i>
+                &nbsp;生成二维码
+            </a>
+        </td>
     </tr>
     {/volist}
 </table>

@@ -146,6 +146,7 @@ class ClassroomController extends Controller
       $Classroom = Classroom::get($id);
       $seats = Seat::where('classroom_id', '=', $id)->select();
       $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
+      ksort($seats);
       if(empty($SeatMap)) {
         return $this->error('不存在对应模板');
       }
@@ -250,5 +251,22 @@ class ClassroomController extends Controller
     else 
     $Seat->isseat = "1";
     $this->save();
+  }
+
+  /**
+   * 生成二维码
+   */
+  public function QRCode() {
+    $id = input('param.id/d');
+    $Classroom = Classroom::get($id);
+    $seats = Seat::where('classroom_id', '=', $id)->select();
+    $SeatMap = SeatMap::get($Classroom->seat_map_id);
+    $seats = $this->seatDisplay($seats, $SeatMap);
+    $this->assign('seats', $seats);
+    $this->assign('SeatMap', $SeatMap);
+    $this->assign('Classroom', $Classroom);
+    $url = 'http://' . $_SERVER['HTTP_HOST'];
+    $this->assign('url', $url);
+    return $this->fetch();
   }
 }
