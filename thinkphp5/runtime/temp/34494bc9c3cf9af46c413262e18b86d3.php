@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\index.html";i:1609162341;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\index.html";i:1609166029;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,14 +42,9 @@
             <table class="table table-bordered table-condensed ">
                 <?php if(is_array($seatAisles) || $seatAisles instanceof \think\Collection): $key = 0; $__LIST__ = $seatAisles;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$seatAisle): $mod = ($key % 2 );++$key;if(($seatAisle->y === ($SeatMap->y_map-1))): ?>
                     <tr>
-                <?php endif; ?>
-                <td>
-                    <?php if($seatAisle->getData("state") == '0'): ?>
-                    <button class="btn btn-success" style="padding-left: 10px;padding-right: 10px;">座位</button><?php else: ?>
-                    <button class="btn btn-default" style="padding-left: 10px;padding-right: 10px;">过道</button><?php endif; ?>
-                
-                </td>
-                <?php if(($seatAisle->y === 0)): ?>
+                <?php endif; if($seatAisle->getData("state") == '0'): ?>
+                    <td class="success" style="padding-left: 10px;padding-right: 10px;"><?php echo $key; ?></td><?php else: ?>
+                    <td style="padding-left: 10px;padding-right: 10px;"><?php echo $key; ?></td><?php endif; if(($seatAisle->y === 0)): ?>
                 </tr>
                 <?php endif; endforeach; endif; else: echo "" ;endif; ?>
             </table>

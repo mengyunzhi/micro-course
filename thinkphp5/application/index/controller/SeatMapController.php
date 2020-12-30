@@ -100,7 +100,7 @@ class SeatMapController extends Controller {
 		$this->addseatAisle($id, url('edit?id=' . $id));
 	}
 	/**
-	 * 存储座位模板的座位
+	 * 利用双重for循环挨个存储座位模板的座位
 	 */
 	public function addseatAisle($seatMapId, $url) {
 		$seatmap = SeatMap::get($seatMapId);
@@ -120,9 +120,12 @@ class SeatMapController extends Controller {
 	/**
 	 * 保存单个座位
 	 * @param $seatMapId 对应模板的id
+	 * @param $seatAiale 座位
 	 * @param $url 要跳到的链接
+	 * @param $i 行
+	 * @param $j 列
 	 */
-	public function saveSeatAisle($seatMapId,$seatAisle,$i,$j) {
+	public function saveSeatAisle($seatMapId, $seatAisle, $i, $j) {
 		$seatAisle->x = $i;
 		$seatAisle->y = $j;
 		$seatAisle->seat_map_id = $seatMapId;

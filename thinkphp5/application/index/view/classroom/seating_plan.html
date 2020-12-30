@@ -13,30 +13,35 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-        <h3 style="margin-left: 545px;margin-bottom: 50px;">
-            <?php echo($Classroom->name) ?>
-            <hr>
-            <p style="color: green;">讲台</p>
-        </h3>
-        <div class="container">
-            <table class="table table-bordered table-condensed ">
-                {volist name="Seat" id="seat" key="key"}
-                {if($seat->y === 0)}
-                <tr>
-                    {/if}
-                    <!-- 空一行 -->
-                <tr></tr>
-                    {eq name='seat->getData("is_seat")' value='0'}
-                    <td class="btn btn-success" style="height: 50px;width: 50px;"><p style="font-size: 25px;">{$key}</p></td>{else /}
-                    <td class="btn btn-default" style="height: 50px;width: 50px;><p font-size: 30px; >{$code}</p></td>
-                    {/eq}
-                {if($seat->y === $SeatMap[0]->y_map)}
-                </tr>
-                {/if}
-                {/volist}
-            </table>
-        </div>
+    <h3 style="margin-left: 545px;margin-bottom: 50px;">
+        <?php echo($Classroom->name) ?>
         <hr>
+        <p style="color: green;">讲台</p>
+    </h3>
+    <div class="container">
+        <table class="table table-bordered table-condensed ">
+            <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
+            <tr>
+                <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
+                {eq name='$seat[$i][$j]->getData("is_seat")' value='0'}
+                <td class="success" style="height: 50px;width: 50px;">
+                    <p style="font-size: 25px;">
+                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
+                    </p>
+                </td>
+                {else /}
+                <td class="default" style="height: 50px;width: 50px;">
+                    <p style="font-size: 25px;">
+                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
+                    </p>
+                </td>
+                {/eq}
+                <?php endfor ?>
+            </tr>
+            <?php endfor ?>
+        </table>
+    </div>
+    <hr>
     </div>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
