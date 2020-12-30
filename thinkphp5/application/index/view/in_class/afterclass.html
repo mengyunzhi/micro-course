@@ -1,0 +1,48 @@
+{extend name="menu"/}
+{block name="title"}
+课程管理
+{/block}
+{block name="content"}
+<table class="table table-hover table-bordered" style="200px;">
+    <td>{$Course->name}:学生加减分情况：</td>
+</table>
+<table class="table table-hover table-bordered" style="margin-bottom: 70px;">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>学生性别</th>
+        <th>加减分情况</th>
+    </tr>
+    {volist name="ClassCaches" id="_ClassCach" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_ClassCach->student->name}</td>
+        <td>{$_ClassCach->student->num}</td>
+        <td>{eq name="_ClassCach->student->sex" value='0'}男{else /}女{/eq}</td>
+        <td>{$_ClassCach->aodnum}分</td>
+    </tr>
+    {/volist}
+</table>
+<table class="table table-hover table-bordered" style="200px;">
+    <td>{$Course->name}:未签到学生:{:sizeof($students)}人</td>
+</table>
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>学生性别</th>
+    </tr>
+    {volist name="students" id="_student" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_student->name}</td>
+        <td>{$_student->num}</td>
+        <td>{eq name="$_student->sex" value='0'}男{else /}女{/eq}</td>
+    </tr>
+    {/volist}
+</table>
+{:$ClassCaches->render()}
+{/block}
+{/block}
