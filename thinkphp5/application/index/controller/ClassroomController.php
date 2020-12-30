@@ -157,24 +157,31 @@ class ClassroomController extends Controller
     }
 
     /**
-     * 显示教室的座位图（不是模板）
+     * 转化座位为二维数组
      */
-    public function seating_plan() {
-      $id = Request::instance()->param('id');
-      $Seat = new Seat;
-      $Seat = Seat::where('classroom_id', '=', $id)->select();
-      $Classroom = Classroom::get($id);
-      $SeatMap = new SeatMap;
-      $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
-      $SeatMap = $SeatMap[0];
+    public function seatDisplay($seats, $SeatMap) {
       $newSeats = [];
-      foreach ($Seat as $seat)  {
+      foreach ($seats as $seat)  {
         $newSeats[$seat->x][$seat->y] = $seat;
       } 
       ksort ($newSeats);
       for($i = 0; $i < $SeatMap->x_map; $i++) {
         ksort($newSeats[$i]);
       }
+      return $newSeats;
+    }
+    /**
+     * 显示教室的座位图（不是模板）
+     */
+    public function seating_plan() {
+      $id = Request::instance()->param('id');
+      $Seat = new Seat;
+      $seats = Seat::where('classroom_id', '=', $id)->select();
+      $Classroom = Classroom::get($id);
+      $SeatMap = new SeatMap;
+      $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
+      $SeatMap = $SeatMap[0];
+      $newSeats = $this->seatDisplay($seats, $SeatMap);
       if(empty($SeatMap)) {
         return $this->error('本教室座位图还未创建');
       }

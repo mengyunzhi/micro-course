@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:89:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\add.html";i:1608861029;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:89:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\add.html";i:1609293669;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,6 +39,10 @@
             
 <div class="container">
     <form action="<?php echo url('save'); ?>" method="post">
+        <div class="form-group">
+            <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板名称:</label>
+            <input name="name" id="name" class="form-control" />
+        </div>
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 20px;">输入教室总行数:</label>
             <input name="xMap" id="xMap" class="form-control" />
