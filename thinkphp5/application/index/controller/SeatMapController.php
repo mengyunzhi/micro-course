@@ -183,6 +183,7 @@ class SeatMapController extends Controller {
 		if($this->DeleteSeatAisle($id)) {
 			$seatMap = SeatMap::get($id);
 			$arry = $this->asc();
+			
 			// 如果是最后一个则其前一个座位变为最后一个
 			if($seatMap->is_last === 1) {
 				$SeatMap = $this->desc($arry);
@@ -190,7 +191,6 @@ class SeatMapController extends Controller {
 				$SeatMap[1]->is_last = 1;
 				$SeatMap[1]->save();
 			}
-
 
 			// 如果是第一个则其后一个座位变为第一个
 			if($seatMap->is_first === 1) {

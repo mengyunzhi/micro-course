@@ -158,6 +158,8 @@ class ClassroomController extends Controller
 
     /**
      * 转化座位为二维数组
+     * @param $seats 要展示的座位数组
+     * @param $SeatMap 对应的模板
      */
     public function seatDisplay($seats, $SeatMap) {
       $newSeats = [];
