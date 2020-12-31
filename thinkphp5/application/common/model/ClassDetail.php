@@ -6,7 +6,7 @@ use think\Request;//内置请求类
 /**
  * 上课缓存类，用于统计上课情况和数据保存
  */
-class Classcache extends Model
+class ClassDetail extends Model
 {
 	/**
 	* 获取学生对象

@@ -4,24 +4,28 @@ use app\common\model\Course;
 use app\common\model\Student;
 use app\common\model\Classroom;
 use app\common\model\Onclass;
+use app\common\model\Seat;
+use app\common\model\ClassCache;
 
 /**
 * 负责对上课缓存进行增删改查操作
 */
-class Classcache extends IndexController {
+class ClassDetailController extends IndexController {
 	public function index() {
-		// 接收上课教室、上课课程、上课学生的id、上课签到时间
+		// 接收上课教室、上课课程、上课学生的id、上课签到时间、扫码的座位号
 		$courseId = Request::instance()->param('courseId');
-		$classroomId = Request::instance()->param('ClassroomId');
+		$classroomId = Request::instance()->param('classroomId');
 		$studentId = Request::instance()->param('studentId');
-		$signTime = Request::instance()->param('signTime/d');
+		$createTime = Request::instance()->param('createTime/d');
+		$seatId = Request::instance()->param('seatId');
 
 		// 新创建一个对象
 		$ClassCache = new ClassCache;
+		$Seat = Seat::get($seatId);
 
 		// 调用saveClassCache方法对新建的ClassCache进行保存
 		if (!$this->saveClassCache()) {
-			return $this->error('上课缓存信息保存失败,请从新扫码签到' . $)
+			return $this->error('上课缓存信息保存失败,请从新扫码签到')
 		}
 	}
 
@@ -41,5 +45,17 @@ class Classcache extends IndexController {
 
 		// 将赋值后的classcache对象保存
 		return $ClassCache->validate(true)->save();
+	}
+
+	/**
+	 * 保存座位信息
+	 */
+	public function saveSeat($seatId, $studentId) {
+		// 实例化Seat对象
+		$Seat = Seat::get($seatId);
+
+		// 将Seat对象对应的信息进行更新
+		$Seat->is_seated = 1;
+		$Seat->update_time = time();
 	}
 }
