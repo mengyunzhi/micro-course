@@ -10,12 +10,12 @@ use app\common\model\SeatMapTeacher;
 use app\common\model\Classroom;
 use app\common\model\Seat;
 use app\common\model\PreClass;
-use app\common\model\Classcache;
+use app\common\model\ClassDetail;
 
 /**
 * 用于负责上课管理的各部分功能
 */
-class OnClassController  extends IndexController
+class InClassController  extends IndexController
 {
     public function index() {
         // 获取老师对应的ID
@@ -26,38 +26,30 @@ class OnClassController  extends IndexController
 
         // 接收教室id，接收上课签到时间
         // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
+        // $classroomId = Request::instance()->param('classroomId');
         $classroomId = 1;
         $Classroom = Classroom::get($classroomId);
-        // $courseId = Request::instance()->param('courseId');
-        $outTime = Request::instance()->param('outTime');
-        $beginTime = Request::instance()->param('beginTime');
-        $courseId = 1;
-        // $classroomId = Request::instance()->param('classroomId');
 
-        //此处使用===会导致错误，增加判断传值是否字符串类型
+        // 首先判断是不是已经设置上课时间等
         if (empty($reClass)) {
-            // 将上课时间转换为秒，方便下面进行运算
-            $beginTime = strtotime($beginTime);
-            $outTime = strtotime($outTime);
-        }        
+            // 如果是已经上课，就不需要重新接收courseId
+            // $courseId = Request::instance()->param('courseId');
+            // 接受上课时间和课程ID
+            $beginTime = Request::instance()->param('beginTime');
+            $courseId = 1;
 
-        // 重新定义新的课前类，方便错误跳转，同时定义课程对象
-        $PreClass = new PreClass;
-        $Course = Course::get($courseId);
+            // 增加判断签到时间必须设置
+            $this->timeJudge($beginTime, $Classroom);
 
-        // 增加判断签到时间必须设置
-        $this->timeJudge($beginTime, $outTime);
-        
-        // 存取时间和课程id,并更新和保存
-        $this->saveTime($Classroom, $beginTime, $outTime);
-        $this->saveCourse($Classroom, $courseId);
-        if (is_null($Classroom->validate(true)->save())) {
-            return $this->error('签到时间或课程信息数据保存失败' . $PreClass->getError());
+            // 重新定义新的课前类，方便错误跳转，同时定义课程对象
+            $PreClass = new PreClass;
+            
+            // 存取时间和课程id,并更新和保存
+            $this->saveCourse($Classroom, $courseId);
+            if (is_null($Classroom->validate(true)->save())) {
+                return $this->error('签到时间或课程信息数据保存失败' . $PreClass->getError());
+            }
         }
-
-        // 将时间戳转换为自己想要的时间
-        $beginTime = date('Y年m月d日H时i分', $beginTime);
-        $outTime = date('Y年m月d日H时i分', $outTime);
 
         // 获取已签到学生（由于还未完整完成数据传输，此时首先调用所有学生信息进行调试）
         $Students = Student::all();
@@ -74,11 +66,9 @@ class OnClassController  extends IndexController
         $Courses = Course::where('teacher_id', '=', $id)->select();
 
         // 将上课签到时间和截止时间以及学号数组和课程信息传入V层
-        $this->assign('Course', $Course);
+        $this->assign('Course', $Classroom->Course);
         $this->assign('nums', $nums);
         $this->assign('Classroom', $Classroom);
-        $this->assign('beginTime', $beginTime);
-        $this->assign('outTime', $outTime);
 
         //取回V层渲染的
         return $this->fetch();
@@ -102,7 +92,7 @@ class OnClassController  extends IndexController
         // 接收教室对应的id,接收课程对应的id
         // $classroomId = Request::instance()->param('$classroomId');
         $classroomId = 1;
-        $courseId = 1;
+        $courseId = 3;
 
         // 实例化课程和教室和beginTime
         $Classroom = Classroom::get($classroomId);
@@ -112,7 +102,7 @@ class OnClassController  extends IndexController
         // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
         $que = array(
             "classroom_id"=>$classroomId,
-            "isseated"=>1
+            "is_seated"=>1
         );
         
         // 根据该教室座位找出已被坐的座位
@@ -126,9 +116,9 @@ class OnClassController  extends IndexController
         // 根据课程获取该课程所对应的中间表信息
         $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         
-        // 新建Students对象数组,新建加减分情况数组
-        $Students = new Student();
-        $ClassCaches = new Classcache();
+        // 新建学生和上课缓存数组
+        $Students = [];
+        $ClassCaches = [];
 
         // 调用unsignStu函数和aodHappened函数获取未签到学生和上课缓存信息
         $this->unsignStu($CourseStudents, $Seats, $Students);
@@ -171,7 +161,7 @@ class OnClassController  extends IndexController
         // 构造查询条件数组,根据教室id和是否被坐
         $que = array(
             "classroom_id"=>$classroomId,
-            "isseated"=>1
+            "is_seated"=>1
         );
 
         // 根据该教室座位找出已被坐的座位
@@ -198,7 +188,6 @@ class OnClassController  extends IndexController
 
         // 返回渲染后的学生信息
         return $this->fetch();
-
     }
 
     /**
@@ -207,14 +196,14 @@ class OnClassController  extends IndexController
     * @param $outTime 签到结束时间
     * @param $Classroom 时间保存到的教室对象
     */
-    public function saveTime(Classroom &$Classroom, $beginTime, $outTime) {
-        // 新建preclass对象，方便错误信息跳转
-        $PreClass = new PreClass;
+    // public function saveTime(Classroom &$Classroom, $beginTime, $outTime) {
+    // 新建preclass对象，方便错误信息跳转
+        // $PreClass = new PreClass;
 
         // 进行赋值
-        $Classroom->begin_time = $beginTime;
-        $Classroom->out_time = $outTime;
-    }
+        // $Classroom->begin_time = $beginTime;
+        // $Classroom->out_time = $outTime;
+    // }
 
     /**
     * 保存签到课程信息。
@@ -232,29 +221,153 @@ class OnClassController  extends IndexController
     }
 
     /**
-    * 签到时间是否合格验证
+    * 检验上课时间是否合格，同时设置上课时间和签到截止时间
     * @param $beginTime 签到起始时间
     * @param $outTime 签到截止时间
     */
-    protected function timeJudge($beginTime, $outTime) {
+    protected function timeJudge($beginTime, Classroom &$Classroom) {
         // 定义课前对象
         $PreClass = new PreClass;
         $Request = Request::instance();
         // 主要为三个时间判断
         // 第一个时间判断为未设置签到时间直接点开始上课
-        if($beginTime === 0 || $outTime === 0) {
-            return $this->error('签到时长不得为空' . $Request->header('referer'));
-        }
-        // 增加判断签到时长不得大于两个小时
-        if($outTime - $beginTime >= 7200) {
-            return $this->error('签到时长不得高于两个小时' . $PreClass->getError());
-        }
-        // 增加判断开始签到时间不得大于截止签到时间
-        if($beginTime >= $outTime) {
-            return $this->error('签到开始时间大于签到截止时间' . $PreClass->getError());
+        if($beginTime === 0) {
+            return $this->error('上课时间获取失败' . $Request->header('referer'));
         }
 
+        // 增加判断上课时间为课前或课中两种情况,并分不同情况得出签到截止时间
+        // 第一种：课中
+        // 将时间转换为小时/分钟的形式
+        $Classroom->begin_time = $beginTime;
+        $string = date('G/i', $beginTime);
+        if($string >= '08/30' && $string <= '10/05') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = $beginTime;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $string = date('G/i', $signDeadlineTime);
+            $signDeadlineTime = $string;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609293900;
+        }
+        if($string >= '10/25' && $string <= '12/00') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = $beginTime;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $string = date('G/i', $signDeadlineTime);
+            $signDeadlineTime = $string;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609300800;
+        }
+        if($string >= '14/00' && $string <= '15/35') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = $beginTime;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $string = date('G/i', $signDeadlineTime);
+            $signDeadlineTime = $string;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609313700;
+        }
+        if($string >= '15/55' && $string <= '17/30') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = $beginTime;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $string = date('G/i', $signDeadlineTime);
+            $signDeadlineTime = $string;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609320600;
+        }
+        if($string >= '18/40' && $string <= '20/15') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = $beginTime;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $string = date('G/i', $signDeadlineTime);
+            $signDeadlineTime = $string;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609330500;
+        }
+        if($string <= '08/30') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = 1609288200;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609293900;
+        }
+        if($string <= '10/25' && $string >= '10/05') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = 1609295100;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609300800;
+        }
+        if($string <= '14/00' && $string >= '12/00') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = 1609308000;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609313700;
+        }
+        if($string <= '15/55' &&$string >= '15/35') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = 1609314900;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609320600;
+        }
+        if($string >= '17/30' && $string <= '18/40') {
+            $Classroom->sign_time = 20;
+            $Classroom->sign_begin_time = 1609324800;
+            $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time;
+            $Classroom->sign_deadline_time = $signDeadlineTime;
+            $Classroom->out_time = 1609330500;
+        }
+        return $Classroom->validate(true)->save();
         //
+    }
+
+    /**
+     * 根据教室对象修改签到时长方法
+     */
+    public function changeSignTime() {
+        // 接收改变后的sigiTime和教室id：classroomId
+        $signTime = Request::instance()->param('signTime');
+        $classroomId = Request::instance()->param('classroomId');
+
+        // 实例化教室对象
+        $Classroom = Classroom::get($classroomId);
+
+        // 将signTime赋值给我教室的sign_time属性
+        $Classroom->sign_time = $signTime;
+
+        // 根据上课时间和修改后的签到时长，从新设置签到截止时长
+        $Classroom->sign_deadline_time = $Classroom->sign_time + $Classroom->sign_begin_time;
+
+        // 将修改后的教室对象保存,并判断是否保存成功
+        if(!$Classroom->validate(true)->save()) {
+            return $Classroom->getError('签到时长修改失败', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+        }
+        return $this->success('修改签到时长成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+    }
+
+    /**
+     * 改变教室对象的下课时间
+     */
+    public function changeOutTime() {
+        // 实例化请求对象,接收从index传来的下课时间outTime和教室Id classroomId
+        $Request = Request::instance();
+        $outTime = Request::instance()->param('outTime');
+        $classroomId = Request::instance()->param('classroomId');
+
+        // 实例化教室对象
+        $Classroom = Classroom::get($classroomId);
+
+        // 将获取到的下课截止时间赋值给Classroom对象
+        $Classroom->out_time = $outTime;
+
+        // 将修改后的教室对象保存,并判断是否保存成功
+        if(!$Classroom->validate(true)->save()) {
+            return $Classroom->error('下课时间修改失败', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+        }
+        return $this->success('修改下课时间成功', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
     }
 
     /**
@@ -286,25 +399,19 @@ class OnClassController  extends IndexController
     /**
     * 获取加减分情况,理论上有课程id和上课起始时间就行
     * @param courseId 上课的课程
-    * @param beginTime 上课签到起始时间
-    * @param Classcache 将要存储所查出上课信息数组
+    * @param classCourseId 对应的课程上课信息id
+    * @param ClassDetails 接收本节课学生上课信息的数组
     */
-    protected function aodHappened($courseId, $beginTime, &$ClassCaches) {
-        // 构造查询条件数组
-        $que = array(
-            'course_id'=>$courseId,
-            'begin_time'=>$beginTime
-        );
-
+    protected function aodHappened($courseId, $classCourseId,array &$ClassDetails) {
         // 定义分页页数为2
         $pageSize = 2;
 
         // 新建一个对象数组 
-        $ClassCachesTemplate = []; 
+        $ClassDetailsTemplate = []; 
 
-        // 根据上课课程和上课签到起始时间获取classcache信息数组，并按加减分数进行降序排列
-        $ClassCachesTemplate = Classcache::order('aodnum desc')->where($que)->paginate($pageSize);
-        $ClassCaches = $ClassCachesTemplate;
+        // 根据上课课程和上课签到起始时间获取classDetail信息数组，并按加减分数进行降序排列
+        $ClassDetailsTemplate = ClassDetail::order('aod_num desc')->where('class_course_id', '=', $classCourseId)->paginate($pageSize);
+        $ClassDetails = $ClassDetailsTemplate;
         // rsort($Classcaches);
     }
 
@@ -319,7 +426,7 @@ class OnClassController  extends IndexController
         // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
         $que = array(
             "classroom_id"=>$Classroom->id,
-            "isseated"=>1
+            "is_seated"=>1
         );
         
         // 根据该教室座位找出已被坐的座位
@@ -349,11 +456,18 @@ class OnClassController  extends IndexController
 
         // 对该教室的每个座位信息进行逐个清空
         for ($i = 0; $i < $number; $i++) {
-            $Seats[$i]->isseated = 0;
+            $Seats[$i]->is_seated = 0;
             $Seats[$i]->student_id = 0;
             if (!$Seats[$i]->validate(true)->save()) {
                 return $this->error('座位信息重置失败', $Request->header('referer'));
             }
         }
+    }
+
+    /**
+     * 用于测试,以便获得各个时间段对应的时间戳
+     */
+    public function test() {
+       $string = date('Y/m/d/G/i',1609287900); return  $string ;
     }
 }

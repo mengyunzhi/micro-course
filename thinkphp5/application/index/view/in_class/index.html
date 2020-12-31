@@ -44,8 +44,19 @@
     <?php use app\common\view\MenuViewTeacher; ?>
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
-    <table class="table table-hover table-bordered" style="200px;">
-        <td><label style="font-size: 15px;">签到课程:{:$Course->name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可签到时间: {:$beginTime} 至 {:$outTime}</label> </td>
+    <table class="table table-hover table-bordered" style="200px;"><form action="{:url('changeSignTime')}" method="post">
+        <td><label style="font-size: 15px;">签到课程:{:$Course->name}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="font-size: 15px;">签到时长:</label>
+            <input type="text" name="signTime" value="{:$Classroom->sign_time}" style="width: 100px;">
+
+            <label style="font-size: 15px;">分钟</label> <button>保存</button> </td></form>
+        <form action="{:url('changeOutTime')}" method="post">
+        <td><label style="font-size: 15px;">下课时间:<select name="outTime">
+        <option value="1609293900" {eq name="Classroom->out_time" value="1609293900" } selected="selected" {/eq}>10:05</option>
+        <option value="1609300800" {eq name="Classroom->out_time" value="1609300800" } selected="selected" {/eq}>12:00</option>
+        <option value="1609313700" {eq name="Classroom->out_time" value="1609313700" } selected="selected" {/eq}>15:35</option>
+        <option value="1609320600" {eq name="Classroom->out_time" value="1609320600" } selected="selected" {/eq}>17:30</option>
+        <option value="1609330500" {eq name="Classroom->out_time" value="1609330500" } selected="selected" {/eq}>20:15</option>
+    </select>分</label><button>保存</button></td></form>
     </table>
     
     <div class="box" id="roll-call" style="float: left;">
