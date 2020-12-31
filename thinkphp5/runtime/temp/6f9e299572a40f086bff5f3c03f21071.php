@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:92:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\index.html";i:1609244735;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:92:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\index.html";i:1609314741;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -55,9 +55,23 @@
         <td><?php echo $key; ?></td>
         <td><?php echo $classroom->getData('name'); ?></td>
         <td>
-            <a class="btn btn-success btn-sm" href="<?php echo url('seating_plan?id=' . $classroom->getData('id') . '&course_id=' . $Course->id); ?>"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;查看座位图</a>
-            <a class="btn btn-danger btn-sm" href="<?php echo url('delete?id=' . $classroom->getData('id')); ?>"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>
-            <a class="btn btn-sm btn-primary" href="<?php echo url('edit?id=' . $classroom->getData('id')); ?>"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a></td>
+            <a class="btn btn-success btn-sm" href="<?php echo url('seating_plan?id=' . $classroom->getData('id') . '&course_id=' . $Course->id); ?>">
+                <i class="glyphicon glyphicon-eye-open"></i>
+                &nbsp;查看座位图
+            </a>
+            <a class="btn btn-danger btn-sm" href="<?php echo url('delete?id=' . $classroom->getData('id')); ?>">
+                <i class="glyphicon glyphicon-trash"></i>
+                &nbsp;删除
+            </a>
+            <a class="btn btn-sm btn-primary" href="<?php echo url('edit?id=' . $classroom->getData('id')); ?>">
+                <i class="glyphicon glyphicon-pencil"></i>
+                &nbsp;编辑
+            </a>
+            <a class="btn btn-sm btn-warning" href="<?php echo url('QRCode?id=' . $classroom->getData('id')); ?>">
+                <i class="glyphicon glyphicon-pencil"></i>
+                &nbsp;生成二维码
+            </a>
+        </td>
     </tr>
     <?php endforeach; endif; else: echo "" ;endif; ?>
 </table>

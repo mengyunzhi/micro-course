@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\edit.html";i:1609209233;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\edit.html";i:1609294296;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,6 +39,7 @@
             
 <div class="container">
     <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
+    <a class="btn btn-warning" href="<?php echo url('add'); ?>" style="float: right;"><p style="text-align: center;margin: auto;">重设模板</p></a>
     <hr>
     <table style="margin: auto;">
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
@@ -48,7 +49,7 @@
             <th>
                 <a href="<?php echo url('isSeat?id=' . $seatAisle->getData('id')); ?>">
                     <?php if($seatAisle->getData("state") == '0'): ?>
-                    <button class="btn btn-success">座位<?php echo($seatAisle->x); echo($seatAisle->y) ?></button><?php else: ?>
+                    <button class="btn btn-info">座位<?php echo($seatAisle->x); echo($seatAisle->y) ?></button><?php else: ?>
                     <button class="btn btn-default">过道<?php echo($seatAisle->x); echo($seatAisle->y) ?></button><?php endif; ?>
                 </a>
             </th>
@@ -57,7 +58,7 @@
         <?php endif; endforeach; endif; else: echo "" ;endif; ?>
     </table>
     <div style="margin-left: auto;margin-right: auto;">
-        <a href="<?php echo url('index'); ?>"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
+        <a href="<?php echo url('index'); ?>"><button type="submit" class="btn btn-primary" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
 </div>
 
             <!-- 定义页数模板 -->

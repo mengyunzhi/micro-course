@@ -146,6 +146,7 @@ class ClassroomController extends Controller
       $Classroom = Classroom::get($id);
       $seats = Seat::where('classroom_id', '=', $id)->select();
       $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
+      ksort($seats);
       if(empty($SeatMap)) {
         return $this->error('不存在对应模板');
       }
@@ -157,24 +158,34 @@ class ClassroomController extends Controller
     }
 
     /**
-     * 显示教室的座位图（不是模板）
+     * 转化座位为二维数组
+     * @param $seats 要展示的座位数组
+     * @param $SeatMap 对应的模板
      */
-    public function seating_plan() {
-      $id = Request::instance()->param('id');
-      $Seat = new Seat;
-      $Seat = Seat::where('classroom_id', '=', $id)->select();
-      $Classroom = Classroom::get($id);
-      $SeatMap = new SeatMap;
-      $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
-      $SeatMap = $SeatMap[0];
+    public function seatDisplay($seats, $SeatMap) {
       $newSeats = [];
-      foreach ($Seat as $seat)  {
+      foreach ($seats as $seat)  {
         $newSeats[$seat->x][$seat->y] = $seat;
       } 
       ksort ($newSeats);
       for($i = 0; $i < $SeatMap->x_map; $i++) {
         ksort($newSeats[$i]);
       }
+      return $newSeats;
+    }
+
+    /**
+     * 显示教室的座位图（不是模板）
+     */
+    public function seating_plan() {
+      $id = Request::instance()->param('id');
+      $Seat = new Seat;
+      $seats = Seat::where('classroom_id', '=', $id)->select();
+      $Classroom = Classroom::get($id);
+      $SeatMap = new SeatMap;
+      $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
+      $SeatMap = $SeatMap[0];
+      $newSeats = $this->seatDisplay($seats, $SeatMap);
       if(empty($SeatMap)) {
         return $this->error('本教室座位图还未创建');
       }
@@ -241,5 +252,22 @@ class ClassroomController extends Controller
     else 
     $Seat->isseat = "1";
     $this->save();
+  }
+
+  /**
+   * 生成二维码
+   */
+  public function QRCode() {
+    $id = input('param.id/d');
+    $Classroom = Classroom::get($id);
+    $seats = Seat::where('classroom_id', '=', $id)->select();
+    $SeatMap = SeatMap::get($Classroom->seat_map_id);
+    $seats = $this->seatDisplay($seats, $SeatMap);
+    $this->assign('seats', $seats);
+    $this->assign('SeatMap', $SeatMap);
+    $this->assign('Classroom', $Classroom);
+    $url =substr($_SERVER['HTTP_REFERER'], 0, -44);
+    $this->assign('url', $url);
+    return $this->fetch();
   }
 }

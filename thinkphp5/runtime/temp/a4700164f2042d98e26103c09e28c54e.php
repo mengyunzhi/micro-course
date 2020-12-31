@@ -1,13 +1,22 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:99:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seating_plan.html";i:1609249284;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:93:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\qrcode.html";i:1609399124;}*/ ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-tw">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>标题</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jquery-qrco生成 QR CODE</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="../../../../static/jquery-qrcode-0.17.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="">
+    <style>
+    .block>div {
+        float: left;
+        margin: 15px;
+    }
+    </style>
 </head>
 
 <body class="container">
@@ -18,27 +27,31 @@
         <hr>
         <p style="color: green;">讲台</p>
     </h3>
-    <div class="container">
-        <table class="table table-bordered table-condensed ">
+        <table class="table table-bordered table-condensed " style="margin-left: -300px;">
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
-                <?php for($j = 0; $j < $SeatMap->y_map; $j++): if($seat[$i][$j]->getData("is_seat") == '0'): ?>
-                <td class="success" style="height: 50px;width: 50px;">
-                    <p style="font-size: 25px;">
-                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
-                    </p>
+                <?php for($j = 0; $j < $SeatMap->y_map; $j++): if($seats[$i][$j]->getData("is_seat") == '0'): ?>
+                <td>
+                    <div id="<?php echo $i; ?><?php echo $j; ?>"></div>
                 </td>
+
+                <script>
+                $("#<?php echo $i; ?><?php echo $j; ?>").qrcode({
+                    render: 'div',
+                    size: 160,
+                    text: '<?php echo($url . url('isSeated?x=' . $seats[$i][$j], '&y=' . $seats[$i][$j])); ?>'
+                });
+                </script>
                 <?php else: ?>
                 <td class="default" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
-                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
+                        <?php echo($seats[$i][$j]->x);echo($seats[$i][$j]->y); ?>
                     </p>
                 </td>
                 <?php endif; endfor ?>
             </tr>
             <?php endfor ?>
         </table>
-    </div>
     <hr>
     </div>
 </body>
