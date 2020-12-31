@@ -42,9 +42,9 @@
             <form action="{:url($action)}" method="post">
                 <label>加分名称:</label>
                 <input type="hidden" name="id" value="{$gradeaod->id}" />
-                <input type="text" name="aodname" value="{$gradeaod->aodname}" />
+                <input type="text" name="aodName" value="{$gradeaod->aod_name}" />
                 <label>分值大小:</label>
-                <input type="text" name="aodnum" value="{$gradeaod->getData('aodnum')}" />
+                <input type="text" name="aodNum" value="{$gradeaod->getData('aod_num')}" />
                 <button type="submit">保存</button>
             </form>
         </div>

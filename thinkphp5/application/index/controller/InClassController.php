@@ -26,7 +26,7 @@ class InClassController  extends IndexController
 
         // 接收教室id，接收上课签到时间
         // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
-        // $classroomId = Request::instance()->param('classroomId');
+        $classroomId = Request::instance()->param('classroomId');
         $classroomId = 1;
         $Classroom = Classroom::get($classroomId);
 

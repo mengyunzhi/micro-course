@@ -1,0 +1,25 @@
+{extend name="menu"/}
+{block name="title"}
+加减分查看
+{/block}
+{block name="content"}
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>当前上课分数</th>
+    </tr>
+    {volist name="Grades" id="_Grade" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_Grade->Student->name}</td>
+        <td>{$_Grade->Student->num}</td>
+        <td>{$_Grade->coursegrade}</td>
+    </tr>
+    {/volist}
+</table>
+{:$Grades->render()}
+{/block}
+{block name="page"}
+{/block}

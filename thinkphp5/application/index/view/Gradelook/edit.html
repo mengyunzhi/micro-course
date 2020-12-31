@@ -4,12 +4,11 @@
 <head>
     <meta charset="utf-8">
     <title>编辑</title>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css"  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
 </head>
 
 <body class="container">
-    <script src="__PUBLIC__/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <script src="__PUBLIC__/static/bootstrap-3.3.7-dist/js/jquery.min.js"></script>
+
     <!--菜单导航-->
     <div class="row">
         <div class="col-md-12">
@@ -43,6 +42,7 @@
                 <label  class="col-sm-2 control-label" style="font-size: 20px;">姓名:</label>
                 <div class="col-sm-10">
                 <input class="form-control" type="text" value="{$Grade->Student->name}" />
+                <input class="form-control" type="hidden" name="id" value="{$Grade->id}" />
                 </div>
                 </div>
                 <div class="form-group">
