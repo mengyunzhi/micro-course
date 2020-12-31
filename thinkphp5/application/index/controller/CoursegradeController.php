@@ -7,36 +7,36 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Grade;
-
+use app\common\model\Classroom;
 
 /**
- * 
+ * 用于在上课时对于上课表现成绩的查看
  */
-class CoursegradeController extends IndexController
-{
-     public function index()
-    {
+class CoursegradeController extends IndexController {
+    public function index() {
         try {
-            // 获取查询信息
-            $id = Request::instance()->param('id');
+            // 接收教室id，接收学生id
+            $classroomId = Request::instance()->param('classroomId');
+            $studentId = Request::instance()->param('studentId');
+
+            // 实例化教室和学生
+            $Classroom = Classroom::get($classroomId);
+            $Student = Student::get($studentId);
+
+            // 定制成绩查询数组，以求该学生该课程成绩
+            $que = array(
+                "student_id" => $studentId,
+                "course_id" => $Classroom->course_id
+            );
+
+            // 通过条件查询，获得该学生该课程对应的上课成绩
+            $Grade = Grade::get($que);
             
-            //实例化课程
-            $course = Course::get($id);
-            $pageSize = 2; // 每页显示5条数据
-            //获取该课程对应的学生
-            $Students = $course->Students;
-
-            $Grades = Grade::where('course_id', 'like', '%' . $id . '%')->paginate($pageSize);
-
-            //定制查询条件
-            if (!empty($id)) {
-
-            }
-
             // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('grades', $Grades);
-            $this->assign('course', $course);
+            $this->assign('Student', $Student);
+            $this->assign('Grade', $Grade);
+            $this->assign('Classroom', $Classroom);
+            $this->assign('Course', $Classroom->Course);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -53,9 +53,4 @@ class CoursegradeController extends IndexController
             return $e->getMessage();
         } 
     }
-
-
-    
-    
-
 }

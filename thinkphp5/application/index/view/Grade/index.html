@@ -19,13 +19,12 @@
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
         <td>{$_course->getData('usmix')}%</td>
-        <td><a class="btn btn-default" href="{:url('Coursegrade/index?id=' . $_course->id)}">增减分数</a> &nbsp;&nbsp;</td>
+        <td><a class="btn btn-default" href="{:url('coursegrade?courseId=' . $_course->id)}">成绩查看</a> &nbsp;&nbsp;</td>
         <td><a class="btn btn-default" href="{:url('Gradelook/index?id=' . $_course->id)}">成绩查看</a> &nbsp;&nbsp;</td>
         <td><a class="btn btn-sm btn-primary" href="{:url('Grade/edit?id=' . $_course->id)}">分数设置</a> &nbsp;&nbsp;</td>
     </tr>
     {/volist}
 </table>
 {/block}
-
 {block name="page"}
 {/block}{:$courses->render()}

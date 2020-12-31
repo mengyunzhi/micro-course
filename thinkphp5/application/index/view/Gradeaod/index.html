@@ -20,7 +20,7 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
-                            <li><a href="{:url('')}">上课管理</a></li>
+                            <li><a href="{:url('PreClass/index')}">上课管理</a></li>
                             <li><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -34,20 +34,19 @@
         </div>
     </div>
     <div class="col-md-4 text-right" style="float: right;">
-                      <a href="{:url('Gradeaod/add?course_id=' . $course->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增项</a>
+                      <a href="{:url('Gradeaod/add?courseId=' . $Classroom->Course->id . '&classroomId=' . $Classroom->id . '&studentId=' . $Student->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增项</a>
                     </div>
                     <br>
                     <br><br>
     <div class="row">
         <div class="col-md-12">
-
             {php}$action=request()->action()==='add'?'update':'update';{/php}
             <form class="form-horizontal" action="{:url($action)}" method="post">
                 <div class="form-group">
                     <label for="major" class="col-sm-2 control-label" style="font-size: 20px;">姓名:</label>
                     <div class="col-sm-10">
                         <input class="form-control" type="text"  value="{$Student->name}" />
-                        <input class="form-control" type="hidden" name="onclassId"  value="{$onclassId}" />
+                        <input class="form-control" type="hidden" name="gradeId"  value="{$Grade->id}" />
                     </div>
                 </div>
                 <div class="form-group">
@@ -71,9 +70,9 @@
                         加减分选择:
                     </label>
                     <div class="col-sm-10">
-                    <select class="form-control"  name="aodnum" id="gradeaod">
-                        {volist name="gradeaods" id="gradeaod" }
-                        <option value="{$gradeaod->aodnum}" {eq name="$gradeaod->aodnum" value="$gradeaod->aodnum" } selected="selected" {/eq}>{$gradeaod->aodname} </option> {/volist} </select> 
+                    <select class="form-control"  name="aodNum" id="gradeaod">
+                        {volist name="Gradeaods" id="_gradeaod" }
+                        <option value="{$_gradeaod->aod_num}" {eq name="$_gradeaod->aod_num" value="$_gradeaod->aod_num" } selected="selected" {/eq}>{$_gradeaod->aod_name} </option> {/volist} </select> 
                         <br>
                         <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10" style="margin-top: 25px;">
