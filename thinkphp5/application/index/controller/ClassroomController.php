@@ -173,6 +173,7 @@ class ClassroomController extends Controller
       }
       return $newSeats;
     }
+
     /**
      * 显示教室的座位图（不是模板）
      */
@@ -265,7 +266,7 @@ class ClassroomController extends Controller
     $this->assign('seats', $seats);
     $this->assign('SeatMap', $SeatMap);
     $this->assign('Classroom', $Classroom);
-    $url = 'http://' . $_SERVER['HTTP_HOST'];
+    $url =substr($_SERVER['HTTP_REFERER'], 0, -44);
     $this->assign('url', $url);
     return $this->fetch();
   }

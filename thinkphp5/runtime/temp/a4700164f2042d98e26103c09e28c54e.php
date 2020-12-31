@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:93:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\qrcode.html";i:1609335450;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:93:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\qrcode.html";i:1609399124;}*/ ?>
 <!DOCTYPE html>
 <html lang="zh-tw">
 
@@ -27,8 +27,7 @@
         <hr>
         <p style="color: green;">讲台</p>
     </h3>
-    <div class="container">
-        <table class="table table-bordered table-condensed ">
+        <table class="table table-bordered table-condensed " style="margin-left: -300px;">
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): if($seats[$i][$j]->getData("is_seat") == '0'): ?>
@@ -39,7 +38,7 @@
                 <script>
                 $("#<?php echo $i; ?><?php echo $j; ?>").qrcode({
                     render: 'div',
-                    size: 250,
+                    size: 160,
                     text: '<?php echo($url . url('isSeated?x=' . $seats[$i][$j], '&y=' . $seats[$i][$j])); ?>'
                 });
                 </script>
@@ -53,7 +52,6 @@
             </tr>
             <?php endfor ?>
         </table>
-    </div>
     <hr>
     </div>
 </body>
