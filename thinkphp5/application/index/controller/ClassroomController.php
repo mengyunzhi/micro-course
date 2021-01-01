@@ -23,15 +23,13 @@ class ClassroomController extends Controller
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
 
-      if(!Teacher::isLogin())
-        {
+      if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
-        }
-
+      }
 
       $Course = Course::get(3);
 
-      //查询
+      // 查询
       if(!empty($name)){
       	$Classroom->where('name','like','%'.$name.'%');
       }
@@ -93,15 +91,13 @@ class ClassroomController extends Controller
 
     /**
      * 保存教室座位图（利用foreach循环挨个保存教室座位）
-     * @param $seatMapId 座位图的id
+     * @param $seatMapId 座位图是id
      * @param $classroomId 教室id
      */
     public function saveSeat($seatMapId, $classroomId) {
       // 通过座位图id获取对应的座位模板的id，从而获得与座位模板对应的座位
       $seatAisles = new SeatAisle;
       $seatAisles = SeatAisle::where('seat_map_id', '=', $seatMapId)->select();
-
-      // 将从座位模板获取的座位复制并保存
       foreach ($seatAisles as $SeatAisle ) {
         $Seat = new Seat;
         $Seat->x = $SeatAisle->x;
@@ -170,6 +166,7 @@ class ClassroomController extends Controller
       // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板
       $seats = Seat::where('classroom_id', '=', $classroomId)->select();
       $SeatMap = SeatMap::get($Classroom->seat_map_id);
+      ksort($seats);
       if(empty($SeatMap)) {
         return $this->error('不存在对应模板');
       }
@@ -181,31 +178,40 @@ class ClassroomController extends Controller
     }
 
     /**
-     * 显示教室的座位图（不是模板）
+     * 转化座位为二维数组
+     * @param $seats 要展示的座位数组
+     * @param $SeatMap 对应的模板
      */
-    public function seating_plan() {
-      // 接收教室id，并根据教室id查找出该教室的所有座位，同时对教室进行实例化
-      $classroomId = Request::instance()->param('id');
-      $Seat = Seat::where('classroom_id', '=', $classroomId)->select();
-      $Classroom = Classroom::get($classroomId);
-
-      // 通过教室id获取对应的教室模板
-      $SeatMap = SeatMap::get($Classroom->seat_map_id);
-
-      // 将座位按先x后y的排序，并将排序后的结果存于newSeats中
+    public function seatDisplay($seats, $SeatMap) {
+      // 定义一个数组，将座位转换为二维数组按先x后y的方式排好序
       $newSeats = [];
-      foreach ($Seat as $seat)  {
+      foreach ($seats as $seat)  {
         $newSeats[$seat->x][$seat->y] = $seat;
       } 
       ksort ($newSeats);
       for($i = 0; $i < $SeatMap->x_map; $i++) {
         ksort($newSeats[$i]);
       }
-      if(empty($SeatMap)) {
-        return $this->error('本教室座位图还未创建');
-      }
+      return $newSeats;
+    }
 
-      // 将排序后的座位，教室对象，座位图对象传入V层进行渲染
+    /**
+     * 显示教室的座位图（不是模板）
+     */
+    public function seating_plan() {
+      // 接收教室id，并根据教室id查找出该教室的所有座位，同时对教室进行实例化
+      $classroomId = Request::instance()->param('id');
+      $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+      $Classroom = Classroom::get($classroomId);
+
+      // 通过教室id获取对应的教室模板，并判断是否存在
+      $SeatMap = SeatMap::get($Classroom->seat_map_id);
+      if(empty($SeatMap)) {
+              return $this->error('本教室座位图还未创建');
+            }
+      // 将座位转换为二维数组，并按照先x后y进行排序
+      $newSeats = $this->seatDisplay($seats, $SeatMap);
+      
       $this->assign('seat', $newSeats);
       $this->assign('Classroom', $Classroom);
       $this->assign('SeatMap', $SeatMap);
@@ -218,7 +224,7 @@ class ClassroomController extends Controller
     public function delete() {
       // 获取教室id，并进行实例化
       $classroomId = input('param.id');
-      $this->deleteSeat($id);
+      $this->deleteSeat($classroomId);
       $Classroom = Classroom::get($classroomId);
 
       // 删除教室
@@ -232,8 +238,8 @@ class ClassroomController extends Controller
      * 删除教室的座位
      * @param $id 教室id
      */
-    public function deleteSeat($classroomId) {
-      $Seats = Seat::where('classroom_id', '=', $classroomId)->select();
+    public function deleteSeat($id) {
+      $Seats = Seat::where('classroom_id', '=', $id)->select();
       foreach ($Seats as $Seat) {
         if(!$Seat->delete()) {
           return $this->error('座位未被正确删除');
@@ -251,23 +257,23 @@ class ClassroomController extends Controller
       $Seat = Seat::get($seatId);
 
       // 判断座位是否为过道，并将其改为相反状态
-      if($Seat->is_seat === "1") {
-        $Seat->is_seat = "0";
+      if($Seat->is_seat === 1) {
+        $Seat->is_seat = 0;
       } else {
-        $Seat->is_seat = "1";
+        $Seat->is_seat = 1;
       }
 
       // 增加判断座位状态更新后是否保存成功
       if(!$Seat->save()) {
         return $this->error('座位保存错误');
       }
-      return $this->success('保存成功', url('seatMapChange?id=' . $classroomId));
+      return $this->success('保存成功', url('seatMapChange?id=' . $classroomId)); 
   }
 
   /**
    * 思路同上 1为有人，0为无人,默认为0，名字最好不要是is_seated,因为它的功能主要是changeState
    */
-  public function is_seated() {
+  public function is_seated(){
     // 获取座位id，并对座位进行实例化
     $seatId = Request::instance()->param('id/d');
     $Seat = Seat::get($seatId);
@@ -280,6 +286,22 @@ class ClassroomController extends Controller
     }
 
     return $Seat->save();
-    }
+  }
+
+  /**
+   * 生成二维码
+   */
+  public function QRCode() {
+    $id = input('param.id/d');
+    $Classroom = Classroom::get($id);
+    $seats = Seat::where('classroom_id', '=', $id)->select();
+    $SeatMap = SeatMap::get($Classroom->seat_map_id);
+    $seats = $this->seatDisplay($seats, $SeatMap);
+    $this->assign('seats', $seats);
+    $this->assign('SeatMap', $SeatMap);
+    $this->assign('Classroom', $Classroom);
+    $url =substr($_SERVER['HTTP_REFERER'], 0, -44);
+    $this->assign('url', $url);
+    return $this->fetch();
   }
 }
