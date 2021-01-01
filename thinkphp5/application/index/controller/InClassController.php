@@ -26,7 +26,7 @@ class InClassController  extends IndexController
 
         // 接收教室id，接收上课签到时间
         // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
-        // $classroomId = Request::instance()->param('classroomId');
+        $classroomId = Request::instance()->param('classroomId');
         $classroomId = 1;
         $Classroom = Classroom::get($classroomId);
 
@@ -359,6 +359,11 @@ class InClassController  extends IndexController
 
         // 实例化教室对象
         $Classroom = Classroom::get($classroomId);
+
+        // 增加判断：当前截止时间和修改后的是否一直
+        if($Classroom->out_time === $outTime) {
+            return $this->success('修改下课时间成功', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+        }
 
         // 将获取到的下课截止时间赋值给Classroom对象
         $Classroom->out_time = $outTime;
