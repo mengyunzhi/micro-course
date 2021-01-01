@@ -1,17 +1,17 @@
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:99:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seating_plan.html";i:1609497666;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{block name="title"}标题{/block}</title>
+    <title>标题</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="">
 </head>
 
 <body class="container">
-    <?php use app\common\view\MenuView; ?>
-    <?php $MenuView = new MenuView; ?>
+    <?php use app\common\view\MenuView; $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
     <h3 style="margin-left: 545px;margin-bottom: 50px;">
         <?php echo($Classroom->name) ?>
@@ -20,31 +20,22 @@
     </h3>
     <div class="container">
         <table class="table table-bordered table-condensed ">
-            <?php $x = 0; ?>
-            <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
+            <?php $x = 0; for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
-                <?php $y = 0; ?>
-                <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-                
-                {eq name='$seat[$i][$j]->getData("is_seat")' value='0'}
+                <?php $y = 0; for($j = 0; $j < $SeatMap->y_map; $j++): if($seat[$i][$j]->getData("is_seat") == '0'): ?>
                 <td class="success" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
                         <?php echo($x);echo($y); $y = $y + 1;?>
                     </p>
                 </td>
-                {else /}
+                <?php else: ?>
                 <td class="default" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
                     </p>
                 </td>
-                {/eq}
-                <?php endfor; ?>
+                <?php endif; endfor; ?>
             </tr>
-            <?php if($y === 0): ?>
-            <?php $x--; ?>
-            <?php endif; ?>
-            <?php $x++; ?>
-            <?php endfor; ?>
+            <?php if($y === 0): $x--; endif; $x++; endfor; ?>
         </table>
     </div>
     <hr>

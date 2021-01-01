@@ -20,7 +20,7 @@
     <table style="margin: auto;">
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
         {volist name="seatAisles" id="seatAisle" key="key"}
-        {if($seatAisle->y === ($SeatMap->y_map-1))}
+        {if($seatAisle->y === 0)}
         <tr>
             {/if}
             <th>
@@ -30,7 +30,7 @@
                     <button class="btn btn-default">过道<?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{/eq}
                 </a>
             </th>
-            {if($seatAisle->y === 0)}
+            {if($seatAisle->y === ($SeatMap->y_map-1))}
         </tr>
         {/if}
         {/volist}

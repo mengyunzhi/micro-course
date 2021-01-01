@@ -25,8 +25,8 @@ class ClassroomController extends Controller
 
       if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
-      }
 
+      }
       $Course = Course::get(3);
 
       // 查询
@@ -166,11 +166,10 @@ class ClassroomController extends Controller
       // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板
       $seats = Seat::where('classroom_id', '=', $classroomId)->select();
       $SeatMap = SeatMap::get($Classroom->seat_map_id);
-      ksort($seats);
-      if(empty($SeatMap)) {
+      if(is_null($SeatMap)) {
         return $this->error('不存在对应模板');
       }
-
+      $seats = $this->seatDisplay($seats, $SeatMap);
       $this->assign('seats', $seats);
       $this->assign('Classroom', $Classroom);
       $this->assign('SeatMap', $SeatMap);

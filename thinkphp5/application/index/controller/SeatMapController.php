@@ -71,12 +71,14 @@ class SeatMapController extends Controller {
 		$id = Request::instance()->param('id/d');
 		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
 		rsort($seatAisle);
+		$seatAisle = array_reverse($seatAisle);
 		$this->assign('seatAisles', $seatAisle);
 		$SeatMap = new SeatMap;
 		$SeatMap = SeatMap::get($id);
 		$this->assign('SeatMap', $SeatMap);
 		return $this->fetch();
 	}
+
 	/**
 	 * 保存模板的行和列
 	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
@@ -152,14 +154,14 @@ class SeatMapController extends Controller {
 		$SeatAisle = SeatAisle::get($id);
 
 		// 如果是座位则切换为过道
-		if($SeatAisle->state == "1") {
+		if($SeatAisle->state === 1) {
 
-			$SeatAisle->state = "0";
+			$SeatAisle->state = 0;
 		}
 		// 反之切换为座位
 		else {
 
-			$SeatAisle->state = "1";
+			$SeatAisle->state = 1;
 		}
 		if(!$SeatAisle->save()) {
 			$this->error('系统未找到ID为' . $id . '的记录');
