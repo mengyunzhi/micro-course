@@ -27,8 +27,6 @@ class ClassroomController extends Controller
         {
             return $this->error('plz login first',url('Login/index'));
         }
-
-
       $Course = Course::get(3);
 
       //查询
@@ -146,12 +144,12 @@ class ClassroomController extends Controller
       $Classroom = Classroom::get($id);
       $seats = Seat::where('classroom_id', '=', $id)->select();
       $SeatMap = SeatMap::where('id', '=', $Classroom->seat_map_id)->select();
-      ksort($seats);
       if(empty($SeatMap)) {
         return $this->error('不存在对应模板');
       }
       $SeatMap = $SeatMap[0];
-      $this->assign('seats', $seats);
+      $seats = $this->seatDisplay($seats, $SeatMap);
+      $this->assign('seat', $seats);
       $this->assign('Classroom', $Classroom);
       $this->assign('SeatMap', $SeatMap);
       return $this->fetch();
@@ -229,10 +227,10 @@ class ClassroomController extends Controller
         $classroomId = input('param.classroomId');
         $Seat = new Seat;
         $Seat = Seat::get($id);
-        if($Seat->is_seat === "1") {
-          $Seat->is_seat = "0";
+        if($Seat->is_seat === 1) {
+          $Seat->is_seat = 0;
         } else {
-          $Seat->is_seat = "1";
+          $Seat->is_seat = 1;
         }
         if(!$Seat->save()) {
           return $this->error('座位保存错误');

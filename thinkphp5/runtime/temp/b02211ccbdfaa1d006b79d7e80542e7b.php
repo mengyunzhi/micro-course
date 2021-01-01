@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\edit.html";i:1609294296;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:90:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\edit.html";i:1609499890;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,7 +43,7 @@
     <hr>
     <table style="margin: auto;">
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
-        <?php if(is_array($seatAisles) || $seatAisles instanceof \think\Collection): $key = 0; $__LIST__ = $seatAisles;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$seatAisle): $mod = ($key % 2 );++$key;if(($seatAisle->y === ($SeatMap->y_map-1))): ?>
+        <?php if(is_array($seatAisles) || $seatAisles instanceof \think\Collection): $key = 0; $__LIST__ = $seatAisles;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$seatAisle): $mod = ($key % 2 );++$key;if(($seatAisle->y === 0)): ?>
         <tr>
             <?php endif; ?>
             <th>
@@ -53,7 +53,7 @@
                     <button class="btn btn-default">过道<?php echo($seatAisle->x); echo($seatAisle->y) ?></button><?php endif; ?>
                 </a>
             </th>
-            <?php if(($seatAisle->y === 0)): ?>
+            <?php if(($seatAisle->y === ($SeatMap->y_map-1))): ?>
         </tr>
         <?php endif; endforeach; endif; else: echo "" ;endif; ?>
     </table>

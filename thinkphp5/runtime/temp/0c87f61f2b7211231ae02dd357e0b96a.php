@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:93:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\admin_course\add.html";i:1606534277;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1606533971;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:89:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\seat_map\add.html";i:1609293669;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
+模板添加
 </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="">
@@ -38,20 +39,19 @@
             
 <div class="container">
     <form action="<?php echo url('save'); ?>" method="post">
-        <input type="hidden" name="httpref" value="<?php echo $_SERVER['HTTP_REFERER']; ?>">
         <div class="form-group">
-            <label for="name" style="font-size: 20px;margin-top: 40px">课程名</label>
-            <input type="text" name="name" id="name" class="form-control" />
+            <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板名称:</label>
+            <input name="name" id="name" class="form-control" />
         </div>
         <div class="form-group">
-            <label style="font-size: 20px;margin-top: 20px">对应教师</label>
-            <select name="teacher_id" id="teacher" class="form-control">
-                <?php if(is_array($teachers) || $teachers instanceof \think\Collection): $i = 0; $__LIST__ = $teachers;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$_Teacher): $mod = ($i % 2 );++$i;?>
-                <option value="<?php echo $_Teacher->getData('id'); ?>"><?php echo $_Teacher->getData('name'); ?></option>
-                <?php endforeach; endif; else: echo "" ;endif; ?>
-            </select>
+            <label for="name" style="font-size: 20px;margin-top: 20px;">输入教室总行数:</label>
+            <input name="xMap" id="xMap" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-default" style="margin-top: 20px">submit</button>
+        <div class="form-group">
+            <label for="name" style="font-size: 20px;margin-top: 20px;">输入教室总列数:</label>
+            <input name="yMap" id="yMap" class="form-control" />
+        </div>
+        <a href="<?php echo url('save'); ?>"><button type="submit" class="btn btn-default" style="margin-top: 20px">submit</button></a>
     </form>
 </div>
 

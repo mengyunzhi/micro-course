@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:95:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\admin_teacher\edit.html";i:1608539380;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:95:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\admin_teacher\edit.html";i:1609490800;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,6 +52,10 @@
                 <div class="form-group">
                     <label for="name" style="font-size: 20px;margin-top: 20px;">姓名:</label>
                     <input type="text" name="name" id="name" value="<?php echo $Teacher->name; ?>" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="username" style="font-size: 20px;margin-top: 20px;">用户名:</label>
+                    <input type="text" name="username" id="username" value="<?php echo $Teacher->username; ?>" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label for="teacher_id" style="font-size: 20px;margin-top: 20px;">工号:</label>

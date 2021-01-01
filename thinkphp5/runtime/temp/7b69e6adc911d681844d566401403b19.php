@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:99:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seating_plan.html";i:1609249284;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:99:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seating_plan.html";i:1609497666;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,23 +20,22 @@
     </h3>
     <div class="container">
         <table class="table table-bordered table-condensed ">
-            <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
+            <?php $x = 0; for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
-                <?php for($j = 0; $j < $SeatMap->y_map; $j++): if($seat[$i][$j]->getData("is_seat") == '0'): ?>
+                <?php $y = 0; for($j = 0; $j < $SeatMap->y_map; $j++): if($seat[$i][$j]->getData("is_seat") == '0'): ?>
                 <td class="success" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
-                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
+                        <?php echo($x);echo($y); $y = $y + 1;?>
                     </p>
                 </td>
                 <?php else: ?>
                 <td class="default" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
-                        <?php echo($seat[$i][$j]->x);echo($seat[$i][$j]->y); ?>
                     </p>
                 </td>
-                <?php endif; endfor ?>
+                <?php endif; endfor; ?>
             </tr>
-            <?php endfor ?>
+            <?php if($y === 0): $x--; endif; $x++; endfor; ?>
         </table>
     </div>
     <hr>

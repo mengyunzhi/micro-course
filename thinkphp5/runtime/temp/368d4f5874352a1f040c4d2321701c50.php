@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\edit.html";i:1609246588;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:91:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\edit.html";i:1609500705;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,8 +47,12 @@
                 </div>
                 <div class="form-group">
                     <label for="seat_map_id">对应模板编号</label>
-                    <select class="form-control" name="seat_map_id">
+                    <select class="form-control" name="seat_map_id" value="">
+                        <option value="<?php echo $Classroom->seat_map_id; ?> selected">
+                            <?php echo $Classroom->seat_map_id; ?>
+                        </option>
                         <?php if(is_array($seatMaps) || $seatMaps instanceof \think\Collection): $key = 0; $__LIST__ = $seatMaps;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$SeatMap): $mod = ($key % 2 );++$key;?>
+
                         <option value="<?php echo $SeatMap->id; ?>">
                             <?php echo $SeatMap->id; ?>
                         </option>

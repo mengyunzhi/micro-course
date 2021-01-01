@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:89:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\course\index.html";i:1608604718;s:87:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index\menu.html";i:1608687529;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:1:{s:87:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index\menu.html";i:1608687529;}*/ ?>
 <!--菜单导航-->
 <div class="row">
     <div class="col-md-12">

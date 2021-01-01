@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:100:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seatmapchange.html";i:1609243450;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:100:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\classroom\seatmapchange.html";i:1609500037;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,32 +41,27 @@
     <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
     <hr>
     <table>
-        <label class="container">
-            <h3 style="text-align: center;">讲台</h3>
-        </label>
-        <?php if(is_array($seats) || $seats instanceof \think\Collection): $key = 0; $__LIST__ = $seats;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$seat): $mod = ($key % 2 );++$key;if(($seat->y === ($SeatMap->y_map-1))): ?>
-        <tr>
-            <?php endif; ?>
-            <th>
-                <a href="<?php echo url('isSeat?id=' . $seat->getData('id') ,'&classroomId=' . $Classroom->id); ?>">
-                    <?php if($seat->getData("is_seat") == '0'): ?>
-                    <button class="btn btn-success">座位
-                        <?php echo($seat->x); echo($seat->y) ?>
-                    </button>
-                    <?php else: ?>
-                    <button class="btn btn-default">过道
-                        <?php echo($seat->x); echo($seat->y) ?>
-                    </button>
-                    <?php endif; ?>
-                </a>
-            </th>
-            <?php if(($seat->y === 0)): ?>
-        </tr>
-        <?php endif; endforeach; endif; else: echo "" ;endif; ?>
-    </table>
-    <?php echo($Classroom->id); ?>
-    <div style="margin-left: auto;margin-right: auto;">
-        <a href="<?php echo url('edit?id=' . $Classroom->id); ?>"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
+        <table class="table table-bordered table-condensed ">
+            <?php $x = 0; for($i = 0; $i < $SeatMap->x_map; $i++): ?>
+            <tr>
+                <?php $y = 0; for($j = 0; $j < $SeatMap->y_map; $j++): ?>
+                <td>
+                    <a href="<?php echo url('isSeat?id=' . $seat[$i][$j]->getData('id') . '&classroomId=' . $Classroom->id); ?>">
+                        <?php if($seat[$i][$j]->getData("is_seat") == '0'): ?>
+                        <button class="btn btn-success" style="height: 50px;width: 80px;">座位 <?php echo $x; ?><?php echo $y; $y++;?>
+                        </button>
+                        <?php else: ?>
+                        <button class="btn btn-default" style="height: 50px;width: 80px;">过道
+                        </button>
+                        <?php endif; ?>
+                    </a>
+                </td>
+                <?php endfor; ?>
+            </tr>
+            <?php if($y === 0): $x--; endif; $x++; endfor; ?>
+        </table>
+        <div style="margin-left: auto;margin-right: auto;">
+            <a href="<?php echo url('edit?id=' . $Classroom->id); ?>"><button type="submit" class="btn btn-default" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">submit</button></a></div>
 </div>
 
             <!-- 定义页数模板 -->

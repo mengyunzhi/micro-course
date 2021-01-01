@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:87:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\term\index.html";i:1608539380;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:2:{s:87:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\term\index.html";i:1609491883;s:82:"D:\xampp\htdocs\micro-course\thinkphp5\public/../application/index\view\index.html";i:1608540289;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 

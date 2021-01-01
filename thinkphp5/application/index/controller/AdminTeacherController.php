@@ -65,6 +65,7 @@ class AdminTeacherController extends Controller
         // 设置默认值
         $Teacher->id = 0;
         $Teacher->name = '';
+        $Teacher->username = '';
         $Teacher->teacher_id = '';
         $this->assign('Teacher', $Teacher);
 
@@ -76,6 +77,7 @@ class AdminTeacherController extends Controller
         try {
             // 获取传入ID
             $id = Request::instance()->param('id/d');
+            dump($id);
 
             // 判断是否成功接收
             if (is_null($id) || 0 === $id) {
@@ -111,6 +113,7 @@ class AdminTeacherController extends Controller
     {
         // 写入要更新的数据
         $Teacher->name = input('post.name');
+        $Teacher->username = input('post.username');
         $Teacher->teacher_id = input('post.teacher_id');
 
         // 更新或保存
