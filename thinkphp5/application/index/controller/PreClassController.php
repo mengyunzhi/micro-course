@@ -10,7 +10,7 @@ use app\common\model\Teacher;
 
 
 /**
- * 课前类，负责统计课前签到时间设置及签到课程选择
+ * 课前管理部分，负责统计课前签到时间设置及签到课程选择
  */
 class PreClassController extends IndexController
 {
@@ -29,6 +29,8 @@ class PreClassController extends IndexController
         // 增加判断是否是在上课签到时间
         $this->isSign($Classroom, $id);
 
+        // 获取当前时间
+        $thisTime = time();
 
         // 实例化老师	
         $Teacher = Teacher::get($id);
@@ -44,15 +46,19 @@ class PreClassController extends IndexController
 
     /**
     * 判断该教室是否是在签到时间
-    * @param Classroom为教室对象
-    * @param teacherId为教师对应的id
+    * @param Classroom 教室对象
+    * @param teacherId 教师对应的id
     */
     protected function isSign($Classroom, $teacherId) {
-        // 增加判断当前时间和签到起始时间与签到截止时间的关系
-        if ($Classroom->begin_time < time() && $Classroom->out_time > time()) {
+        // 增加判断当前时间和下课截止时间的关系，如果未到下课时间，则再判断是否对应上课老师
+        // 首先将时间戳转换为小时:分钟的形式再进行比较
+        $currentTime = date('G/i', time());
+        $outTime = date('G/i', $Classroom->out_time);
+        $beginTime = date('G/i', $Classroom->begin_time);
+        if ($outTime > $currentTime && $currentTime > $beginTime){
             // 增加判断是否老师为当前签到时间对应的老师
             if ($teacherId == $Classroom->Course->Teacher->id) {
-                return $this->success('当前处于签到时间', url('OnClass/index?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->Course->id . '&beginTime=' . $Classroom->begin_time . '&outTime=' . $Classroom->out_time . '&reclass=' . 1));;
+                return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&$classroomId=' . $Classroom->id));;
             }
         } 
     }

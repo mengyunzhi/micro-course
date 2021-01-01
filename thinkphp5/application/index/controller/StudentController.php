@@ -5,6 +5,7 @@ use app\common\model\Course;
 use think\Request;
 use app\index\controller\Login;
 use app\common\model\Grade;
+use app\common\model\Classroom;
 use app\common\model\CourseStudent;
 class StudentController extends IndexController
 {
@@ -56,38 +57,6 @@ class StudentController extends IndexController
             return $e->getMessage();
         } 
     }
-
-    /**
-    * 对应上课管理时的单击座位查看学生信息
-    */
-    public function look()
-    {
-        // 获取学生对应的id和课程对应id,实例化请求
-        $Request = Request::instance();
-        $id = Request::instance()->param('id');
-        $courseId = Request::instance()->param('course_id');
-        
-        // 实例化对象，通过课程和学生对应的id得出上课时此学生此课程的成绩，方便进行加减分操作
-        $Student = Student::get($id);
-        $Course = Course::get($courseId);
-        $grade=array(
-            "course_id"=>$courseId,
-            "student_id"=>$id
-        );
-
-        // select方法获取的是对象数组，下面传值时要传入首地址,增加判断是否有该学生的成绩信息
-        $Grade = Grade::where($grade)->select();
-        $number = sizeof($Grade);
-        if ($number == 0) {
-            return $this->error('未查到该学生对应该课程的成绩', $Request->header('referer'));
-        }
-
-        $this->assign('Student', $Student);
-        $this->assign('Course', $Course);
-        $this->assign('Grade', $Grade[0]);
-        return $this->fetch();
-    }
-
 
 	public function add()
 	{
