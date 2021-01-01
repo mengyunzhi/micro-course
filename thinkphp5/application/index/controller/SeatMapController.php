@@ -33,7 +33,6 @@ class SeatMapController extends Controller {
 		$SeatMap = SeatMap::get($id);
 		$seatAisle = new SeatAisle;
 		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
-		rsort($seatAisle);
 		$this->assign('seatMap1', $seatMapAsc);
 		$this->assign('seatMap2', $seatMapDesc);
 		$this->assign('SeatMap',$SeatMap);
@@ -43,25 +42,25 @@ class SeatMapController extends Controller {
 
 	}
 	/**
-	 * 返回座位图模板数据库里面id升序的数组
+	 * 返回数据库里面id升序的数组
 	 */
 	public function asc() {
-		return SeatMap::order('id')->select();
+		return(SeatMap::order('id')->select());
 		
 	}
 	/**
-	 * 返回座位图模板数据库id降序的数组
-	 * @param $arry 要逆置的数组
+	 * 返回数据库id降序的数组
 	 */
-	public function desc($arry) {
-		return array_reverse ($arry);
+	public function desc() {
+		return(SeatMap::order('id desc')->select());
 	}
-
 	/**
 	 * 增加模板
 	 */
 	public function add(){
+
 		return $this->fetch();
+
 	}
 	/**
 	 * 编辑模板座位图的过道以及座位
@@ -69,9 +68,11 @@ class SeatMapController extends Controller {
 	 */
 	public function edit() {
 		$id = Request::instance()->param('id/d');
-		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
-		rsort($seatAisle);
-		$this->assign('seatAisles', $seatAisle);
+		$SeatAisle = new SeatAisle;
+		$SeatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
+		$this->assign('seatAisles', $SeatAisle);
+		// dump($SeatAisle);
+		// die();
 		$SeatMap = new SeatMap;
 		$SeatMap = SeatMap::get($id);
 		$this->assign('SeatMap', $SeatMap);
@@ -79,17 +80,9 @@ class SeatMapController extends Controller {
 	}
 	/**
 	 * 保存模板的行和列
-	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
 	 */
 	public function save() {
 		$SeatMap = new SeatMap;
-		$SeatMap->name = input('post.name');
-		$SeatMapPre = SeatMap::where('name', '=', input('post.name'))->select();
-		if(!empty($SeatMapPre)) {
-			$idPre = $SeatMapPre[0]->id;
-			$this->deleteSeatAisle($idPre);
-			$SeatMapPre[0]->delete();
-		}
 		$SeatMap->x_map = Request::instance()->post('xMap');
 		$SeatMap->y_map = Request::instance()->post('yMap');
 		if(!$SeatMap->save()) {
@@ -106,7 +99,6 @@ class SeatMapController extends Controller {
 		}
 		$this->addseatAisle($id, url('edit?id=' . $id));
 	}
-
 	/**
 	 * 利用双重for循环挨个存储座位模板的座位
 	 */
@@ -184,19 +176,19 @@ class SeatMapController extends Controller {
 		$id = Request::instance()->param('id');
 		if($this->DeleteSeatAisle($id)) {
 			$seatMap = SeatMap::get($id);
-			$seats = $this->asc();
-			
+
 			// 如果是最后一个则其前一个座位变为最后一个
 			if($seatMap->is_last === 1) {
-				$SeatMap = array_reverse($seats);
+				$SeatMap = $this->desc();
 
 				$SeatMap[1]->is_last = 1;
 				$SeatMap[1]->save();
 			}
 
+
 			// 如果是第一个则其后一个座位变为第一个
 			if($seatMap->is_first === 1) {
-				$SeatMap = $seats;
+				$SeatMap = $this->asc();
 				$SeatMap[1]->is_first = 1;
 				$SeatMap[1]->save();
 			}
