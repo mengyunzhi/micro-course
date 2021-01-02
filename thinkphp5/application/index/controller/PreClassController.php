@@ -21,7 +21,7 @@ class PreClassController extends IndexController
 
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
-        $classroomId = 1;
+        $classroomId = 35;
  
         // 实例化Classroom对象
         $Classroom = Classroom::get($classroomId);
@@ -52,10 +52,8 @@ class PreClassController extends IndexController
     protected function isSign($Classroom, $teacherId) {
         // 增加判断当前时间和下课截止时间的关系，如果未到下课时间，则再判断是否对应上课老师
         // 首先将时间戳转换为小时:分钟的形式再进行比较
-        $currentTime = date('G/i', time());
-        $outTime = date('G/i', $Classroom->out_time);
-        $beginTime = date('G/i', $Classroom->begin_time);
-        if ($outTime > $currentTime && $currentTime > $beginTime){
+        $currentTime = time();
+        if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time){
             // 增加判断是否老师为当前签到时间对应的老师
             if ($teacherId == $Classroom->Course->Teacher->id) {
                 return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&$classroomId=' . $Classroom->id));;

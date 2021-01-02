@@ -51,11 +51,11 @@
             <label style="font-size: 15px;">分钟</label> <button>保存</button> </td></form>
         <form action="{:url('changeOutTime')}" method="post">
         <td><label style="font-size: 15px;">下课时间:<select name="outTime">
-        <option value="1609293900" {eq name="Classroom->out_time" value="1609293900" } selected="selected" {/eq}>10:05</option>
-        <option value="1609300800" {eq name="Classroom->out_time" value="1609300800" } selected="selected" {/eq}>12:00</option>
-        <option value="1609313700" {eq name="Classroom->out_time" value="1609313700" } selected="selected" {/eq}>15:35</option>
-        <option value="1609320600" {eq name="Classroom->out_time" value="1609320600" } selected="selected" {/eq}>17:30</option>
-        <option value="1609330500" {eq name="Classroom->out_time" value="1609330500" } selected="selected" {/eq}>20:15</option>
+        <option value="1" {eq name="outTime" value="10/05" } selected="selected" {/eq}>10:05</option>
+        <option value="2" {eq name="outTime" value="12/00" } selected="selected" {/eq}>12:00</option>
+        <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35</option>
+        <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30</option>
+        <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15</option>
     </select>分</label><button>保存</button></td></form>
     </table>
     
@@ -110,162 +110,23 @@
     <div class="row" style="margin-top: 25px;">
         <hr>
         <div class="container">
-            <h3 style="margin-left: 545px;margin-bottom: 20px;margin-top: -10px;">A101</h3>
-            <table class="table table-bordered table-condensed ">
-                <tr>
-                    <td class="success"><a href="{:url('coursegrade/index?studentId=95&classroomId=1')}">000</a></td>
-                    <td class="danger">001</td>
-                    <td class="success">002</td>
-                    <td class="success">003</td>
-                    <td class="success">004</td>
-                    <td class="success">005</td>
-                    <td style="border: none;"></td>
-                    <td class="success">006</td>
-                    <td class="success">007</td>
-                    <td class="success">008</td>
-                    <td class="danger">009</td>
-                    <td class="success">010</td>
-                    <td class="success">011</td>
-                </tr>
-                <tr>
-                    <td class="success">012</td>
-                    <td class="danger">013</td>
-                    <td class="success">014</td>
-                    <td class="success">015</td>
-                    <td class="success">016</td>
-                    <td class="success">017</td>
-                    <td style="border: none;"></td>
-                    <td class="success">018</td>
-                    <td class="success">019</td>
-                    <td class="success">020</td>
-                    <td class="danger">021</td>
-                    <td class="success">022</td>
-                    <td class="success">023</td>
-                </tr>
-                <tr>
-                    <td class="success">024</td>
-                    <td class="danger">025</td>
-                    <td class="success">026</td>
-                    <td class="success">027</td>
-                    <td class="success">028</td>
-                    <td class="success">029</td>
-                    <td style="border: none;"></td>
-                    <td class="success">030</td>
-                    <td class="success">031</td>
-                    <td class="success">032</td>
-                    <td class="danger">033</td>
-                    <td class="success">034</td>
-                    <td class="success">035</td>
-                </tr>
-                <tr>
-                    <td class="success">036</td>
-                    <td class="danger">037</td>
-                    <td class="success">038</td>
-                    <td class="success">039</td>
-                    <td class="success">040</td>
-                    <td class="success">041</td>
-                    <td style="border: none;"></td>
-                    <td class="success">042</td>
-                    <td class="success">043</td>
-                    <td class="success">044</td>
-                    <td class="danger">045</td>
-                    <td class="success">046</td>
-                    <td class="success">047</td>
-                </tr>
-                <tr>
-                    <td class="success">048</td>
-                    <td class="danger">049</td>
-                    <td class="success">050</td>
-                    <td class="success">051</td>
-                    <td class="success">052</td>
-                    <td class="success">053</td>
-                    <td style="border: none;"></td>
-                    <td class="success">054</td>
-                    <td class="success">055</td>
-                    <td class="success">056</td>
-                    <td class="danger">057</td>
-                    <td class="success">058</td>
-                    <td class="success">059</td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="success">060</td>
-                    <td class="danger">061</td>
-                    <td class="success">062</td>
-                    <td class="success">063</td>
-                    <td class="success">064</td>
-                    <td class="success">065</td>
-                    <td style="border: none;"></td>
-                    <td class="success">066</td>
-                    <td class="success">067</td>
-                    <td class="success">068</td>
-                    <td class="danger">069</td>
-                    <td class="success">070</td>
-                    <td class="success">071</td>
-                </tr>
-                <tr>
-                    <td class="success">072</td>
-                    <td class="danger">073</td>
-                    <td class="success">074</td>
-                    <td class="success">075</td>
-                    <td class="success">076</td>
-                    <td class="success">077</td>
-                    <td style="border: none;"></td>
-                    <td class="success">078</td>
-                    <td class="success">079</td>
-                    <td class="success">080</td>
-                    <td class="danger">081</td>
-                    <td class="success">082</td>
-                    <td class="success">083</td>
-                </tr>
-                <tr>
-                    <td class="success">084</td>
-                    <td class="danger">085</td>
-                    <td class="success">086</td>
-                    <td class="success">087</td>
-                    <td class="success">088</td>
-                    <td class="success">089</td>
-                    <td style="border: none;"></td>
-                    <td class="success">090</td>
-                    <td class="success">091</td>
-                    <td class="success">092</td>
-                    <td class="danger">093</td>
-                    <td class="success">094</td>
-                    <td class="success">095</td>
-                </tr>
-                <tr>
-                    <td class="success">096</td>
-                    <td class="danger">097</td>
-                    <td class="success">098</td>
-                    <td class="success">099</td>
-                    <td class="success">100</td>
-                    <td class="success">101</td>
-                    <td style="border: none;"></td>
-                    <td class="success">102</td>
-                    <td class="success">103</td>
-                    <td class="success">104</td>
-                    <td class="danger">105</td>
-                    <td class="success">106</td>
-                    <td class="success">107</td>
-                </tr>
-                <tr>
-                    <td class="success">108</td>
-                    <td class="danger">109</td>
-                    <td class="success">110</td>
-                    <td class="success">111</td>
-                    <td class="success">112</td>
-                    <td class="success">113</td>
-                    <td style="border: none;"></td>
-                    <td class="success">114</td>
-                    <td class="success">115</td>
-                    <td class="success">116</td>
-                    <td class="danger">117</td>
-                    <td class="success">118</td>
-                    <td class="success">119</td>
-                </tr>
-            </table>
+            <table style="margin: auto;">
+        <label class="container"><h3 style="text-align: center;">讲台</h3></label>
+        <?php for($i = 0; $i < $SeatTemplate->x_map; $i++): ?>
+        <tr>
+            <?php for($j = 0; $j < $SeatTemplate->y_map; $j++): ?>
+            <th>
+                <a href="{:url('coursegrade/index?studentId=95&classroomId=35')}">
+                    {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
+                    <button class="btn btn-info" style="width:60px;"><?php echo($seats[$i][$j]->x);echo ("-"); echo($seats[$i][$j]->y); ?></button>{else /}
+                    <button class="btn btn-default" style="width:60px;"><?php echo($seats[$i][$j]->x); echo($seats[$i][$j]->y); ?></button>
+                    {/eq}
+                </a>
+            </th>
+            <?php endfor ?>
+        </tr>
+        <?php endfor ?>
+    </table>
         </div>
     </div>
     <div style="float: left;">

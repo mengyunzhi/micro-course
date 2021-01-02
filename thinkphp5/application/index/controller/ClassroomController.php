@@ -68,7 +68,7 @@ class ClassroomController extends Controller
       $Classroom->course_id = 0;
       $Classroom->begin_time = 0;
       $Classroom->out_time = 0;
-      $Classroom->sign_deadline = 0;
+      $Classroom->sign_deadline_time = 0;
       $Classroom->sign_begin_time = 0;
       $Classroom->sign_time = 0;
       $this->saveSeatMap($Classroom);
@@ -211,7 +211,7 @@ class ClassroomController extends Controller
             }
       // 将座位转换为二维数组，并按照先x后y进行排序
       $newSeats = $this->seatDisplay($seats, $SeatMap);
-      
+
       $this->assign('seat', $newSeats);
       $this->assign('Classroom', $Classroom);
       $this->assign('SeatMap', $SeatMap);
