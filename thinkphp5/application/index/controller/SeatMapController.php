@@ -156,14 +156,14 @@ class SeatMapController extends Controller {
 		$SeatAisle = SeatAisle::get($id);
 
 		// 如果是座位则切换为过道
-		if($SeatAisle->state == "1") {
+		if($SeatAisle->state === 1) {
 
-			$SeatAisle->state = "0";
+			$SeatAisle->state = 0;
 		}
 		// 反之切换为座位
 		else {
 
-			$SeatAisle->state = "1";
+			$SeatAisle->state = 1;
 		}
 		if(!$SeatAisle->save()) {
 			$this->error('系统未找到ID为' . $id . '的记录');
