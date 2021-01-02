@@ -139,6 +139,8 @@ class SeatMapController extends Controller {
 		$seatAisle->x = $i;
 		$seatAisle->y = $j;
 		$seatAisle->seat_map_id = $seatMapId;
+		$seatAisle->create_time = time();
+		$seatAisle->update_time = time();
 		return $seatAisle->save();
 	}
 
