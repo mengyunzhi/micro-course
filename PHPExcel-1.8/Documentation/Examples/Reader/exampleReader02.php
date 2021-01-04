@@ -26,7 +26,7 @@ include 'PHPExcel/IOFactory.php';
 <h2>Simple File Reader using a Specified Reader</h2>
 <?php
 
-$inputFileName = './sampleData/example1.xls';
+$inputFileName = 'd:/data/123.xls';
 
 echo 'Loading file ',pathinfo($inputFileName,PATHINFO_BASENAME),' using PHPExcel_Reader_Excel5<br />';
 $objReader = new PHPExcel_Reader_Excel5();
