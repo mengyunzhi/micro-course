@@ -7,6 +7,9 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\ClassDetail;
 use app\common\model\Grade;
+use app\common\model\Seat;
+use app\common\model\Classroom;
+use app\common\model\ClassCourse;
 
 /**
  * 负责教师和学生扫码登陆
@@ -121,19 +124,32 @@ class LoginController extends Controller
     public function afterSign() {
         // 获取学生id，并将学生对象实例化
         $studentId = Request::instance()->param('studentId');
-        $courseId = Request::instance()->param('courseId');
+        $seatId = Request::instance()->param('seatId');
         $Student = Student::get($studentId);
+
+        // 如果座位id接收值非空，说明正常扫码上课成功
+        if (!is_null($seatId)) {
+            // 实例化座位对象
+            $Seat = Seat::get($seatId);
+            // 通过座位id获取对应的教室信息
+            $Classroom = Classroom::get($Seat->classroom_id);
+            // 通过教室和教室的上课开始时间确定classCourse的id
+            $classCourse = classCourse::get(['begin_time' => $Classroom->begin_time,
+                'classroom_id' => $Classroom->id ] 
+        );
+        }
 
         // 通过中间表和学生id，获取该学生所上的课程
         $que = array(
             'student_id' => $studentId,
-            'class_course_id' => $courseId
+            'class_course_id' => $classCourse->id
         );
         $pageSize = 2;
         $classDetails = ClassDetail::where($que)->paginate($pageSize);
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
+        $this->assign('Classroom', $Classroom);
 
         return $this->fetch();
     }
