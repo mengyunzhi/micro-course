@@ -70,7 +70,7 @@ class CourseController extends IndexController
         public function add()
     {
         $id = Request::instance()->param('id');
-        $Term = Term::where('app', 'like', '%' . 1 . '%')->paginate();      
+        $Term = Term::where('state', 'like', '%' . 1 . '%')->paginate();      
         $Teacher = Teacher::get($id);
         $Course=new Course;
         $Course->name = '';
