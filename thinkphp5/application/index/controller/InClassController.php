@@ -12,7 +12,10 @@ use app\common\model\PreClass;
 use app\common\model\SeatMap;
 use app\common\model\ClassDetail;
 use app\common\model\ClassCourse;
+use Env;
+use PHPExcel_IOFactory;
 use PHPExcel;
+
 
 /**
 * 用于负责上课管理的各部分功能
@@ -234,7 +237,6 @@ class InClassController  extends IndexController
 
         // 进行赋值由于未传值，故用3表示
         // $Classroom->course_id = $courseId;
-        // 老师，因为那个数据库字段没有courseId，我改了之后就保错了
         $Classroom->course_id = 3;
 
         // 修改课程对应的信息(上课签到次数)
@@ -372,12 +374,13 @@ class InClassController  extends IndexController
     public function changeSignTime() {
         // 接收改变后的sigiTime和教室id：classroomId
         $signTime = Request::instance()->param('signTime');
+        var_dump($signTime);die();
         $classroomId = Request::instance()->param('classroomId');
 
         // 实例化教室对象
         $Classroom = Classroom::get($classroomId);
 
-        // 将signTime乘以60转换为秒赋值给我教室的sign_time属性
+        // 将signTime(分钟)赋值给我教室的sign_time属性
         $Classroom->sign_time = $signTime;
 
         // 根据上课时间和修改后的签到时长，从新设置签到截止时长
@@ -609,5 +612,148 @@ class InClassController  extends IndexController
        $string = date('Y/m/d/G/i',1609287900); return  $string ;
     }
 
-    
+    /**
+     * 文件导出成绩部分
+     */
+    public function fileExportGrade() {
+        // 获取时间和课程名，以用作文件名
+        $time = input('param.time');
+        $courseName = input('param.courseid');
+        require_once dirname(__FILE__) . '/../PHPExcel.php';
+
+
+        // Create new PHPExcel object
+        $objPHPExcel = new PHPExcel();
+
+        // Set document properties
+
+        $objPHPExcel->getProperties()->setCreator("Liting Chen")//创立者
+                                     ->setLastModifiedBy("yunzhi")//最后修改者
+                                     ->setTitle($time . $courseName)//文件名，以下的不用动
+                                     ->setSubject("Office 2007 XLSX Test Document")
+                                     ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+                                     ->setKeywords("office 2007 openxml php")
+                                     ->setCategory("Test result file");
+
+        // 添加数据
+        $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A1', '序号')
+                    ->setCellValue('B1', '姓名')
+                    ->setCellValue('C1', '学号')
+                    ->setCellValue('D1', '性别')
+                    ->setCellValue('E1', '加减分情况');
+
+                    // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
+                    $classDetails = ClassDetail::all();
+                    $count = 2;
+                    foreach ($classDetails as $ClassDetail) {
+                        $Student = Student::get($ClassDetail->student_id);
+                        // Miscellaneous glyphs, UTF-8
+                        $objPHPExcel->setActiveSheetIndex(0)
+                                    ->setCellValue('A' . $count, $count-1)
+                                    ->setCellValue('B' . $count, $Student->name)
+                                    ->setCellValue('C' . $count, $Student->num)
+                                    ->setCellValue('E' . $count, $ClassDetail->aod_num);
+                        if($Student->sex === 0) {
+                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '男');
+                        } else {
+                            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '女');
+                        }
+                        $count++;
+                    }
+       
+
+        // 导出的Excel表的表名，不是文件名
+        $objPHPExcel->getActiveSheet()->setTitle('加减分情况');
+
+        //必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
+        $objPHPExcel->setActiveSheetIndex(0);
+
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit; 
+    }
+     public function fileExportSign() {
+        require_once dirname(__FILE__) . '/../PHPExcel.php';
+
+
+        // Create new PHPExcel object
+        $objPHPExcel = new PHPExcel();
+
+        // Set document properties
+
+        $objPHPExcel->getProperties()->setCreator("Liting Chen")//创立者
+                                     ->setLastModifiedBy("yunzhi")//最后修改者
+                                     ->setTitle("Office 2007 XLSX Test Document")//文件名，以下的不用动
+                                     ->setSubject("Office 2007 XLSX Test Document")
+                                     ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+                                     ->setKeywords("office 2007 openxml php")
+                                     ->setCategory("Test result file");
+
+
+
+
+        // 添加数据
+        $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A1', '序号')
+                    ->setCellValue('B1', '姓名')
+                    ->setCellValue('C1', '学号')
+                    ->setCellValue('D1', '性别')
+                    ->setCellValue('E1', '邮件');
+                    
+                      
+
+                    // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
+                    $students = Student::all();
+                    $count = 2;
+                    foreach ($students as $Student) {
+                        // Miscellaneous glyphs, UTF-8
+                        $objPHPExcel->setActiveSheetIndex(0)
+                                    ->setCellValue('A' . $count, $count-1)
+                                    ->setCellValue('B' . $count, $Student->name)
+                                    ->setCellValue('C' . $count, $Student->num)
+                                    ->setCellValue('D' . $count, $Student->sex)
+                                    ->setCellValue('E' . $count, $Student->email);
+                        $count++;
+                    }
+       
+
+        // 导出的Excel表的表名，不是文件名
+        $objPHPExcel->getActiveSheet()->setTitle('成绩');
+
+        //必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
+        $objPHPExcel->setActiveSheetIndex(0);
+
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit; 
+    }
 }

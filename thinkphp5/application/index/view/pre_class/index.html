@@ -16,14 +16,26 @@
     <form class="form-horizontal" action="{:url('InClass/index')}" method="post">
         <input type="hidden" name="beginTime" value="{:time()}">
         <div class="form-group">
-            <label class="col-sm-2 control-label" style="font-size: 20px;">课程选择:</label>
+            <label class="col-sm-2 control-label" style="font-size: 20px;">
+                课程选择:
+            </label>
             <div class="col-sm-10">
                 <select class="form-control" name="course_id">
                     {volist name="courses" id="course" }
-                    <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}>{$course->name} </option> {/volist} </select> </div> </div> <div class="form-group">
-                        <div style="margin-left: 200px;margin-top: 20px;">
-                            <button type="submit" onclick="开始上课" class="btn btn-default">开始上课</button>
-                        </div>
+                        <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}>
+                            {$course->name} 
+                        </option> 
+                    {/volist}
+                </select> 
+            </div> 
+        </div>
+         <div class="form-group">
+            <div style="margin-left: 200px;margin-top: 20px;">
+                <button type="submit" onclick="开始上课" class="btn btn-default">
+                    开始上课
+                </button>
+            </div>
+        </div>
     </form>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
