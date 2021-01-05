@@ -1,23 +1,39 @@
 <?php
+namespace app\index\controller;
+use think\Controller;
+use think\Request;
+use think\validate;
 
-error_reporting(E_ALL);
-set_time_limit(0);
+class TestController extends IndexController
+{
+	public function index()
+	{
+		$i=1;
+		for($i;$i<5;$i++)
+		{
+			echo "数字为".$i;
+		}
+		$this->assign('i',$i);
+		return $this->fetch();
+	}
+	public function file() {
+		return $this->fetch();
+	}
+	public function file1() {
+    $uploaddir = 'd:/data/';
+    $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 
-date_default_timezone_set('Europe/London');
 
-/** PHPExcel_IOFactory */
-include './PHPExcel/IOFactory.php';
+    echo '<pre>';
+    if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+        echo "File is valid, and was successfully uploaded.\n";
+    } else {
+        echo "Possible file upload attack!\n";
+    }
 
+    echo 'Here is some more debugging info:';
+    print_r($_FILES);
 
-$inputFileName = '__PUBLIC__/static/example1.xls';
-echo 'Loading file ',pathinfo($inputFileName,PATHINFO_BASENAME),' using IOFactory to identify the format<br />';
-$objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
-
-
-echo '<hr />';
-
-$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-var_dump($sheetData);
-
-
-?>
+    print "</pre>";
+  }
+}
