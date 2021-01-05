@@ -355,7 +355,7 @@ class InClassController  extends IndexController
             $Classroom->sign_deadline_time = $signDeadlineTime;
             $Classroom->out_time = $eighthTime;
         }
-        if($beginTime >= $ninthTime && $beginTime <= $eighthTime) {
+        if($beginTime <= $ninthTime && $beginTime >= $eighthTime) {
             $Classroom->sign_time = 20;
             $Classroom->sign_begin_time = $ninthTime;
             $signDeadlineTime = $Classroom->sign_begin_time + $Classroom->sign_time * 60;;
@@ -404,7 +404,7 @@ class InClassController  extends IndexController
         $ClassCourse->classroom_id = $Classroom->id;
         $Course = course::get($courseId);
         $ClassCourse->teacher_id = $Course->teacher_id;
-        
+
         // 将上课课程信息保存
        if (!$ClassCourse->save()) {
         return $this->error('上课课程信息缓存失败，请重新开始上课', url('PreClass/index'));

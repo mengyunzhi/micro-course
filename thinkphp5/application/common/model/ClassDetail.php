@@ -16,6 +16,13 @@ class ClassDetail extends Model
 	}
 
 	/**
+	* 获取上课课程缓存对象
+	*/
+	public function classCourse() {
+		return $this->belongsto('classCourse');
+	}
+
+	/**
 	* 获取教室信息
 	*/
 	public function classroom() {

@@ -8,6 +8,8 @@ use think\validate;
 use app\common\model\SeatMapController;
 use app\common\model\Classroom;
 use app\common\model\Grade;
+use app\common\model\ClassCourse;
+use app\common\model\ClassDetail;
 
 /**
  * 座位管理，负责座位的信息更新和信息重置等
@@ -101,13 +103,18 @@ class SeatController extends controller
         		if (is_null($Grade)) {
         			return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Login/afterSign?studentId=' . $studentId));
         		}
-
         		// 该成绩签到次数加一并保存
         		$Grade->resigternum ++;
         		if (!$Grade->save()) {
         			return $this->error('签到次数加一失败，即将重新签到', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         		}
         	}
+        }
+
+        // 创建一条上课数据,首先获取该课程对应的上课缓存信息
+        $classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
+        if (!$this->saveClassDetail($classCourse, $studentId, $seatId)) {
+        	return $this->error('签到信息保存失败', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         }
  
         // 将教室座位student_id进行赋值
@@ -117,6 +124,26 @@ class SeatController extends controller
         if (!$Seat->save()) {
             return $this->error('座位信息更新失败，请重新扫码', url('sign?studentId=' . $studentId));
         }
-        return $this->success('扫码签到成功，请开始上课', url('Login/afterSign?studentId=' . $studentId . '&courseId=' . $Classroom->course_id));
+        return $this->success('扫码签到成功，请开始上课', url('Login/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
+    }
+
+    /**
+     * 上课座位学生信息缓存
+     * @param classCourse 上课课程缓存信息
+     * @param studentId 该座位学生id
+     * @param seatId 学生所做的座位
+     */
+    public function saveClassDetail($classCourse, $studentId, $seatId) {
+    	// 新建上课座位学生信息对象并进行赋值
+    	$classDetail = new ClassDetail();
+    	$classDetail->class_course_id = $classCourse->id;
+    	$classDetail->student_id = $studentId;
+    	$classDetail->aod_num = 0;
+    	$classDetail->seat_id = $seatId;
+    	$classDetail->create_time = time();
+    	$classDetail->update_time = time();
+
+    	// 将新建的对象进行保存
+    	return $classDetail->save();
     }
 }
