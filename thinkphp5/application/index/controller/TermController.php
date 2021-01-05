@@ -141,7 +141,7 @@ class TermController extends IndexController
             $Term = new Term;
             $Term = Term::all();
             foreach ($Term as $Term1) {
-                $Term1->state = '0';
+                $Term1->state = 0;
                 $Term1->save();
             }
             $Term = Term::get($id);
