@@ -5,6 +5,7 @@ use app\common\model\Course;
 use think\Request;
 use app\index\controller\Login;
 use app\common\model\Grade;
+use app\common\model\Seat;
 use app\common\model\Classroom;
 use app\common\model\CourseStudent;
 class StudentController extends IndexController
@@ -263,7 +264,6 @@ class StudentController extends IndexController
             return $e->getMessage();
         }
 	// 进行跳转
-	return $this->success('删除成功', $Request->header('referer')); 
-        
+	return $this->success('删除成功', $Request->header('referer'));   
     }
 }

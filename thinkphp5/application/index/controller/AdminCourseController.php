@@ -20,7 +20,10 @@ class AdminCourseController extends Controller
     		$name = Request::instance()->get('name');
     		$courses = new Course;
     		$pageSize=5;
-            $Term = $Term->where('state','=',1);
+            $que = [
+                'state' => 1
+            ];
+            $Term = Term::get($que);
     	if(!empty($teacher_id))
     	{
     	    $pageSize = 5;
@@ -32,7 +35,7 @@ class AdminCourseController extends Controller
             }
 
         }
-        $courses = $courses->where('term_id','=',Term::$Term_id);
+        $courses = $courses->where('term_id','=', $Term->id);
         $courses = $courses->order('id desc')->paginate($pageSize, false, [
                 'query'=>[
                     'name' => $name,

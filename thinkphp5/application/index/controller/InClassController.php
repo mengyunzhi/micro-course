@@ -11,6 +11,8 @@ use app\common\model\Seat;
 use app\common\model\PreClass;
 use app\common\model\SeatMap;
 use app\common\model\ClassDetail;
+use app\common\model\ClassCourse;
+use PHPExcel;
 
 /**
 * 用于负责上课管理的各部分功能
@@ -54,8 +56,11 @@ class InClassController  extends IndexController
             // 存取时间和课程id,并更新和保存
             $this->saveCourse($Classroom, $courseId);
             if (is_null($Classroom->validate(true)->save())) {
-                return $this->error('签到时间或课程信息数据保存失败' . $PreClass->getError());
+                return $this->error('签到时间或课程信息数据保存失败', $PreClass->getError());
             }
+
+            // 将上课信息记录到ClassCourse类中
+            $this->saveClassCourse($Classroom, $courseId);
         }
 
         // 通过date函数将时间转换为小时/分钟形式，便于判断
@@ -131,16 +136,16 @@ class InClassController  extends IndexController
         
         // 新建学生和上课缓存数组
         $Students = [];
-        $ClassCaches = [];
+        $classDetails = [];
 
         // 调用unsignStu函数和aodHappened函数获取未签到学生和上课缓存信息
         $this->unsignStu($CourseStudents, $Seats, $Students);
-        $this->aodHappened($courseId, $beginTime, $ClassCaches);
+        $this->aodHappened($courseId, $beginTime, $classDetails);
 
         // 返回提示信息：课程结束：显示应到多少人实到多少人，加减分情况
         $this->assign('students', $Students);
         $this->assign('courseStudents', $CourseStudents);
-        $this->assign('ClassCaches', $ClassCaches);
+        $this->assign('classDetails', $classDetails);
         $this->assign('Course', $Course);
 
         return $this->fetch();
@@ -160,7 +165,7 @@ class InClassController  extends IndexController
         // 接收传来的教室编号，获取该课程所对应的ID
         // $classroomId = Request::instance()->param('classroom_id');
         // $courseId = Request::instance()->param('course_id');
-        $classroomId = 1;
+        $classroomId = 35;
         $courseId = 3;
 
         // 定义分页变量
@@ -231,6 +236,18 @@ class InClassController  extends IndexController
         // $Classroom->course_id = $courseId;
         // 老师，因为那个数据库字段没有courseId，我改了之后就保错了
         $Classroom->course_id = 3;
+
+        // 修改课程对应的信息(上课签到次数)
+        // 首先实例化课程对象
+        $Course = Course::get($Classroom->course_id);
+
+        // 更改课程的签到次数
+        $Course->resigternum ++;
+
+        // 将更改后的课程信息保存
+        if (!$Course->save()) {
+            return $this->error('课程签到次数增加失败,请重新开始上课', url('PreClass/index?classroomId=' . $Classroom->id));
+        }
     }
 
     /**
@@ -374,6 +391,27 @@ class InClassController  extends IndexController
     }
 
     /**
+     * 保存上课信息
+     * @param Classroom 教室对象
+     * @param courseId 课程id
+     * @param ClassCourse 待修改的上课课程缓存
+     */
+    public function saveClassCourse($Classroom, $courseId) {
+        $ClassCourse = new ClassCourse;
+        $ClassCourse->course_id = $courseId;
+        $ClassCourse->begin_time = $Classroom->begin_time;
+        $ClassCourse->out_time = $Classroom->out_time;
+        $ClassCourse->classroom_id = $Classroom->id;
+        $Course = course::get($courseId);
+        $ClassCourse->teacher_id = $Course->teacher_id;
+        
+        // 将上课课程信息保存
+       if (!$ClassCourse->save()) {
+        return $this->error('上课课程信息缓存失败，请重新开始上课', url('PreClass/index'));
+       }
+    }
+
+    /**
      * 改变教室对象的下课时间
      */
     public function changeOutTime() {
@@ -455,7 +493,7 @@ class InClassController  extends IndexController
     * @param classCourseId 对应的课程上课信息id
     * @param ClassDetails 接收本节课学生上课信息的数组
     */
-    protected function aodHappened($courseId, $classCourseId,array &$ClassDetails) {
+    protected function aodHappened($courseId, $classCourseId, array &$ClassDetails) {
         // 定义分页页数为2
         $pageSize = 2;
 
@@ -492,6 +530,12 @@ class InClassController  extends IndexController
         $Classroom->begin_time = 0;
         $Classroom->out_time = 0;
         $Classroom->course_id = 0;
+        $Classroom->sign_time = 20;
+        $Classroom->sign_deadline_time = 0;
+        $Classroom->update_time = time();
+        $Classroom->out_time = 0;
+        $Classroom->begin_time = 0;
+        $Classroom->sign_begin_time = 0;
 
         // 更新并保存数据
         $Classroom->validate(true)->save();
@@ -564,4 +608,6 @@ class InClassController  extends IndexController
     public function test() {
        $string = date('Y/m/d/G/i',1609287900); return  $string ;
     }
+
+    
 }

@@ -1,97 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        .box{
-            width:400px;
-            
-            border:1px solid #999;
-            position:absolute;
-            left:50%;
-            top:50%;
-            text-align: center;
-            padding:20px;
-            /*margin-left:-200px;
-            margin-top:-150px;*/
-            -webkit-transform:translate(-50%, -50%);
-            -moz-transform:translate(-50%, -50%);
-            -ms-transform:translate(-50%, -50%);
-            -o-transform:translate(-50%, -50%);
-            transform:translate(-50%, -50%);
-            
-        }
+<title>PHPExcel Reader Example #01</title>
 
-        .content{
-            border:1px solid #999;
-            padding:20px;
-            font-size:30px;
-        }
-        .box button{
-            font-family: "Microsoft YaHei";
-            font-size:20px;
-            margin-top:10px;
-            width:100%;
-            border:1px solid #999;
-            cursor:pointer;
-            line-height: 40px;
-            outline:none;
-        }
-    </style>
 </head>
 <body>
-    <div class="box">
-        <div class="content" id="content">随机点名器</div>
-        <button onclick="gotoRand()" id="btn">开 始</button>
-    </div>
 
-    <script>
-
-        //声明 所有的人名 组成的数组
-        var nameList = ['小丽丽', '小艳艳', '小翠翠', '小静静', '曹操', '潘金莲', '西门庆', '马奶奶', '林丛', '奥巴马'];
-
-        //声明时间的变量
-        var timer = null;
-
-        //开始 随机的函数
-        function gotoRand(){
-            //获取button 元素
-            var button = document.getElementById('btn');
-
-            //判断 是开始还是结束
-            if (timer === null) {
-                //开启定时
-                timer = setInterval(getName, 100);
-                //把button的内容改掉
-                button.innerHTML = "暂 停";
-            } else {
-                //清除定时
-                clearInterval(timer);
-                //修改button的内容
-                button.innerHTML = "开 始";
-                //把timer赋值为null
-                timer = null;
-            }
-
-            
-        }
-
-
-        //随机获取姓名函数
-        function getName(){
-
-            //取随机数
-            var index = Math.floor(Math.random() * 10000000 % nameList.length);
-            //取出姓名放入 div中
-            document.getElementById('content').innerHTML = nameList[index];
-        }
-
-
-    </script>
-
-    
-
-</body>
+<h1>PHPExcel Reader Example #01</h1>
+<h2>Simple File Reader using PHPExcel_IOFactory::load()</h2>
+<body>
 </html>

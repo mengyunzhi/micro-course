@@ -40,7 +40,7 @@
                 $("#{$i}{$j}").qrcode({
                     render: 'div',
                     size: 160,
-                    text: '<?php echo($url . url('isSeated?x=' . $seats[$i][$j], '&y=' . $seats[$i][$j])); ?>'
+                    text: '<?php echo($url . $seats[$i][$j]->id); ?>'
                 });
                 </script>
                 {else /}

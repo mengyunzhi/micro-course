@@ -1,54 +1,23 @@
 <?php
-namespace app\index\controller;
-use think\Controller;
-use think\Request;
-use think\validate;
 
-class TestController extends IndexController
-{
-	public function index()
-	{
-		$i=1;
-		for($i;$i<5;$i++)
-		{
-			echo "数字为".$i;
-		}
-		$this->assign('i',$i);
-		return $this->fetch();
-	}
-	public function file() {
-		return $this->fetch();
-	}
-	public function file1() {
-		if(isset($_POST["submit"])) {
-                $url='localhost';
-                $username='root';
-                $password='';
-                $conn=mysqli_connect($url,$username,$password,"location");
-          if(!$conn){
-          die('Could not Connect My Sql:' .mysqli_error());
-		  }
-          $file = $_FILES['file']['tmp_name'];
-          $handle = fopen($file, "r");
-          $c = 0;
-          while(($filesop = fgetcsv($handle, 1000, ",")) !== false) {
-          	$fname = $filesop[0];
-          	$lname = $filesop[1];
-          	$sql = "insert into excel(fname,lname) values ('$fname','$lname')";
-          	$stmt = mysqli_prepare($conn,$sql);
-          	mysqli_stmt_execute($stmt);
+error_reporting(E_ALL);
+set_time_limit(0);
 
-         	$c = $c + 1;
-           }
+date_default_timezone_set('Europe/London');
 
-            if($sql){
-               echo "sucess";
-             } 
-		 	else
-		 	{
-            	echo "Sorry! Unable to impo.";
-          	}
+/** PHPExcel_IOFactory */
+include './PHPExcel/IOFactory.php';
 
-		}
-	}
-}
+
+$inputFileName = '__PUBLIC__/static/example1.xls';
+echo 'Loading file ',pathinfo($inputFileName,PATHINFO_BASENAME),' using IOFactory to identify the format<br />';
+$objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+
+
+echo '<hr />';
+
+$sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+var_dump($sheetData);
+
+
+?>
