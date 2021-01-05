@@ -6,6 +6,7 @@ use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
 use app\common\model\Course;
+use app\common\model\Grade;
 use app\common\model\SeatAisle;
 /**
  * 座位图模板

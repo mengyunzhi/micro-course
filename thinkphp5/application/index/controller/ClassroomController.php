@@ -299,7 +299,7 @@ class ClassroomController extends Controller
     $this->assign('seats', $seats);
     $this->assign('SeatMap', $SeatMap);
     $this->assign('Classroom', $Classroom);
-    $url =substr($_SERVER['HTTP_REFERER'], 0, -44);
+    $url = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/wxlogin?classroomId=' . $Classroom->id . '&seatId=';
     $this->assign('url', $url);
     return $this->fetch();
   }

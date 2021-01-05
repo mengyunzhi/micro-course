@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="">
     <style>
-    .box {
+        .box {
         width: 120px;
         border: 1px solid #999;
         text-align: center;
@@ -36,7 +36,6 @@
         background-color: black;
     }
     </style>
-
     <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.0.1/vue.global.js"></script>
 </head>
 
@@ -44,89 +43,100 @@
     <?php use app\common\view\MenuViewTeacher; ?>
     <?php $MenuViewTeacher = new MenuViewTeacher; ?>
     <?php echo $MenuViewTeacher->render(); ?>
-    <table class="table table-hover table-bordered" style="200px;"><form action="{:url('changeSignTime')}" method="post">
-        <td><label style="font-size: 15px;">签到课程:{:$Course->name}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="font-size: 15px;">签到时长:</label>
-            <input type="text" name="signTime" value="{:$Classroom->sign_time}" style="width: 100px;">
-
-            <label style="font-size: 15px;">分钟</label> <button>保存</button> </td></form>
+    <table class="table table-hover table-bordered" style="200px;">
+        <form action="{:url('changeSignTime')}" method="post">
+            <td><label style="font-size: 15px;">签到课程:{:$Course->name}</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label style="font-size: 15px;">签到时长:</label>
+                <input type="text" name="signTime" value="{:$Classroom->sign_time}" style="width: 100px;">
+                <label style="font-size: 15px;">分钟</label> <button>保存</button> </td>
+        </form>
         <form action="{:url('changeOutTime')}" method="post">
-        <td><label style="font-size: 15px;">下课时间:<select name="outTime">
-        <option value="1" {eq name="outTime" value="10/05" } selected="selected" {/eq}>10:05</option>
-        <option value="2" {eq name="outTime" value="12/00" } selected="selected" {/eq}>12:00</option>
-        <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35</option>
-        <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30</option>
-        <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15</option>
-    </select>分</label><button>保存</button></td></form>
+            <td><label style="font-size: 15px;">下课时间:<select name="outTime">
+                        <option value="1" {eq name="outTime" value="10/05" } selected="selected" {/eq}>10:05 </option> <option value="2" {eq name="outTime" value="12/00" } selected="selected" {/eq}>12:00 </option> <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35 </option> <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30 </option> <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15 </option> </select>分 </label> <button>保存</button></td>
+        </form>
     </table>
-    
     <div class="box" id="roll-call" style="float: left;">
         <div class="content" id="content">点名</div>
         <button @click="onButtonClick">{{buttonTitle}}</button>
         {{currentStudent.name}} - {{currentStudent.num}}
     </div>
     <script>
-        // 定义一个用于VUE的对象
-        const RollCall = {
+    // 定义一个用于VUE的对象
+    const RollCall = {
 
-            // 数据
-            data() {
-                return {
-                    currentStudent: {},
-                    timer: null,
-                    students: [],
-                    buttonTitle: '开始'
-                }
-            },
+        // 数据
+        data() {
+            return {
+                currentStudent: {},
+                timer: null,
+                students: [],
+                buttonTitle: '开始'
+            }
+        },
 
-            // 方法
-            methods: {
-                onButtonClick() {
-                    this.buttonTitle = this.buttonTitle === '开始' ? '结束' : '开始';
-                    if (this.timer) {
-                        clearInterval(this.timer);
-                        this.timer = null;
-                    } else {
-                        this.timer = setInterval(() => {
-                            var index = Math.floor(Math.random() * 10000000) % this.students.length;
-                            this.currentStudent = this.students[index];
-                        }, 100);
-                    }
+        // 方法
+        methods: {
+            onButtonClick() {
+                this.buttonTitle = this.buttonTitle === '开始' ? '结束' : '开始';
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                } else {
+                    this.timer = setInterval(() => {
+                        var index = Math.floor(Math.random() * 10000000) % this.students.length;
+                        this.currentStudent = this.students[index];
+                    }, 100);
                 }
             }
-        };
+        }
+    };
 
-        // 创建vue app，并绑定到html中 
-        const app = Vue.createApp(RollCall).mount('#roll-call');
+    // 创建vue app，并绑定到html中 
+    const app = Vue.createApp(RollCall).mount('#roll-call');
 
-        // 获取后台数据，并传给RollCall中的data中的students
-        fetch('{:url("getStudents")}')
-            .then(res => res.json())
-            .then(data => app.$data.students = data);
-    
+    // 获取后台数据，并传给RollCall中的data中的students
+    fetch('{:url("getStudents")}')
+        .then(res => res.json())
+        .then(data => app.$data.students = data);
     </script>
+    <div class="col-md-4 text-right" style="float: left;">
+        <button style="width: 80px;" class="btn btn-danger">&nbsp;已有学生</button>
+        <button style="width: 80px;" class="btn btn-info">&nbsp;座位为空</button>
+        <button style="width: 70px;"  class="btn btn-default">&nbsp;过道</button>
+    </div>
     <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('afterClass')}" ><button style="width: 100px;"  class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
+        <a href="{:url('afterClass')}"><button style="width: 100px;" class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
     </div>
     <div class="row" style="margin-top: 25px;">
         <hr>
         <div class="container">
             <table style="margin: auto;">
-        <label class="container"><h3 style="text-align: center;">讲台</h3></label>
-        <?php for($i = 0; $i < $SeatTemplate->x_map; $i++): ?>
-        <tr>
-            <?php for($j = 0; $j < $SeatTemplate->y_map; $j++): ?>
-            <th>
-                <a href="{:url('coursegrade/index?studentId=95&classroomId=35')}">
-                    {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
-                    <button class="btn btn-info" style="width:60px;"><?php echo($seats[$i][$j]->x);echo ("-"); echo($seats[$i][$j]->y); ?></button>{else /}
-                    <button class="btn btn-default" style="width:60px;"><?php echo($seats[$i][$j]->x); echo($seats[$i][$j]->y); ?></button>
-                    {/eq}
-                </a>
-            </th>
-            <?php endfor ?>
-        </tr>
-        <?php endfor ?>
-    </table>
+                <label class="container">
+                    <h3 style="text-align: center;">讲台</h3>
+                </label>
+                <?php $x = 1;$y = 0; ?>
+                <?php for($i = 0; $i < $SeatTemplate->x_map; $i++): ?>
+                <tr>
+                    <?php for($j = 0; $j < $SeatTemplate->y_map; $j++): ?>
+                    <th>
+                        <a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id)}">
+                            {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
+                            {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
+                            <button class="btn btn-info" style="width:80px;">
+                                <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<button class="btn btn-danger" style="width:80px;">
+                                <?php echo($x);echo ("-"); echo(++$y); ?></button>
+                                {/eq}
+                            {else /}
+                            <button class="btn btn-default" style="width:80px;">
+                                <?php echo('过道'); ?></button>
+                            {/eq}
+                        </a>
+                    </th>
+                    <?php endfor; ?>
+                    <?php $x++; ?>
+                    <?php $y = 0; ?>
+                </tr>
+                <?php endfor; ?>
+            </table>
         </div>
     </div>
     <div style="float: left;">

@@ -15,6 +15,39 @@ class Student extends Model
 
     }
 
+    /**
+     * 增加登陆判断
+     */
+    public function Login($username, $passward) {
+        // 定制查询信息，判断是否存在username
+        $que = array(
+            'username' => $username,
+        );
+        $Student = Student::get($que);
+        if (!is_null($Student)) {
+            // 验证密码是否正确
+            if ($Student->checkPassword($password)) {
+                // 登录
+                session('studentId', $Student->getData('id'));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 验证密码是否正确
+     */
+    public function checkPassword($password)
+    {
+        if ($this->getData('password') === $this::encryptPassword($password))
+        {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function Course()
     {
         return $this->belongsTo('course');

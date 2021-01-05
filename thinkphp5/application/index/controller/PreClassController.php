@@ -56,9 +56,9 @@ class PreClassController extends IndexController
         if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time){
             // 增加判断是否老师为当前签到时间对应的老师
             if ($teacherId == $Classroom->Course->Teacher->id) {
-                return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&$classroomId=' . $Classroom->id));;
+                return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&classroomId=' . $Classroom->id));;
             }
-        } 
+        }
     }
 }
             

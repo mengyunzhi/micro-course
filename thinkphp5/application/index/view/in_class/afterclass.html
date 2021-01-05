@@ -14,13 +14,13 @@
         <th>学生性别</th>
         <th>加减分情况</th>
     </tr>
-    {volist name="ClassCaches" id="_ClassCach" key="key"}
+    {volist name="classDetails" id="_classDetail" key="key"}
     <tr>
         <td>{$key}</td>
-        <td>{$_ClassCach->student->name}</td>
-        <td>{$_ClassCach->student->num}</td>
-        <td>{eq name="_ClassCach->student->sex" value='0'}男{else /}女{/eq}</td>
-        <td>{$_ClassCach->aodnum}分</td>
+        <td>{$_classDetail->student->name}</td>
+        <td>{$_classDetail->student->num}</td>
+        <td>{eq name="_classDetail->student->sex" value='0'}男{else /}女{/eq}</td>
+        <td>{$_classDetail->aod_num}分</td>
     </tr>
     {/volist}
 </table>
@@ -43,6 +43,6 @@
     </tr>
     {/volist}
 </table>
-{:$ClassCaches->render()}
+{:$classDetails->render()}
 {/block}
 {/block}

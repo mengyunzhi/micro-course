@@ -1,0 +1,27 @@
+{extend name="menu"/}
+{block name="title"}
+课程展示
+{/block}
+{block name="content"}
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>课程名称</th>
+        <th>签到时间上课地点</th>
+        <th>签到时间</th>
+        <th>加减分情况</th>
+    </tr>
+    {volist name="classDetails" id="_classDetail" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_classDetail->getData('name')}</td>
+        <td>{$_classDetail->Term->name}</td>
+        <td>{$_classDetail->create_time}</td>
+        <td>{$_classDetail->aod_num}</td>
+    </tr>
+    {/volist}
+</table>
+{$classDetails->render()} 
+{/block}
+{block name="page"}
+{/block}
