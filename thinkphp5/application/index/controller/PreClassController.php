@@ -17,7 +17,7 @@ class PreClassController extends IndexController
      public function index() {
 
         // 获取老师对应的ID
-        $id =session('teacherId');
+        $id = session('teacherId');
 
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
@@ -36,7 +36,7 @@ class PreClassController extends IndexController
         $Teacher = Teacher::get($id);
 
         // 获取该老师对应的课程信息
-        $Courses = Course::where('teacher_id', '=', $id)->select();
+        $Courses = Course::where('teacher_id', '=' , $id)->select();
 
         $this->assign('courses', $Courses);
         $this->assign('Teacher', $Teacher);
@@ -53,11 +53,12 @@ class PreClassController extends IndexController
         // 增加判断当前时间和下课截止时间的关系，如果未到下课时间，则再判断是否对应上课老师
         // 首先将时间戳转换为小时:分钟的形式再进行比较
         $currentTime = time();
-        if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time){
+        if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time) {
             // 增加判断是否老师为当前签到时间对应的老师
-            if ($teacherId == $Classroom->Course->Teacher->id) {
-                return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&classroomId=' . $Classroom->id));;
+            if ($teacherId != $Classroom->Course->Teacher->id) {
+                return $this->success('当前处于签到时间', url('InClass/index?reclass=' . 1 . '&classroomId=' . $Classroom->id));
             }
+
         }
     }
 }

@@ -3,9 +3,10 @@
 教师管理
 {/block}
 {block name="content"}
-<div class="col-md-4 text-right" style="float: right;">
-                    <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
-                </div>
+<div class="text-right">
+    <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+    <hr>
+</div>
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>
@@ -21,12 +22,13 @@
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
         <td>{$_course->Term->name}</td>
-        <td><a class="btn btn-default" href="{:url('student/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;点击查看</a>&nbsp;</td><td>
+        <td><a class="btn btn-default" href="{:url('student/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;点击查看</a>&nbsp;</td>
+        <td>
             <a class="btn btn-sm btn-primary" href="{:url('course/courseedit?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a><a class=" btn btn-danger btn-sm" href="{:url('course/delete?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;删除</a></td>
     </tr>
     {/volist}
 </table>
-{$courses->render()} 
+{$courses->render()}
 {/block}
 {block name="page"}
 {/block}
