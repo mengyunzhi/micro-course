@@ -73,11 +73,16 @@ class LoginController extends Controller
             $Student = Student::get($que);
             if (is_null($Student)) {
                 return $this->error('注册失败，请检查你的学号姓名是否正确', url('firstWx?seatId=' . $seatId));
-            } else if(!$Student->save()) {
-                return $this-error('用户名密码信息记录失败', url('firstWx?seatId=' . $seatId));
             } else {
-                session('studentId', $Student->getData('id'));
-            }
+                // 对该学生的用户名密码进行赋值
+                $Student->username = $username;
+                $Student->password = $password;
+                if(!$Student->save()) {
+                return $this-error('用户名密码信息记录失败', url('firstWx?seatId=' . $seatId));
+                } else {
+                    session('studentId', $Student->getData('id'));
+                }
+            } 
         } else {
             $Student = Student::get($studentId);
         }

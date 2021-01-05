@@ -28,12 +28,14 @@
         <p style="color: green;">讲台</p>
     </h3>
         <table class="table table-bordered table-condensed " style="margin-left: -300px;">
+            <?php $x = 1;$y = 0; ?>
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
                 <td>
                     <div id="{$i}{$j}"></div>
+                    <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y);echo('列');echo($url . $seats[$i][$j]->id);?>
                 </td>
 
                 <script>
@@ -43,6 +45,7 @@
                     text: '<?php echo($url . $seats[$i][$j]->id); ?>'
                 });
                 </script>
+                
                 {else /}
                 <td class="default" style="height: 50px;width: 50px;">
                     <p style="font-size: 25px;">
@@ -50,9 +53,11 @@
                     </p>
                 </td>
                 {/eq}
-                <?php endfor ?>
+                <?php endfor; ?>
+                <?php $x++; ?>
+                    <?php $y = 0; ?>
             </tr>
-            <?php endfor ?>
+            <?php endfor; ?>
         </table>
     <hr>
     </div>
