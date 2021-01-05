@@ -6,6 +6,7 @@ use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
 use app\common\model\Course;
+use app\common\model\Grade;
 use app\common\model\SeatAisle;
 /**
  * 座位图模板
@@ -139,6 +140,8 @@ class SeatMapController extends Controller {
 		$seatAisle->x = $i;
 		$seatAisle->y = $j;
 		$seatAisle->seat_map_id = $seatMapId;
+		$seatAisle->create_time = time();
+		$seatAisle->update_time = time();
 		return $seatAisle->save();
 	}
 

@@ -26,8 +26,8 @@
             <th>
                 <a href="{:url('isSeat?id=' . $seatAisle->getData('id'))}">
                     {eq name='seatAisle->getData("state")' value='0'}
-                    <button class="btn btn-info">座位<?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{else /}
-                    <button class="btn btn-default">过道<?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{/eq}
+                    <button class="btn btn-info" style="width:60px;"><?php echo($seatAisle->x);echo ("-"); echo($seatAisle->y) ?></button>{else /}
+                    <button class="btn btn-default" style="width:60px;"><?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{/eq}
                 </a>
             </th>
             {if($seatAisle->y === ($SeatMap->y_map-1))}
