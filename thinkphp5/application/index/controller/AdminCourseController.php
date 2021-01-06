@@ -33,20 +33,17 @@ class AdminCourseController extends Controller
 
         	$courses = $courses->where('name', 'like','%'.$name.'%');
             }
-
         }
+       
+
         $courses = $courses->where('term_id','=', $Term->id);
-        $courses = $courses->order('id desc')->paginate($pageSize, false, [
-                'query'=>[
-                    'name' => $name,
-                    ],
-                ]);
+        $courses = $courses->order('id desc')->paginate($pageSize);
         $page = $courses->render(); 
 
-
-            $this->assign('courses',$courses);
-            $this->assign('page',$page);
-       	    return $this->fetch();
+        $this->assign('termId', $Term->id);
+        $this->assign('courses',$courses);
+        $this->assign('page',$page);
+       	return $this->fetch();
         // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         } catch (\think\Exception\HttpResponseException $e) {
             throw $e;
@@ -70,11 +67,12 @@ class AdminCourseController extends Controller
         $Course->save();
         return $Course->name . '成功增加至数据表中。新增ID为:' . $Course->id;
     }
-	public function add()
-    {
+	public function add() {
+        $termId = input('param.termId');
     	$course = new Course();
         // 获取所有的教师信息
         $teachers = Teacher::all();
+        $this->assign('termId', $termId);
         $this->assign('teachers', $teachers);
         $this->assign('course', $course);
         return $this->fetch();
@@ -169,17 +167,18 @@ class AdminCourseController extends Controller
     {
         // 实例化请求信息
         $Request = Request::instance();
-
         // 实例化班级并赋值
         $Course = new Course();
+
         $Course->name = $Request->post('name');
         $Course->teacher_id = $Request->post('teacher_id/d');
+        $Course->term_id = $Request->post('term_id/d');
 
         // 添加数据
         if (!$Course->validate(true)->save()) {
             return $this->error('数据添加错误：' . $Course->getError());
         }
 
-        return $this->success('操作成功', url('course/index?id=' . $Course->teacher_id));
+        return $this->success('操作成功', url('index?id=' . $Course->teacher_id));
     }
 }

@@ -52,6 +52,7 @@ class LoginController extends Controller
         // 直接到V层渲染
         return $this->fetch();
     }
+    
     /**
      * 微信登陆
      */
