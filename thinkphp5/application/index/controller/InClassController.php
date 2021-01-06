@@ -140,6 +140,9 @@ class InClassController  extends IndexController
         // 根据该教室座位找出已被坐的座位
         $Seats = Seat::where($que)->select();
 
+        // 通过教室对象信息获取当前上课课程缓存信息
+        $ClassCourse = ClassCourse::get(['classroom_id' => $Classroom->id, 'begin_time' => $Classroom->begin_time]);
+
         // 调用clearClassroom方法，对classroom对象信息进行重置
         if(!$this->clearClassroom($Classroom)) {
             return $this->error('教室信息重置失败', $Request->header('referer'));
@@ -154,11 +157,12 @@ class InClassController  extends IndexController
 
         // 调用unsignStu函数和aodHappened函数获取未签到学生和上课缓存信息
         $this->unsignStu($CourseStudents, $Seats, $Students);
-        $this->aodHappened($courseId, $beginTime, $classDetails);
+        $this->aodHappened($courseId, $ClassCourse->id, $classDetails);
 
         // 返回提示信息：课程结束：显示应到多少人实到多少人，加减分情况
         $this->assign('students', $Students);
         $this->assign('courseStudents', $CourseStudents);
+        $this->assign('ClassCourse', $ClassCourse);
         $this->assign('classDetails', $classDetails);
         $this->assign('Course', $Course);
 
@@ -241,7 +245,7 @@ class InClassController  extends IndexController
     public function saveCourse(Classroom &$Classroom,$courseId) {
         // 新建preclass对象，方便错误信息跳转
         $Preclass = new PreClass;
-        
+
         // $Classroom->course_id = $courseId;
         $Classroom->course_id = $courseId;
 
@@ -255,11 +259,6 @@ class InClassController  extends IndexController
         // 将更改后的课程信息保存
         if (!$Course->save()) {
             return $this->error('课程签到次数增加失败,请重新开始上课', url('PreClass/index?classroomId=' . $Classroom->id));
-        }
-
-        // 保存教室对象字段
-        if (!$Classroom->save()) {
-            return $this->error('教室属性课程id设置失败,请重新开始上课', url('PreClass/index?classroomId=' . $Classroom->id));
         }
     }
 
@@ -631,7 +630,6 @@ class InClassController  extends IndexController
         $courseName = input('param.courseid');
         require_once dirname(__FILE__) . '/../PHPExcel.php';
 
-
         // Create new PHPExcel object
         $objPHPExcel = new PHPExcel();
 
@@ -651,7 +649,8 @@ class InClassController  extends IndexController
                     ->setCellValue('B1', '姓名')
                     ->setCellValue('C1', '学号')
                     ->setCellValue('D1', '性别')
-                    ->setCellValue('E1', '加减分情况');
+                    ->setCellValue('E1', '加减分情况')
+                    ->setCellValue('F1', '签到时间');
 
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
                     $classDetails = ClassDetail::all();
@@ -663,7 +662,8 @@ class InClassController  extends IndexController
                                     ->setCellValue('A' . $count, $count-1)
                                     ->setCellValue('B' . $count, $Student->name)
                                     ->setCellValue('C' . $count, $Student->num)
-                                    ->setCellValue('E' . $count, $ClassDetail->aod_num);
+                                    ->setCellValue('E' . $count, $ClassDetail->aod_num)
+                                    ->setCellValue('F' . $count, $ClassDetail->update_time);
                         if($Student->sex === 0) {
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '男');
                         } else {
@@ -674,11 +674,10 @@ class InClassController  extends IndexController
        
 
         // 导出的Excel表的表名，不是文件名
-        $objPHPExcel->getActiveSheet()->setTitle('加减分情况');
+        $objPHPExcel->getActiveSheet()->setTitle('上课情况汇总');
 
         //必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
         $objPHPExcel->setActiveSheetIndex(0);
-
 
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -697,15 +696,24 @@ class InClassController  extends IndexController
         $objWriter->save('php://output');
         exit; 
     }
-     public function fileExportSign() {
-        require_once dirname(__FILE__) . '/../PHPExcel.php';
 
+    /**
+     * 将未签到的学生信息以Excel的形式输出
+     */
+    public function fileExportSign() {
+        // 接收课程id并进行实例化，接收上课课程缓存id
+        $courseId = Request::instance()->param('courseId');
+        $classCourseId = Request::instance()->param('classCourseId');
+
+        // 通过上课课程id获取上课详情对象数组
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $classCourseId);
+
+        require_once dirname(__FILE__) . '/../PHPExcel.php';
 
         // Create new PHPExcel object
         $objPHPExcel = new PHPExcel();
 
         // Set document properties
-
         $objPHPExcel->getProperties()->setCreator("Liting Chen")//创立者
                                      ->setLastModifiedBy("yunzhi")//最后修改者
                                      ->setTitle("Office 2007 XLSX Test Document")//文件名，以下的不用动
@@ -714,40 +722,30 @@ class InClassController  extends IndexController
                                      ->setKeywords("office 2007 openxml php")
                                      ->setCategory("Test result file");
 
-
-
-
         // 添加数据
         $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValue('A1', '序号')
                     ->setCellValue('B1', '姓名')
                     ->setCellValue('C1', '学号')
-                    ->setCellValue('D1', '性别')
-                    ->setCellValue('E1', '邮件');
+                    ->setCellValue('D1', '性别');
                     
-                      
-
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
-                    $students = Student::all();
                     $count = 2;
-                    foreach ($students as $Student) {
+                    foreach ($ClassDetails as $ClassDetail) {
                         // Miscellaneous glyphs, UTF-8
                         $objPHPExcel->setActiveSheetIndex(0)
                                     ->setCellValue('A' . $count, $count-1)
-                                    ->setCellValue('B' . $count, $Student->name)
-                                    ->setCellValue('C' . $count, $Student->num)
-                                    ->setCellValue('D' . $count, $Student->sex)
-                                    ->setCellValue('E' . $count, $Student->email);
+                                    ->setCellValue('B' . $count, $ClassDetail->student->name)
+                                    ->setCellValue('C' . $count, $ClassDetail->student->num)
+                                    ->setCellValue('D' . $count, $ClassDetail->student->sex);
                         $count++;
                     }
-       
 
         // 导出的Excel表的表名，不是文件名
-        $objPHPExcel->getActiveSheet()->setTitle('成绩');
+        $objPHPExcel->getActiveSheet()->setTitle('上课情况汇总');
 
-        //必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
+        // 必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
         $objPHPExcel->setActiveSheetIndex(0);
-
 
         // Redirect output to a client’s web browser (Excel2007)
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
