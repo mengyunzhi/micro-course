@@ -51,7 +51,7 @@ class AdminTeacherController extends Controller
         // 为对象的属性赋值
         $Teacher->id=0;
         $Teacher->name=$postData['name'];
-		$Teacher->teacher_id=$postData['teacher_id'];
+		$Teacher->num=$postData['num'];
      
         // 执行对象的插入数据操作
         $Teacher->save();
@@ -66,7 +66,7 @@ class AdminTeacherController extends Controller
         $Teacher->id = 0;
         $Teacher->name = '';
         $Teacher->username = '';
-        $Teacher->teacher_id = '';
+        $Teacher->num = '';
         $this->assign('Teacher', $Teacher);
 
         // 调用edit模板
@@ -114,7 +114,7 @@ class AdminTeacherController extends Controller
         // 写入要更新的数据
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
-        $Teacher->teacher_id = input('post.teacher_id');
+        $Teacher->num = input('post.num');
 
         // 更新或保存
         return $Teacher->validate(true)->save();

@@ -193,12 +193,6 @@ class TestController extends IndexController
                     ->setCellValue('D1', '性别')
                     ->setCellValue('E1', '邮件');
                     
-                        $objPHPExcel->setActiveSheetIndex(0)
-                                    ->setCellValue('A2', 1)
-                                    ->setCellValue('B2' , 1)
-                                    ->setCellValue('C2', 1)
-                                    ->setCellValue('D2', 1)
-                                    ->setCellValue('E2', 1);
                       
 
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
