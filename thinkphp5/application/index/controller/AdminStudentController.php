@@ -23,21 +23,22 @@ class AdminStudentController extends Controller
             //$course_id = 1;
             // 定制查询信息
             if(!empty($course_id)){
-
+                // course-student表别名为a
             	$coursestudents = CourseStudent::alias('a')->where('a.course_id','=',$course_id);
+                // student的表别名为s
                 if(!empty($num)){
                     $coursestudents = $coursestudents->
                     join('student s','a.student_id = s.id')->where('s.num','=',$num);
                 }
-                $coursestudents = $coursestudents->paginate(2);
-                $page = $coursestudents->render(); 
-                
-              
+
+                // 按条件查询数据并调用分页
+                $coursestudents = $coursestudents->paginate(5);
+                $page = $coursestudents->render();
             }
-            // 按条件查询数据并调用分页
            
 
             // 向V层传数据
+            $this->assign('courseId', $course_id);
             $this->assign('coursestudents', $coursestudents);
             //dump($coursestudents);die();
             // 取回打包后的数据
@@ -55,8 +56,8 @@ class AdminStudentController extends Controller
             return $e->getMessage();
         } 
     }
-	public function add()
-	{
+	public function add(){
+        $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);
 		return $this->fetch();
 	}
@@ -83,7 +84,7 @@ class AdminStudentController extends Controller
 			return $this->error('保存错误'.$Student->getError());
 		}
 		// -------------------------- 新增班级课程信息 -------------------------- 
-        // 接收klass_id这个数组
+        // 接course_id这个数组
         $courseIds = Request::instance()->post('course_id/a');       // /a表示获取的类型为数组
 
         // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
