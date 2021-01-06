@@ -16,8 +16,8 @@ class CourseController extends IndexController
     public function index()
     {
         //接受传来的ID值
-         $id =session('teacherId');
-         $name = Request::instance()->param('name');
+        $id = session('teacherId');
+        $name = Request::instance()->param('name');
 
         //通过接受的id来实例化Teacher
          $Teacher=Teacher::get($id);

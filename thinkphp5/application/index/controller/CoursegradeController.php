@@ -25,7 +25,7 @@ class CoursegradeController extends IndexController {
 
             // 增加判断点击按钮是否存在学生
             if (is_null($studentId)) {
-                return $this->error('该座位不存在学生', url('InClass/index?classroomId=' . $Classroom->id . '$reclass=' . 1));
+                return $this->error('该座位不存在学生', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
 
             // 定制成绩查询数组，以求该学生该课程成绩

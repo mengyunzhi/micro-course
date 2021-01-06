@@ -10,30 +10,30 @@ use app\common\model\Classroom;
 use app\common\model\CourseStudent;
 class StudentController extends IndexController
 {
-        public function index()
-    {
+    /**
+     * 学生的首页展示方法，主要负责教师端展示所教课程对应的学生信息
+     */
+    public function index() {
         try {
-            // 获取查询信息
+            // 获取课程id和查询信息name
             $id = Request::instance()->param('id');
             $num = Request::instance()->param('name');
             $page = Request::instance()->param('page');
             
-            //实例化课程
+            //实例化课程,并增加判断是否为当前教师
             $course = Course::get($id);
-
             if($course->teacher->id != session('teacherId')){
                 $this->error('无此权限');
             }
-            $pageSize = 2; // 每页显示5条数据
+            // 每页显示5条数据
+            $pageSize = 2; 
 
             // 定制查询信息
-            
-            if(!empty($num)){
+            if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$id);
                     $courseStudents = $courseStudents->
                     join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
-                }
-            else {
+                } else {
                     $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate($pageSize);
                 }
               
@@ -59,16 +59,18 @@ class StudentController extends IndexController
         } 
     }
 
-	public function add()
-	{
+    /**
+     * 学生的新增方法，对应save保存方法
+     */
+	public function add() {
         //获取正确课程对应的ID
-        $id = Request::instance()->param('id');
+        $courseId = Request::instance()->param('id');
         $page = Request::instance()->param('page');
         $grade = new Grade();
-        $grade->course_id = $id;
+        $grade->course_id = $courseId;
 
         //获取该ID对应的课程信息
-        $course = Course::get($id);
+        $course = Course::get($courseId);
 		$Student=new Student;
 		$Student->sex=0;
 		$Student->email='';
@@ -84,18 +86,20 @@ class StudentController extends IndexController
 		return $this->fetch('edit');
 	}
 
-	public function edit()
-	{
+    /**
+     * 负责对学生信息进行更改
+     */
+	public function edit() {
+        // 接收学生id和当前所在页数和课程id   
 		$id=Request::instance()->param('id/d');
         $page = Request::instance()->param('page');
         $course_id=Request::instance()->param('course_id/d');
 
+        // 对课程和学生进行实例化
         $Course =Course::get($course_id);
         $courses = new Course();
 		//判断是否存在为此id的记录
-
-		if(is_null($Student=Student::get($id)))
-		{
+		if(is_null($Student = Student::get($id))) {
 			return $this->error('未找到ID为'.id.'的记录');
 		}
 
@@ -107,108 +111,138 @@ class StudentController extends IndexController
 		return $this->fetch();
 	}
 
-
-
-	public function update()
-    {
-        // 获取当前学生
-        $id = Request::instance()->post('id/d');
+    /**
+     * 负责对edit编辑后的保存
+     */
+	public function update() {
+        // 接收学生id和课程id和当前所在页数,并对学生进行实例化和
+        $studentId = Request::instance()->post('id/d');
         $page=Request::instance()->post('page/d');
         $courseId = Request::instance()->post('courseid/d');
-        if (is_null($Student = Student::get($id))) {
-            return $this->error('不存在ID为' . $id . '的记录');
+        if (is_null($Student = Student::get($studentId))) {
+            return $this->error('不存在ID为' . $studentId . '的记录');
         }
 
-        if($page==0)
-        {
+        // 增加判断是否当前页数合规
+        if($page === 0) {
             $page = 1;
         }
 
-        // 更新学生名
-        $Student->name = Request::instance()->post('name');
-        if (is_null($Student->validate(true)->save())) {
-            return $this->error('学生信息更新发生错误：' . $Student->getError());
-        }
-
-
-        // 执行删除操作。由于可能存在 成功删除0条记录，故使用false来进行判断
-        // 我们认为，删除0条记录，也是成功
-
-        // 增加新增数据，执行添加操作。
-        if (!$this->saveStudent($Student)) {
+        // 学生信息更新并保存
+        if (!$this->saveStudent($Student, true)) {
             return $this->error('操作失败' . $Student->getError());
         }
-
         $this->success('操作成功', url('Student/index?id=' . $courseId) . '?page=' . $page);
     }
 
+    /**
+     * 新增add对应的保存
+     */
      public function save()
     {
         // 存课程信息
         $Student = new Student();
         $courseId = Request::instance()->post('courseid/d');
-        $page = Request::instance()->param('page');
-        $Student->name = Request::instance()->post('name');
+        $page = Request::instance()->param('page'); 
         $grade = new  Grade();
         $Course = Course::get($courseId);
-        $Course->student_num++;
 
-        // 新增数据并验证。
-        if (!$Student->validate(true)->save()) {
-            return $this->error('保存错误：' . $Student->getError());
-        }
-        //接收klass_id这个数组
-        // /a表示获取的类型为数组
-
-        // 增加新增数据，执行添加操作。
+        // 调用saveStudent方法用于保存新增数据，执行添加操作。
         if (!$this->saveStudent($Student)) {
             return $this->error('操作失败' . $Student->getError());
         }
 
-
-        if (!is_null($courseId)) {
-            if (!$Student->Courses()->save($courseId)) {
-                return $this->error('课程-班级信息保存错误：' . $Student->Courses()->getError());
-            }
+        // 新建中间表对象，并保存中间表信息
+        $CourseStudent = new CourseStudent();
+        if (!$this->saveCourseStudent($Student->id, $courseId, $CourseStudent)) {
+            return $this->error('中间表信息保存失败' . $Student->getError());
         }
 
         //新增成绩，并判断是否生成
-        if(!$this->saveGrade($grade,$Student))
-        {
+        if(!$this->saveGrade($grade, $Student)) {
             return $this->error('新增成绩失败' . $grade->getError());
         }
+
         //-----新增班级信息结束
         unset($Student);//在返回前最后被执行
 
         return $this->success('操作成功', url('index/Student/index?id=' . $courseId .'&page=' . $page));
     }
 
-
-	private function saveStudent(Student &$Student,$isUpdate= false)
-    {
+    /**
+     * 学生信息保存
+     * @param Student 将要被保存的学生对象
+     * @param isUpdate 判断是否是数据更新
+     */
+	private function saveStudent(Student &$Student, $isUpdate = false) {
         //写入要传入的数据
-        $Student->name=Request::instance()->post('name');
+        $name = Request::instance()->post('name');
+        $num = Request::instance()->post('num/d');
+        $sex = Request::instance()->post('sex/d');
+        $email = Request::instance()->post('email');
+        $courseId = Request::instance()->post('courseid');
+ 
+        // 判断是更新还是新增,如果是新增则新增中间表对象
+        if ($isUpdate === false) {
+            // 根据姓名和学号判断是否已存在该学生信息
+            $StudentTest = Student::get(['name' => $name, 'num' => $num]);
+            if (is_null($StudentTest)) {
+                $Student->name = Request::instance()->post('name');
+                $Student->num = Request::instance()->post('num/d');
+                $Student->sex = Request::instance()->post('sex/d');
+                $Student->email = Request::instance()->post('email');
+                //更新并保存数据
+                return $Student->validate(true)->save();  
+            }
+        } else {
+            // 更新操作只更新学生对象信息
+            $Student->name = Request::instance()->post('name');
+            $Student->num = Request::instance()->post('num/d');
+            $Student->sex = Request::instance()->post('sex/d');
+            $Student->email = Request::instance()->post('email');
+            //更新并保存数据
+            return $Student->validate(true)->save();  
+        } 
 
-        if(!$isUpdate)
-        {
-            $Student->num=Request::instance()->post('num/d');
-            $Student->sex=Request::instance()->post('sex/d');
-            $Student->email=Request::instance()->post('email');
-        }
-
-        //更新并保存数据
-        return $Student->validate(true)->save();
+        // 第三种情况:数据库中存在该学生信息
+        $Student = $StudentTest;
+        return 1;
     }
-    private function saveGrade(Grade &$Grade,Student &$Student,$isUpdate= false)
-    {
-        //写入要传入的数据
-        $Grade->student_id=$Student->id;
 
-            $Grade->coursegrade=Request::instance()->post('begincougrade/d');
-            $Grade->usgrade=0;
-            $Grade->course_id=Request::instance()->post('courseid');
-            $Grade->resigternum=0;
-            $Grade->allgrade=$Grade->usgrade+$Grade->coursegrade;
+    /**
+     * 中间表信息保存
+     * @param studentId 中间表对应的student_id
+     * @param courseId 中间表对应的字段course_id
+     * @param CourseStudent 待保存中间表对象
+     */
+    public function saveCourseStudent($studentId, $courseId, CourseStudent &$CourseStudent) {
+        $CourseStudent->student_id = $studentId;
+        $CourseStudent->course_id = $courseId;
+
+        // 将数据保存
+        return $CourseStudent->save();
+    }
+
+    /**
+     * 负责新增学生时新增成绩并保存
+     * @param Grade 将要被保存的成绩
+     * @param Student 该成绩对应的学生信息
+     * @param isUpdate 是否是保存信息
+     */
+    private function saveGrade(Grade &$Grade,Student &$Student,$isUpdate= false) {
+        // 写入要传入的数据
+        $Grade->student_id = $Student->id;
+        $Grade->course_id = Request::instance()->post('courseid');
+        $Grade->resigternum = 0;
+        $Grade->usgrade = 0;
+
+        // 实例化课程对象
+        $courseId = Request::instance()->post('courseid');
+        $Course = course::get($courseId); 
+
+        // 通过课程对上课表现初始成绩进行赋值
+        $Grade->coursegrade = $Course->begincougrade;        
+        $Grade->allgrade = $Grade->usgrade + $Grade->coursegrade;
 
         //更新并保存数据
         return $Grade->validate(true)->save();
