@@ -45,10 +45,9 @@ class InClassController  extends IndexController
         // 首先判断是不是已经设置上课时间等
         if (empty($reClass)) {
             // 如果是已经上课，就不需要重新接收courseId
-            // $courseId = Request::instance()->param('courseId');
+            $courseId = Request::instance()->param('courseId');
             // 接受上课时间和课程ID
             $beginTime = Request::instance()->param('beginTime');
-            $courseId = 1;
 
             // 增加判断签到时间必须设置
             $this->timeJudge($beginTime, $Classroom);
@@ -77,12 +76,6 @@ class InClassController  extends IndexController
             $nums[$i] = $Students[$i]->num; 
         }
 
-        // 传入已签到学生(还未完成扫码签到，暂时搁置)
-
-        // 实例化老师,根据教师ID获取课程   
-        $Teacher = Teacher::get($id);
-        $Courses = Course::where('teacher_id', '=', $id)->select();
-
         // 将上课签到时间和截止时间以及学号数组和课程信息和座位图模板传入V层
         $this->assign('Course', $Classroom->Course);
         $this->assign('nums', $nums);
@@ -99,8 +92,27 @@ class InClassController  extends IndexController
      * todo: 获取当前正在上课的学生，用于VUE实现的随机点名
      */
     public function getStudents() {
-         $Students = Student::all();
-         return json($Students);
+        // 接收教室id，并根据教室对象获取上课课程缓存对象
+        $classroomId = Request::instance()->param('classroomId');
+        $Classroom = Classroom::get($classroomId);
+        $que = array(
+            'begin_time' => $Classroom->begin_time,
+            'classroom_id' => $Classroom->id
+        );
+
+        // 通过构造的查询数组获取此时对应的教室上课缓存
+        $ClassCourse = ClassCourse::get($que);
+
+        // 通过上课课程缓存获取上课详情缓存
+        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
+        $number = sizeof($classDetails);
+        $Students = [];
+
+        // 通过获取到的上课缓存获取到当前上课的学生对象数组
+        for ($i = 0; $i < $number; $i++) {
+            $Students[$i] = Student::get($classDetails[$i]->student_id);
+        }
+        return json($Students);
     }
 
     /**
@@ -111,9 +123,8 @@ class InClassController  extends IndexController
         $Request = Request::instance();
 
         // 接收教室对应的id,接收课程对应的id
-        // $classroomId = Request::instance()->param('$classroomId');
-        $classroomId = 35;
-        $courseId = 3;
+        $classroomId = Request::instance()->param('classroomId/d');
+        $courseId = Request::instance()->param('courseId/d');
 
         // 实例化课程和教室和beginTime
         $Classroom = Classroom::get($classroomId);
@@ -154,13 +165,6 @@ class InClassController  extends IndexController
         return $this->fetch();
     }
 
-    /** 
-    * 上课进行加减分操作对应的action，与gradeaod部分重合
-    */
-    public function gradeAod() {
-        // 功能与gradeaod重复，目前不打算新写，但对于跳转选择还是无法实现。
-    }
-
     /**
     * 查看签到人数、具有返回按钮返回到上课签到界面
     */
@@ -193,16 +197,19 @@ class InClassController  extends IndexController
         
         // 新建学生和上课缓存数组
         $Students = [];
-        $ClassCaches = [];
+        $ClassDetails = [];
+
+        // 获取上课缓存数组，进而获得已签名单和签到时间
+        $ClassCourse = ClassCourse::get(['classroom_id' => $classroomId, 'begin_time' => $Classroom->begin_time]);
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate($pageSize); 
         
         // 将Students，CourseStudents,Seats传入求未签到学生的函数
         $this->unsignStu($CourseStudents, $Seats, $Students);
-        $this->aodHappened($courseId, $beginTime, $ClassCaches);
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);
         $this->assign('Students', $Students);
-        $this->assign('ClassCaches', $ClassCaches);
+        $this->assign('ClassDetails', $ClassDetails);
         $this->assign('Classroom', $Classroom);
         $this->assign('course', $Course);
         $this->assign('Classroom', $Classroom);
@@ -234,10 +241,9 @@ class InClassController  extends IndexController
     public function saveCourse(Classroom &$Classroom,$courseId) {
         // 新建preclass对象，方便错误信息跳转
         $Preclass = new PreClass;
-
-        // 进行赋值由于未传值，故用3表示
+        
         // $Classroom->course_id = $courseId;
-        $Classroom->course_id = 3;
+        $Classroom->course_id = $courseId;
 
         // 修改课程对应的信息(上课签到次数)
         // 首先实例化课程对象
@@ -250,12 +256,18 @@ class InClassController  extends IndexController
         if (!$Course->save()) {
             return $this->error('课程签到次数增加失败,请重新开始上课', url('PreClass/index?classroomId=' . $Classroom->id));
         }
+
+        // 保存教室对象字段
+        if (!$Classroom->save()) {
+            return $this->error('教室属性课程id设置失败,请重新开始上课', url('PreClass/index?classroomId=' . $Classroom->id));
+        }
     }
 
     /**
     * 检验上课时间是否合格，同时设置上课时间和签到截止时间
     * @param $beginTime 签到起始时间
     * @param $outTime 签到截止时间
+    * @param Classroom 待修改的教室对象
     */
     protected function timeJudge($beginTime, Classroom &$Classroom) {
         // 定义课前对象
@@ -374,7 +386,6 @@ class InClassController  extends IndexController
     public function changeSignTime() {
         // 接收改变后的sigiTime和教室id：classroomId
         $signTime = Request::instance()->param('signTime');
-        var_dump($signTime);die();
         $classroomId = Request::instance()->param('classroomId');
 
         // 实例化教室对象
@@ -397,7 +408,6 @@ class InClassController  extends IndexController
      * 保存上课信息
      * @param Classroom 教室对象
      * @param courseId 课程id
-     * @param ClassCourse 待修改的上课课程缓存
      */
     public function saveClassCourse($Classroom, $courseId) {
         $ClassCourse = new ClassCourse;

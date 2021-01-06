@@ -5,7 +5,7 @@
 {block name="content"}
 <a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;返回</a>
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$course->name}:已签到学生：{:sizeof($ClassCaches)}人</td>
+    <td>{$course->name}:已签到学生：{:sizeof($ClassDetails)}人</td>
 </table>
 <table class="table table-hover table-bordered" style="margin-bottom: 70px;">
     <tr class="info">
@@ -15,13 +15,13 @@
         <th>学生性别</th>
         <th>签到时间</th>
     </tr>
-    {volist name="ClassCaches" id="_ClassCache" key="key"}
+    {volist name="ClassDetails" id="_ClassDetail" key="key"}
     <tr>
         <td>{$key}</td>
-        <td>{$_ClassCache->student->name}</td>
-        <td>{$_ClassCache->student->num}</td>
-        <td>{eq name="_ClassCache->student->sex" value='0'}男{else /}女{/eq}</td>
-        <td>{$_ClassCache->create_time}</td>
+        <td>{$_ClassDetail->student->name}</td>
+        <td>{$_ClassDetail->student->num}</td>
+        <td>{eq name="_ClassDetail->student->sex" value='0'}男{else /}女{/eq}</td>
+        <td><?php echo(date('Y/m/d G:i',$_ClassDetail->create_time)); ?></td>
     </tr>
     {/volist}
 </table>
@@ -45,6 +45,6 @@
     </tr>
     {/volist}
 </table>
-{:$ClassCaches->render()}
+{:$ClassDetails->render()}
 {/block}
 {/block}

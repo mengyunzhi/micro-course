@@ -41,6 +41,21 @@ class LoginController extends Controller
     }
 
     /**
+     * 负责教室端微信登陆，理论上与网页端不冲突
+     */
+    public function wxTeacher() {
+        // 获取教师id，并判断是否存在teacherId;接收教室id
+        $teacherId = session('teacherId');
+        $classroomId = Request::instance()->param('classroomId');
+
+        if (is_null($teacherId)) {
+            return $this->error('第一次请注册信息', url('teacherfirst'));
+        } else {
+            return 1;
+        }
+    }
+
+    /**
      * 负责第一次微信登陆的注册任务
      */
     public function firstWx() {
@@ -136,21 +151,18 @@ class LoginController extends Controller
             // 通过教室和教室的上课开始时间确定classCourse的id
             $classCourse = classCourse::get(['begin_time' => $Classroom->begin_time,
                 'classroom_id' => $Classroom->id ] 
-        );
+            );
         }
 
         // 通过中间表和学生id，获取该学生所上的课程
         $que = array(
             'student_id' => $studentId,
-            'class_course_id' => $classCourse->id
         );
         $pageSize = 2;
         $classDetails = ClassDetail::where($que)->paginate($pageSize);
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
-        $this->assign('Classroom', $Classroom);
-
         return $this->fetch();
     }
 }
