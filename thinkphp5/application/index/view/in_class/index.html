@@ -94,7 +94,7 @@
     const app = Vue.createApp(RollCall).mount('#roll-call');
 
     // 获取后台数据，并传给RollCall中的data中的students
-    fetch('{:url("getStudents")}')
+    fetch('{:url("getStudents?classroomId=' . $Classroom->id . '")}')
         .then(res => res.json())
         .then(data => app.$data.students = data);
     </script>
@@ -104,7 +104,7 @@
         <button style="width: 70px;"  class="btn btn-default">&nbsp;过道</button>
     </div>
     <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('afterClass')}"><button style="width: 100px;" class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
+        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button style="width: 100px;" class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
     </div>
     <div class="row" style="margin-top: 25px;">
         <hr>
@@ -123,7 +123,7 @@
                             {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
                             <button class="btn btn-info" style="width:80px;">
                                 <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<button class="btn btn-danger" style="width:80px;">
-                                <?php echo($x);echo ("-"); echo(++$y); ?></button>
+                                <?php echo($seats[$i][$j]->student->name); ?></button>
                                 {/eq}
                             {else /}
                             <button class="btn btn-default" style="width:80px;">

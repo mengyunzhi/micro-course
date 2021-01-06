@@ -87,6 +87,26 @@ class SeatController extends controller
         $seatId = Request::instance()->param('seatId');
         $Seat = Seat::get($seatId);
 
+        // 增加判断是否为已经扫码，更改座位情况
+        $SeatFirst = Seat::get($studentId);
+        if (!is_null($SeatFirst)) {
+        	$SeatFirst->studentId = null;
+        	$SeatFirst->is_seated = 0;
+        	// 获取对应的上课详情对象
+        	$classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
+        	$que = array(
+        		'studentId' => $studentId,
+        		'class_course_id' => $classCourse->id
+        	);
+        	$classDetail = ClassDetail::get($que);
+        	// 修改找到的classDetail对象属性
+       		$classDetail->studentId = 0;
+       		$classDetail->update_time = time();
+       		if (!$classDetail->save()) {
+       			return $this->error('上课缓存更新失败,将重新签到', url('Login/afterSign?studentId=' . $studentId));
+       		}
+        }
+
         // 通过座位id获取教室id，进而判断本教室是否处于上课状态
         $Classroom = Classroom::get($Seat->classroom_id);
         if ($Classroom->course_id === 0) {
@@ -119,6 +139,7 @@ class SeatController extends controller
  
         // 将教室座位student_id进行赋值
         $Seat->student_id = $studentId;
+        $Seat->is_seated = 1;
 
         // 将修改后的座位对象保存
         if (!$Seat->save()) {
