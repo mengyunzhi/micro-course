@@ -723,7 +723,23 @@ class InClassController  extends IndexController
         $classCourseId = Request::instance()->param('classCourseId');
 
         // 通过上课课程id获取上课详情对象数组
-        $ClassDetails = ClassDetail::where('class_course_id', '=', $classCourseId);
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $classCourseId)->select();
+        $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
+        $number = sizeof($CourseStudents) - sizeof($ClassDetails);
+        $count = 0;
+        // 獲取未簽到的學生
+        for ($i = 0; $i < $number; $i++) {
+            $Students = [];
+            $flag = 1;
+            for($j = 0; $j < sizeof($ClassDetails); $j++) {
+                if ($ClassDetails[$j]->student_id === $CourseStudents[$i]) {
+                    $flag = 0;
+                }
+            }
+            if ($flag === 1) {
+                $Students[$count++] = $CourseStudents[$i]->student;
+            }
+        }
 
         require_once dirname(__FILE__) . '/../PHPExcel.php';
 
@@ -748,13 +764,18 @@ class InClassController  extends IndexController
                     
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
                     $count = 2;
-                    foreach ($ClassDetails as $ClassDetail) {
+                    foreach ($Students as $Student) {
                         // Miscellaneous glyphs, UTF-8
+                        if($Student->sex === 0) {
+                            $sex = '男';
+                        } else {
+                            $sex = '女';
+                        }
                         $objPHPExcel->setActiveSheetIndex(0)
                                     ->setCellValue('A' . $count, $count-1)
-                                    ->setCellValue('B' . $count, $ClassDetail->student->name)
-                                    ->setCellValue('C' . $count, $ClassDetail->student->num)
-                                    ->setCellValue('D' . $count, $ClassDetail->student->sex);
+                                    ->setCellValue('B' . $count, $Student->name)
+                                    ->setCellValue('C' . $count, $Student->num)
+                                    ->setCellValue('D' . $count, $sex);
                         $count++;
                     }
 
