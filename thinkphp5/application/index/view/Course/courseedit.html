@@ -19,7 +19,7 @@
                     <!--Collect the nav links,forms,and other contend for toggling-->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="{:url('Teacher/index')}">课程管理</a></li>
+                            <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
                             <li><a href="{:url('Student/index')}">上课管理</a></li>
                             <li><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
@@ -36,10 +36,44 @@
     {php}$action=request()->action()==='add'?'save':'update';{/php}
     <form class="form-horizontal"  action="{:url($action)}" method="post">
         <div class="form-group">
-        <label style="font-size: 20px;" for="name"  class="col-sm-2 control-label"><h4>课程名称:</h4></label>
+            <input type="hidden" name="id" value="{$Course->getData('id')}" />
+            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+                课程名称:
+            </label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" value="{$Course->name}" />
+            </div>
+        </div>
+        <div class="form-group">
+        <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+            签到成绩占比:
+        </label>
         <div class="col-sm-10">
-        <input type="hidden" name="id" value="{$Course->getData('id')}" />
-        <input class="form-control"  type="text" name="name" id="name" value="{$Course->name}" />
+        <input class="form-control"  type="text" name="usmix" value="{$Course->usmix}%" />
+        </div>
+        </div>
+        <div class="form-group">
+        <label  class="col-sm-2 control-label"  style="font-size: 20px;" for="name">
+            签到次数修改:
+        </label>
+        <div class="col-sm-10">
+        <input  class="form-control"  type="text" name="resigternum" value="{$Course->resigternum}" />
+                </div>
+        </div>
+        <div class="form-group">
+        <label  class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+            上课表现上限:
+        </label>
+        <div class="col-sm-10">
+        <input class="form-control" type="text" name="courseup" value="{$Course->courseup}" />
+        </div>
+        </div>
+        <div class="form-group">
+        <label  class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+           上课表现初始值:
+        </label>
+        <div class="col-sm-10">
+        <input class="form-control" type="text" name="begincougrade" value="{$Course->begincougrade}" />
     </div>
     </div>
         <div class="form-group">

@@ -248,12 +248,13 @@ class StudentController extends IndexController
         return $Grade->validate(true)->save();
     }
 
-
-
+    /**
+     * 学生的删除功能
+     */
     public function delete()
     {
         try {
-            $Grade = new Grade;
+            $Grade = new Grade();
             // 获取get数据
             $Request = Request::instance();
             $id = Request::instance()->param('id/d');
