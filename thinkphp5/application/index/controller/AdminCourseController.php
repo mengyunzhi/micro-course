@@ -8,11 +8,16 @@ use app\common\model\CourseStudent;
 use think\Request;
 use think\validate;
 use app\common\model\Term;
+use app\common\model\ClassDetail;
+use app\common\model\Classcourse;
+use app\common\model\Grade;
+use app\common\model\Gradeaod;
 
-
-class AdminCourseController extends Controller
-{
-  public function index()
+/**
+ * 管理员课程端
+ */
+class AdminCourseController extends Controller {
+    public function index()
     {
     	try{
             $Term = new Term;
@@ -125,6 +130,7 @@ class AdminCourseController extends Controller
 
             // 获取要删除的对象
             $Course = Course::get($id);
+            $this->deleteCourseRelevance($id);
 
             // 要删除的对象存在
             if (is_null($Course)) {
@@ -148,6 +154,79 @@ class AdminCourseController extends Controller
         // 进行跳转 
         return $this->success('删除成功', $Request->header('referer')); 
     }
+
+    /**
+     * 删除与课程相关的信息
+     * @param $courseId 课程信息
+     */
+    public function deleteCourseRelevance($courseId) {
+        $this->deleteCourseStudent($courseId);
+        $this->deleteClassDetail($courseId);
+        $this->deleteGrade($courseId);
+        $this->deleteGradeaod($courseId);
+    }
+
+    /**
+     * 删除课程学生关联
+     * @param $courseId 要被删除的课程id
+     */
+    public function deleteCourseStudent($courseId) {
+        $courseStudents = CourseStudent::where('course_id', '=', $CourseId)->select();
+        foreach ($courseStudents as $CourseStudent) {
+            if(!$CourseStudent->delete()) {
+                return $this->error('删除课程学生关联失败');
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * 删除ClassDetail
+     * @param $courseId 要被删除的课程id
+     */
+    public function deleteClassDetail($courseId) {
+        $classcourses = Classcourse::where('course_id', '=', '$courseId')->select();
+        foreach ($classcourses as $Classcourse ) {
+            $classDetails = ClassDetail::where('class_course_id', '=', $Classcourse->id)->select();
+            foreach ($classDetails as $ClassDetail) {
+                if(!$ClassDetail->delete()) {
+                    return $this->error('删除课程详细信息失败', url($url));
+                }
+            }
+            if(!$Classcourse->delete()) {
+                return $this->error('删除课程失败', url($url));
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * 删除ClassDetail
+     * @param $courseId 要被删除的课程id
+     */
+    public function deleteGrade($courseId) {
+        $grades = Grade::where('course_id', '=', $courseId)->select();
+        foreach ($grades as $Grade) {
+            if(!$Grade->delete()) {
+                return $this->error('删除对应课程成绩失败');
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * 删除ClassDetail
+     * @param $courseId 要被删除的课程id
+     */
+    public function deleteGradeaod($courseId) {
+        $gradeaods = Gradeaod::where('course_id', '=', $courseId)->select();
+        foreach ($gradeaods as $Gradeaod) {
+            if(!$Gradeaod->delete()) {
+                return $this->error('删除课程加减分情况失败');
+            }
+        }
+    }
+
     /**
      * 对数据进行保存或更新
      * @param    Course                  &$Course 教师

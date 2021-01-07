@@ -2,6 +2,10 @@
 {block name="title"}
 教师管理
 {/block}
+{block name="search"}
+<label class="sr-only" for="num">工号</label>
+<input name="num" type="text" class="form-control" placeholder="工号..." value="{:input('get.num')}">
+{/block}
 {block name="content"}
 <table class="table table-hover table-bordered">
     <tr class="info">
@@ -18,15 +22,15 @@
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $teacher->getData('id'))}">
                 <i class="glyphicon glyphicon-pencil"></i>
-            &nbsp;编辑
-        </a>
+                &nbsp;编辑
+            </a>
             <a class="btn btn-success btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
-            &nbsp;所教课程
-        </a>
+                &nbsp;所教课程
+            </a>
             <a class="btn btn-danger btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
                 <i class="glyphicon glyphicon-trash"></i>
-            &nbsp;删除
-        </a>
+                &nbsp;删除
+            </a>
         </td>
     </tr>
     {/volist}

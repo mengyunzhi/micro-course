@@ -5,6 +5,9 @@ use app\common\model\Term;//教师模型
 use think\Request;
 use think\validate;
 use app\common\model\Teacher;
+use app\common\model\Course;
+use app\common\model\Student;
+use app\common\model\CourseStudent;
 class TermController extends IndexController
 {
 	public function index()
@@ -179,6 +182,15 @@ class TermController extends IndexController
             // 要删除的对象存在
             if (is_null($Term)) {
                 throw new \Exception('不存在id为' . $id . '的教师，删除失败', 1);
+            }
+
+            //删除与本学期相关的课程信息和课程学生关联表信息
+            $courses = Course::where('term_id', '=', $id)->select();
+            foreach ($courses as $Course ) {
+                AdminCourse::deleteCourseStudent($Course->id);
+                if(!$Course->delete()) {
+                    return $this->error('删除本学期课程失败');
+                }
             }
 
             // 删除对象

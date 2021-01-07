@@ -7,6 +7,13 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Term;
+use app\common\model\ClassDetail;
+use app\common\model\Classcourse;
+use app\common\model\Grade;
+use app\common\model\Gradeaod;
+use Env;
+use PHPExcel_IOFactory;
+use PHPExcel;
 /**
  * 
  */
@@ -20,7 +27,8 @@ class CourseController extends IndexController
         $name = Request::instance()->param('name');
 
         //通过接受的id来实例化Teacher
-         $Teacher=Teacher::get($id);
+         $Teacher = Teacher::get($id);
+         $Term = Term::get(['state' => 1]);
         //查询的情况时
 
         // 调用父类构造函数(必须)
@@ -42,11 +50,7 @@ class CourseController extends IndexController
         trace($Teacher,'debug');
 
         //按条件查询数据并调用分页
-         $courses = $Course->where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
-            'query'=>[
-                'id' => $id,
-                ],
-            ]);
+         $courses = $Course->where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
 
          if (!empty($name))
          {
@@ -237,7 +241,6 @@ class CourseController extends IndexController
     public function file1() {
     $uploaddir = '/data/';
     $name = basename($_FILES['userfile']['name']) . time();
-    var_dump($name);
     $uploadfile = $uploaddir . $name;
 
 
@@ -250,11 +253,10 @@ class CourseController extends IndexController
 
     //$href 文件存储路径
     $href = '/data/' . $name;
-    
-    echo 'Here is some more debugging info:';
-    print_r($_FILES);
-    $this->excel($href);
-    print "</pre>";
+    if(!$this->excel($href)) {
+        return $this->error('文件上传失败');
+    }
+    return $this->success('文件上传成功', url('add'));
   }
 
    /**
@@ -264,10 +266,8 @@ class CourseController extends IndexController
     */
   public function excel($href) {
         /** Include path **/
-        set_include_path(get_include_path() . PATH_SEPARATOR . '../../../Classes/');
+        require_once dirname(__FILE__) . '/../PHPExcel/IOFactory.php';
 
-        /** PHPExcel_IOFactory */
-        include 'PHPExcel/IOFactory.php';
         $inputFileName = $href;
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
@@ -276,7 +276,6 @@ class CourseController extends IndexController
 
 
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-        dump($sheetData);
 
         // 将学生表中的数据存入数据库
         $count = 1;
@@ -291,18 +290,19 @@ class CourseController extends IndexController
                 $Student->num = $sheetData1["C"];
                 $Student->sex = $sheetData1["D"];
                 $Student->email = $sheetData1["E"];
-                $Student->save();
+                if(!$Student->save()) {
+                    return $this->error('信息保存失败',url('add'));
+                }
             }
             $count++;
         }
+        return 1;
     }
 
     /**
      * 模板下载
      */
     public function templateDownload() {
-
-
         /** Include PHPExcel */
         require_once dirname(__FILE__) . '/../PHPExcel.php';
 
