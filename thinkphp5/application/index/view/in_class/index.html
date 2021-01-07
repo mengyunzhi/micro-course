@@ -115,7 +115,7 @@
     const app = Vue.createApp(RollCall).mount('#roll-call');
 
     // 获取后台数据，并传给RollCall中的data中的students
-    fetch('{:url("getStudents?classroomId=' . $Classroom->id . '")}')
+    fetch('{:url("getStudents?classroomId=" . $classroomId)}')
         .then(res => res.json())
         .then(data => app.$data.students = data);
     </script>
@@ -167,7 +167,7 @@
         </div>
     </div>
     <div style="float: left;">
-        <a href="{:url('looksign')}" class="btn btn-info">&nbsp;查看签到情况</a>
+        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-info">&nbsp;查看签到情况</a>
     </div>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

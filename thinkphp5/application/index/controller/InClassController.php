@@ -83,6 +83,7 @@ class InClassController  extends IndexController
         $this->assign('Classroom', $Classroom);
         $this->assign('outTime', $outTime);
         $this->assign('SeatTemplate', $SeatTemplate);
+        $this->assign('classroomId', $classroomId);
 
         //取回V层渲染的
         return $this->fetch();
@@ -92,9 +93,19 @@ class InClassController  extends IndexController
      * todo: 获取当前正在上课的学生，用于VUE实现的随机点名
      */
     public function getStudents() {
-        // 接收教室id，并根据教室对象获取上课课程缓存对象
         $classroomId = Request::instance()->param('classroomId');
+        return json($this->classStudents($classroomId));
+    }
+
+    /**
+     * 獲取學生信息
+     */
+    public function classStudents($classroomId) {
+        // 接收教室id，并根据教室对象获取上课课程缓存对象
+        // dump($classroomId);
+
         $Classroom = Classroom::get($classroomId);
+        // dump($Classroom);
         $que = array(
             'begin_time' => $Classroom->begin_time,
             'classroom_id' => $Classroom->id
@@ -112,7 +123,8 @@ class InClassController  extends IndexController
         for ($i = 0; $i < $number; $i++) {
             $Students[$i] = Student::get($classDetails[$i]->student_id);
         }
-        return json($Students);
+        // dump($Students);
+        return $Students;
     }
 
     /**
@@ -125,7 +137,7 @@ class InClassController  extends IndexController
         // 接收教室对应的id,接收课程对应的id
         $classroomId = Request::instance()->param('classroomId/d');
         $courseId = Request::instance()->param('courseId/d');
-
+        
         // 实例化课程和教室和beginTime
         $Classroom = Classroom::get($classroomId);
         $Course = Course::get($courseId);
@@ -169,6 +181,7 @@ class InClassController  extends IndexController
         $this->assign('ClassCourse', $ClassCourse);
         $this->assign('classDetails', $classDetails);
         $this->assign('Course', $Course);
+        $this->assign('beginTime', $beginTime);
 
         return $this->fetch();
     }
@@ -178,10 +191,9 @@ class InClassController  extends IndexController
     */
     public function lookSign() {
         // 接收传来的教室编号，获取该课程所对应的ID
-        // $classroomId = Request::instance()->param('classroom_id');
-        // $courseId = Request::instance()->param('course_id');
-        $classroomId = 35;
-        $courseId = 3;
+        $classroomId = Request::instance()->param('classroomId');
+        $courseId = Request::instance()->param('courseId');
+        // $classroomId = 35;
 
         // 定义分页变量
         $pageSize = 2;
@@ -626,7 +638,7 @@ class InClassController  extends IndexController
     }
 
     /**
-     * 文件导出成绩部分
+     * 文件导出上課表現成绩部分
      */
     public function fileExportGrade() {
         // 获取时间和课程名，以用作文件名
@@ -657,7 +669,8 @@ class InClassController  extends IndexController
                     ->setCellValue('F1', '签到时间');
 
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
-                    $classDetails = ClassDetail::all();
+                    $classCourseId = Request::instance()->param('classCourseId');
+                    $classDetails = ClassDetail::where('class_course_id', '=', $classCourseId)->select();
                     $count = 2;
                     foreach ($classDetails as $ClassDetail) {
                         $Student = Student::get($ClassDetail->student_id);
@@ -667,7 +680,7 @@ class InClassController  extends IndexController
                                     ->setCellValue('B' . $count, $Student->name)
                                     ->setCellValue('C' . $count, $Student->num)
                                     ->setCellValue('E' . $count, $ClassDetail->aod_num)
-                                    ->setCellValue('F' . $count, $ClassDetail->update_time);
+                                    ->setCellValue('F' . $count, date('Y/m/d G:i', $ClassDetail->update_time));
                         if($Student->sex === 0) {
                                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '男');
                         } else {

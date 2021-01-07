@@ -22,12 +22,14 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <h3 style="margin-left: 545px;margin-bottom: 70px;">
+    <h3 style="margin-left: 545px;margin-bottom: 20px;">
         <?php echo($Classroom->name) ?>
         <hr>
         <p style="color: green;">讲台</p>
         <td>
-                <div id="pla"></div>
+                <div id="pla" style="margin-left: -40px;"></div>
+                <div style="margin-left: -40px; ">
+                <?php echo('教室：' . $Classroom->name . '    ');echo($urlTeacher);?></div>
             </td>
             <script>
             $("#pla").qrcode({
