@@ -26,14 +26,16 @@ class LoginController extends Controller
     public function login()
     {
         // 接收post信息
-        $postData = Request::instance()->post();
+        $username = Request::instance()->param('username');
+        $password = Request::instance()->param('password');
         
         // 直接调用M层方法，进行登录。
-        if (Teacher::login($postData['username'], $postData['password'])) {
-            if($postData['username']=='admin'){
-
+        if (Teacher::login($username, $password)) {
+            // 判断是否为管理员，如果用户名是管理员则认定为管理员，跳转到管理员端
+            if($username === 'admin') {
                 return $this->success('login success', url('Term/index'));
             }
+            // 如果不是则认定为教师端登陆，跳转到教师端
             return $this->success('login success', url('Course/index'));
         } else {
             return $this->error('username or password incorrent', url('index'));
@@ -44,15 +46,32 @@ class LoginController extends Controller
      * 负责教室端微信登陆，理论上与网页端不冲突
      */
     public function wxTeacher() {
-        // 获取教师id，并判断是否存在teacherId;接收教室id
-        $teacherId = session('teacherId');
+        // 接收用户名密码信息和教室id
+        $username = Request::instance()->post('username');
+        $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId');
 
+        // 获取教师id，并判断是否存在teacherId;接收教室id,并将其存入session中
+        $teacherId = session('teacherId');
+        session('classroomId', $classroomId);
+
         if (is_null($teacherId)) {
-            return $this->error('第一次请注册信息', url('teacherfirst'));
+            return $this->error('第一次请注册信息', url('teacherFirst?classroomId=' . $classroomId));
         } else {
-            return 1;
+            return $this->success('login success', url('Course/index'));
         }
+    }
+
+    /**
+     * 负责老师的第一次登陆注册
+     */
+    public function teacherFirst() {
+        // 获取教室id
+        $classroomId = Request::instance()->param();
+
+        // 将教室id传入v层
+        $this->assign('classroomId', $classroomId);
+        return $this->fetch();
     }
 
     /**

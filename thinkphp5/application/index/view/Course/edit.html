@@ -22,7 +22,7 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
-                            <li><a href="{:url('')}">上课管理</a></li>
+                            <li><a href="{:url('PreClass/index')}">上课管理</a></li>
                             <li><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -36,30 +36,59 @@
         </div>
     </div>
     <div class="row">
-        <div class="container" style="margin-top: 100px">
-            <label style="font-size: 20px;">学生信息上传:</label>
-            <br>
-            <a href="{:url('templateDownload')}"><button class="btn btn-info">模板下载</button></a>
-            <form enctype="multipart/form-data" action="{:url('file1')}" method="POST" style="margin-top: 10px;">
-                <!-- MAX_FILE_SIZE must precede the file input field -->
-                <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
-                <!-- Name of input element determines name in $_FILES array -->
-                <input name="userfile" type="file"  />
-                <input style="margin-top: 10px" type="submit" class="btn btn-info" value="提交" />
-            </form>
-            {php}$action=request()->action()==='add'?'save':'update';{/php}
-            <form class="form-horizontal" action="{:url($action)}" method="post" style="margin-top: 20px;">
-                <div class="form-group">
-                    <label style="font-size: 20px;">课程名称:</label>
-                    <div>
-                        <input type="hidden" name="id" value="{$Teacher->getData('id')}" />
-                        <input type="hidden" name="term_id" value="{$Term->getData('id')}" />
-                        <input class="form-control" type="text" name="name" />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">保存</button>
-            </form>
+        <div class="container" style="margin-top: 30px">
+            <table class="table table-hover table-bordered" style="height: 400px;">
+                <td style="width: 150px;"><a href="{:url('templateDownload')}"><button class="btn btn-info">模板下载</button></a></td>
+                <td>
+                    <form enctype="multipart/form-data" action="{:url('file1')}" method="POST" style="margin-top: 10px;">
+                        <div style="margin-bottom: 50px;">
+                            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">导入学生:</label>
+                            <!-- MAX_FILE_SIZE must precede the file input field -->
+                            <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+                            <!-- Name of input element determines name in $_FILES array -->
+                            <input name="userfile" type="file" /></div>
+                        <div class="form-group">
+                            <input type="hidden" name="id" value="{$Teacher->getData('id')}" />
+                            <input type="hidden" name="term_id" value="{$Term->getData('id')}" />
+                            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+                                课程名称:
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" value="" name="name" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+                                签到成绩占比:
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="usmix" value="%" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+                                上课表现上限:
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="courseup" value="100" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
+                                上课表现初始值:
+                            </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" type="text" name="begincougrade" value="0" />
+                            </div>
+                        </div>
+                        <div style="width: 100px; margin-right: auto;margin-left: auto; margin-top: 50px;">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </div>
+                    </form>
+                </td>
+            </table>
         </div>
+        {php}$action=request()->action()==='add'?'save':'update';{/php}
     </div>
 </body>
 

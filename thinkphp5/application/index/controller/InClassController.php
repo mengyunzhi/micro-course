@@ -143,6 +143,10 @@ class InClassController  extends IndexController
         // 通过教室对象信息获取当前上课课程缓存信息
         $ClassCourse = ClassCourse::get(['classroom_id' => $Classroom->id, 'begin_time' => $Classroom->begin_time]);
 
+        if(is_null($ClassCourse)) {
+            return $this->error('上课课程缓存未找到', url('PreClass/index?classroomId=' . $Classroom->id));
+        }
+
         // 调用clearClassroom方法，对classroom对象信息进行重置
         if(!$this->clearClassroom($Classroom)) {
             return $this->error('教室信息重置失败', $Request->header('referer'));
