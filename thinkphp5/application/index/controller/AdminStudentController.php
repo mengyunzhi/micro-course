@@ -59,6 +59,7 @@ class AdminStudentController extends Controller
 	public function add(){
         $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);
+        $Student = new Student;
 		return $this->fetch();
 	}
 
@@ -85,7 +86,8 @@ class AdminStudentController extends Controller
 		}
 		// -------------------------- 新增班级课程信息 -------------------------- 
         // 接course_id这个数组
-        $courseIds = Request::instance()->post('course_id/a');       // /a表示获取的类型为数组
+        $courseIds = Request::instance()->post('courseIds/a');       
+        // /a表示获取的类型为数组
 
         // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
         if (!is_null($courseIds)) {
@@ -140,7 +142,6 @@ class AdminStudentController extends Controller
         return $Student->validate(true)->save();
     }
 
-
     public function delete()
     {
         try {
@@ -155,7 +156,7 @@ class AdminStudentController extends Controller
 
             // 获取要删除的对象
             $Student = Student::get($id);
-
+            $this->deleteStudentReverance($id);
             // 要删除的对象存在
             if (is_null($Student)) {
                 throw new \Exception('不存在id为' . $id . '的学生，删除失败', 1);
@@ -165,7 +166,7 @@ class AdminStudentController extends Controller
             if (!$Student->delete()) {
                 $message = '删除失败:' . $Teacher->getError();
             }
-            }
+        }
         //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         catch(\think\Exception\HttpResponseException $e){
             throw $e;
@@ -177,5 +178,39 @@ class AdminStudentController extends Controller
 	// 进行跳转
 	return $this->success('删除成功', $Request->header('referer')); 
         
+    }
+
+    /**
+     * 删除学生关联
+     * @param $studentId 要被删除的学生ID
+     */
+    public function deleteStudentReverance($studentId) {
+        $this->deleteCourseStudent($studentId);
+        $this->deleteClassDetail($studentId);
+    }
+
+    /**
+     * 删除对应的课程学生关联
+     * @param $studentId 要被删除的学生id
+     */
+    public function deleteCourseStudent($studentId) {
+        $courseStudents = CourseStudent::where('student_id', '=', $studentId)->select();
+        foreach ($coursestudents as $CourseStudent) {
+            if(!$CourseStudent->delete()) {
+                return $this->error('删除课程学生关联失败');
+            }
+        }
+    }
+
+    /**
+     * 删除对应的上课细节关联
+     */
+    public function deleteClassDetail($studentId) {
+        $classdetails = ClassDetail::where('student_id', '=', '$studentId')->select();
+        foreach ($classdetails as $ClassDetail) {
+             if(!$ClassDetail->delete()) {
+                return $this->error('删除学生课程详细信息失败');
+            }
+        }
     }
 }

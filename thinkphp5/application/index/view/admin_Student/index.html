@@ -2,6 +2,10 @@
 {block name="title"}
 学生管理
 {/block}
+{block name="search"}
+<label class="sr-only" for="name">姓名</label>
+<input name="name" type="text" class="form-control" placeholder="姓名..." value="{:input('get.name')}">
+{/block}
 {block name="Add"}
 <div class="col-md-4 text-right">
     <a href="{:url('add?courseId=' . $courseId)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
