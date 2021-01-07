@@ -7,6 +7,11 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Term;
+use app\common\model\Grade;
+use Env;
+use PHPExcel_IOFactory;
+use PHPExcel;
+
 /**
  * 
  */
@@ -66,128 +71,63 @@ class CourseController extends IndexController
 
 
 
-    //添加操作
-        public function add()
-    {
+    /**
+     * 课程的新增方法，可通过Excel批量导入学生信息
+     */
+    public function add() {
+        // 获取教师id
         $id = Request::instance()->param('id');
-        $Term = Term::where('state', 'like', '%' . 1 . '%')->paginate();      
+        // 查询处于激活的学期
+        $Term = Term::get(['state' => 1]);
+
+        // 实例化教师对象      
         $Teacher = Teacher::get($id);
         $Course=new Course;
         $Course->name = '';
 
-        //设置默认值
-        // $Course->id=0;
-        // $Course->name='';
-        // dump($Term);
-        // dump($Teacher);
-        // dump($Course);
-        // die();
         $this->assign('Course',$Course);
-        $this->assign('Term',$Term[0]);
+        $this->assign('Term',$Term);
         $this->assign('Teacher',$Teacher);
 
         //调用edit模板
         return $this->fetch('edit');
     }
 
-
-     public function save()
-    {
-        // 存课程信息
-        $Course = new Course();
-        $Course->name = Request::instance()->post('name');
-        $Course->teacher_id = Request::instance()->post('id');
-        $Course->term_id = Request::instance()->post('term_id');
-        $Course->student_num = 0;
-
-        // 新增数据并验证。验证类
-        if (!$Course->validate(true)->save()) {
-            return $this->error('保存错误：' . $Course->getError());
-        }
-        //接受学生导入信息
-        $studentIds = Request::instance()->post('student_id/a');       // /a表示获取的类型为数组
-
-        
-        if (!is_null($studentIds)) {
-            if (!$Course->Students()->saveAll($studentIds)) {
-                return $this->error('课程-班级信息保存错误：' . $Course->Students()->getError());
-            }
-        }
-        //-----新增班级信息结束
-        unset($Course);//在返回前最后被执行
-
-        return $this->success('操作成功', url('index'));
-    }
-
-
-    //编辑课程信息
-    public function edit()
-    {
-        $id=Request::instance()->param('id/d');
-        $Course=Course::get($id);
-
-        //获取该课程对应的所有学生信息
-        $Students = $Course->Students;
-
+    /**
+     * 负责修改课程基本信息(上课初始成绩)
+     */
+    public function courseedit() { 
+        // 获取课程id，并进行实例化  
+        $courseId=Request::instance()->param('id/d');
+        $Course=Course::get($courseId);
         if(is_null($Course)){
-            return $this->error('不存在Id为:'.$id.'的课程');
+            return $this->error('不存在Id为:' . $courseId . '的课程');
         }
-
-        $this->assign('Course',$Course);
-        $this->assign('students',$Students);
-        return $this->fetch();
-    }
-
-    //编辑课程名称，导入学生信息等功能
-    public function courseedit()
-    {
-        $id=Request::instance()->param('id/d');
-        $Course=Course::get($id);
-
-        //获取该课程对应的所有学生信息
-
-        if(is_null($Course)){
-            return $this->error('不存在Id为:'.$id.'的课程');
-        }
-
 
         $this->assign('Course',$Course);
         return $this->fetch();
     }
 
-    public function update()
-    {
-        // 获取当前老师和课程ID
-        $teacher_id = Request::instance()->post('teacher_id/d');
-        $id = Request::instance()->post('id/d');
-        if (is_null($Course = Course::get($id))) {
-            return $this->error('不存在ID为' . $id . '的记录');
+    /**
+     * 课程修改的赋值和保存
+     */
+    public function update() {
+        // 获取当前老师和课程ID,并实例化课程对象
+        $teacherId = session('teacherId');
+        $courseId = Request::instance()->param('courseId');
+        if (is_null($Course = Course::get($courseId))) {
+            return $this->error('不存在ID为' . $courseId . '的记录');
         }
 
-        // 更新课程名
+        // 更新课程信息(上课表现初始成绩、最高上课表现成绩、签到占比，签到一次占比)
         $Course->name = Request::instance()->post('name');
+        $Course->resigternum = Request::instance()->post('resigternum');
+        $Course->usmix = Request::instance()->post('usmix');
+        $Course->courseup = Request::instance()->post('courseup');
+        $Course->begincougrade = Request::instance()->post('begincougrade');
         if (is_null($Course->validate(true)->save())) {
             return $this->error('课程信息更新发生错误：' . $Course->getError());
         }
-
-        // 删除原有信息
-        $map = ['course_id'=>$id];
-
-        // 执行删除操作。由于可能存在 成功删除0条记录，故使用false来进行判断，而不能使用
-        // if (!KlassCourse::where($map)->delete()) {
-        // 我们认为，删除0条记录，也是成功
-        if (false === $Course->CourseStudents()->where($map)->delete()) {
-            return $this->error('删除班级课程关联信息发生错误' . $Course->CourseStudents()->getError());
-        }
-
-        // 增加新增数据，执行添加操作。
-        $studentIds = Request::instance()->post('student_id/a');
-        if (!is_null($studentIds)) {
-            if (!$Course->Students()->saveAll($studentIds)) {
-                return $this->error('课程-班级信息保存错误：' . $Course->Students()->getError());
-            }
-        }
-
         return $this->success('更新成功', url('index'));
     }
 
@@ -230,53 +170,66 @@ class CourseController extends IndexController
         // 进行跳转 
         return $this->success('删除成功', $Request->header('referer')); 
     }
+
     /**
      * 文件导入部分
      * 上传文件
      */
     public function file1() {
-    $uploaddir = '/data/';
-    $name = basename($_FILES['userfile']['name']) . time();
-    var_dump($name);
-    $uploadfile = $uploaddir . $name;
+        // 接收课程信息，并进行保存
+        $Course = new Course();
+        $Course->name = Request::instance()->post('name');
+        $Course->teacher_id = Request::instance()->post('id');
+        $Course->term_id = Request::instance()->post('term_id');
+        $Course->student_num = 0;
+        $Course->resigternum = 0;
+        $Course->usmix = Request::instance()->param('usmix');
+        $Course->courseup = Request::instance()->param('courseup');
+        $Course->begincougrade = Request::instance()->param('begincougrade');
 
+        // 新增数据并验证。验证类
+        if (!$Course->validate(true)->save()) {
+            return $this->error('保存错误：' . $Course->getError());
+        }
 
-    echo '<pre>';
-    if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-        echo "File is valid, and was successfully uploaded.\n";
-    } else {
-        echo "Possible file upload attack!\n";
-    }
+        // Excel表的导入
+        $uploaddir = 'data/';
+        // $uploaddir = "";
+        $name = time() . $_FILES["userfile"]["name"];
+        // dump($name);
+        $uploadfile = $uploaddir . $name;
+        // dump($uploadfile);
+        // echo '<pre>';
+        // print_r($_FILES);
+        // dump($_FILES['userfile']['tmp_name']);
+        if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+            
+        } else {
+            echo "Possible file upload attack!\n";
+        }
 
-    //$href 文件存储路径
-    $href = '/data/' . $name;
-    
-    echo 'Here is some more debugging info:';
-    print_r($_FILES);
-    $this->excel($href);
-    print "</pre>";
+        //$href 文件存储路径
+        $href = $uploaddir . $name;
+        // echo 'Here is some more debugging info:';
+        // print_r($_FILES);
+        // die();
+        $this->excel($href, $Course);
+        // print "</pre>";
   }
 
    /**
     * 文件导入部分
     * 将Excel存入数据库
-    * @param $href 文件存储路径
+    * @param href 文件存储路径
+    * @param Course 保存的课程对象
     */
-  public function excel($href) {
-        /** Include path **/
-        set_include_path(get_include_path() . PATH_SEPARATOR . '../../../Classes/');
-
-        /** PHPExcel_IOFactory */
-        include 'PHPExcel/IOFactory.php';
+  public function excel($href, $Course) {
+        require_once dirname(__FILE__) . '/../PHPExcel.php';
         $inputFileName = $href;
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
 
-
-
-
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-        dump($sheetData);
 
         // 将学生表中的数据存入数据库
         $count = 1;
@@ -284,25 +237,57 @@ class CourseController extends IndexController
             return $this->error('文件格式与模板格式不相符', url('file'));
         }
         $count = 0;
-        foreach ($sheetData as $sheetData1 ) {
-            if($count != 0) {
-                $Student = new Student;
-                $Student->name = $sheetData1["B"];
-                $Student->num = $sheetData1["C"];
-                $Student->sex = $sheetData1["D"];
-                $Student->email = $sheetData1["E"];
-                $Student->save();
+        foreach ($sheetData as $sheetDataTemp) {
+            if($count !== 0) {
+                // 定制查询信息
+                $que = array(
+                    'name' => $sheetDataTemp['B'],
+                    'num' => $sheetDataTemp['C']
+                );
+                $StudentTmp = Student::get($que);
+                // 如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
+                if (is_null($StudentTmp)) {
+                    $Student = new Student();
+                    $Student->name = $sheetDataTemp["B"];
+                    $Student->num = $sheetDataTemp["C"];
+                    $Student->sex = $sheetDataTemp["D"];
+                    $Student->email = $sheetDataTemp["E"];
+                    $Student->save(); 
+                }
+                // 新增中间表并保存,同时新增成绩 
+                $CourseStudent = new CourseStudent();
+                if (is_null($StudentTmp)) {
+                    $CourseStudent->student_id = $Student->id;
+                    // 新增成绩保存
+                    if (!$this->saveGrade($Student, $Course)) {
+                        return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
+                    }
+                } else {
+                    $CourseStudent->student_id = $StudentTmp->id;
+                    // 新增成绩保存
+                    if (!$this->saveGrade($StudentTmp, $Course)) {
+                        return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
+                    }
+                }
+                $CourseStudent->course_id = $Course->id;
+                if (!$CourseStudent->save()) {
+                    return $this->error('课程-学生信息保存失败', url('Course/add'));
+                }
             }
             $count++;
+            // 课程对应学生数量加一
+            $Course->student_num++;
         }
+        if (!$Course->save()) {
+            return $this->success('操作失败', url('Course/add'));
+        } 
+        return $this->success('新增課程成功', url('Course/index'));
     }
 
     /**
      * 模板下载
      */
     public function templateDownload() {
-
-
         /** Include PHPExcel */
         require_once dirname(__FILE__) . '/../PHPExcel.php';
 
@@ -352,5 +337,22 @@ class CourseController extends IndexController
         $objWriter->save('php://output');
         exit;
 
+    }
+
+    /**
+     * 新增成绩
+     * @param Student 对应的学生对象
+     * @param Course 对应的课程对象
+     */
+    public function saveGrade($Student, $Course) {
+        // 新建成绩对象,并对新建对象进行赋值操作
+        $Grade = new Grade();
+        $Grade->student_id = $Student->id;
+        $Grade->course_id = $Course->id;
+        $Grade->coursegrade = $Course->begincougrade;
+        $Grade->usgrade = 0;
+        $Grade->resigternum = 0;
+        $Grade->allgrade = $Grade->usgrade * $Course->usmix / 100 + $Grade->coursegrade * (1 - $Course->usmix/100);
+        return $Grade->save();
     }
 }

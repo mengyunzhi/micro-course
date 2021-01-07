@@ -22,54 +22,54 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <h3 style="margin-left: 545px;margin-bottom: 50px;">
+    <h3 style="margin-left: 545px;margin-bottom: 70px;">
         <?php echo($Classroom->name) ?>
         <hr>
         <p style="color: green;">讲台</p>
         <td>
-                    <div id="{1}{1}"></div>
-                </td>
-
-                <script>
-                $("#{0}{0}").qrcode({
-                    render: 'div',
-                    size: 160,
-                    text: '<?php echo($urlTeacher); ?>'
-                });
-                </script>
+                <div id="pla"></div>
+            </td>
+            <script>
+            $("#pla").qrcode({
+                render: 'div',
+                size: 160,
+                text: '<?php echo($urlTeacher); ?>'
+            });
+            </script>
     </h3>
-        <table class="table table-bordered table-condensed " style="margin-left: -300px;">
-            <?php $x = 1;$y = 0; ?>
-            <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
-            <tr>
-                <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-                {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
-                <td>
-                    <div id="{$i}{$j}"></div>
-                    <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y);echo('列');echo($url . $seats[$i][$j]->id);?>
-                </td>
-
-                <script>
-                $("#{$i}{$j}").qrcode({
-                    render: 'div',
-                    size: 160,
-                    text: '<?php echo($url . $seats[$i][$j]->id); ?>'
-                });
-                </script>
-                
-                {else /}
-                <td class="default" style="height: 50px;width: 50px;">
-                    <p style="font-size: 25px;">
-                        <?php echo($seats[$i][$j]->x);echo($seats[$i][$j]->y); ?>
-                    </p>
-                </td>
-                {/eq}
-                <?php endfor; ?>
-                <?php $x++; ?>
-                    <?php $y = 0; ?>
-            </tr>
+    <table class="table table-bordered table-condensed ">
+        
+    </table>
+    <table class="table table-bordered table-condensed " style="margin-left: -300px;">
+        <?php $x = 1;$y = 0; ?>
+        <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
+        <tr>
+            <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
+            {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
+            <td>
+                <div id="{$i}{$j}"></div>
+                <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y);echo('列');echo($url . $seats[$i][$j]->id);?>
+            </td>
+            <script>
+            $("#{$i}{$j}").qrcode({
+                render: 'div',
+                size: 160,
+                text: '<?php echo($url . $seats[$i][$j]->id); ?>'
+            });
+            </script>
+            {else /}
+            <td class="default" style="height: 50px;width: 50px;">
+                <p style="font-size: 25px;">
+                    <?php echo($seats[$i][$j]->x);echo($seats[$i][$j]->y); ?>
+                </p>
+            </td>
+            {/eq}
             <?php endfor; ?>
-        </table>
+            <?php $x++; ?>
+            <?php $y = 0; ?>
+        </tr>
+        <?php endfor; ?>
+    </table>
     <hr>
     </div>
 </body>
