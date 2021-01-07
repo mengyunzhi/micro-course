@@ -90,7 +90,7 @@ class GradeaodController extends IndexController
         }
     
         // 成功跳转至InClass/index触发器,并传入教室id
-        return $this->success('上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '$reclass=' . 1)); 
+        return $this->success('上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
 
     /**
@@ -162,7 +162,7 @@ class GradeaodController extends IndexController
         }
 
         // 成功跳转至index触发器
-        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '$reclass=' . 1)); 
+        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
     
     /**

@@ -3,9 +3,11 @@
 课程管理
 {/block}
 {block name="content"}
-<a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;返回</a>
+
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$course->name}:已签到学生：{:sizeof($ClassDetails)}人</td>
+    <td><div >
+        <a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;返回</a></td></div>
 </table>
 <table class="table table-hover table-bordered" style="margin-bottom: 70px;">
     <tr class="info">
@@ -28,7 +30,6 @@
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$course->name}:未签到学生名单:</td>
 </table>
-<input type="output" name="">
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>

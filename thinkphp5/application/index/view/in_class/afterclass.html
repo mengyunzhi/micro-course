@@ -8,7 +8,7 @@
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$Course->name}:已签学生名单：</td>
     <td>
-        <form action="{:url('fileExportGrade?courseid=' . $Course->id . '&time=' . $time)}">
+        <form action="{:url('fileExportGrade?classCourseId=' . $ClassCourse->id)}">
             <button class="btn btn-warning">导出表单</button>
     </td>
     </form>
