@@ -24,6 +24,9 @@ class PreClassController extends IndexController
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
         $classroomId = $Teacher->classroom_id;
+        if (is_null($classroomId) || $classroomId === 0) {
+            return $this->error('请首先用微信扫描教室讲桌二维码', url('Course/index'));
+        }
  
         // 实例化Classroom对象
         $Classroom = Classroom::get($classroomId);
@@ -65,7 +68,7 @@ class PreClassController extends IndexController
         // 删除上节课的信息
         if (!$this->clearClassroom($Classroom)) {
                 return $this->error('上一次上课信息清除失败,请重新上课', url('PreClass/index'));
-            }
+        }
     }
 
     /**

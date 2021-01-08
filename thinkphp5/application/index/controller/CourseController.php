@@ -13,63 +13,49 @@ use PHPExcel_IOFactory;
 use PHPExcel;
 
 /**
- * 
+ * 课程的增删改查操作
  */
-class CourseController extends IndexController
-{
-     
-    public function index()
-    {
+class CourseController extends IndexController {
+    /**
+     * 负责教师对应课程的展示
+     */
+    public function index() {
         //接受传来的ID值
         $id = session('teacherId');
         $name = Request::instance()->param('name');
 
         //通过接受的id来实例化Teacher
-         $Teacher=Teacher::get($id);
-        //查询的情况时
+        $Teacher=Teacher::get($id);
 
         // 调用父类构造函数(必须)
         parent::__construct();
         //验证用户是否登录
-        if(!Teacher::isLogin())
-        {
+        if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
         }
 
-        $course = Course::get($id);
-
-        $pageSize=5;//每页显示5条数据
-
-        //实例化Course
-        $Course = new Course;
-        
-        //打印$Teacher 至控制台
-        trace($Teacher,'debug');
-
+        //每页显示2条数据
+        $pageSize = 2;
         //按条件查询数据并调用分页
-         $courses = $Course->where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
+        $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
             'query'=>[
                 'id' => $id,
                 ],
             ]);
 
-         if (!empty($name))
-         {
+        // 通过name获取查询信息
+        if (!empty($name)) {
             $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
-         }
- 
+        }
 
         //向V层传数据
-        $this->assign('courses',$courses);
-        $this->assign('Teacher',$Teacher);
+        $this->assign('courses', $courses);
+        $this->assign('Teacher', $Teacher);
         //取回打包后的数据
         $htmls=$this->fetch();
         //将数据返回给用户
         return $htmls;
-        
     }
-
-
 
     /**
      * 课程的新增方法，可通过Excel批量导入学生信息
@@ -82,12 +68,12 @@ class CourseController extends IndexController
 
         // 实例化教师对象      
         $Teacher = Teacher::get($id);
-        $Course=new Course;
+        $Course= new Course();
         $Course->name = '';
 
-        $this->assign('Course',$Course);
-        $this->assign('Term',$Term);
-        $this->assign('Teacher',$Teacher);
+        $this->assign('Course', $Course);
+        $this->assign('Term', $Term);
+        $this->assign('Teacher', $Teacher);
 
         //调用edit模板
         return $this->fetch('edit');
@@ -100,11 +86,11 @@ class CourseController extends IndexController
         // 获取课程id，并进行实例化  
         $courseId=Request::instance()->param('id/d');
         $Course=Course::get($courseId);
-        if(is_null($Course)){
+        if(is_null($Course)) {
             return $this->error('不存在Id为:' . $courseId . '的课程');
         }
 
-        $this->assign('Course',$Course);
+        $this->assign('Course', $Course);
         return $this->fetch();
     }
 
@@ -131,26 +117,28 @@ class CourseController extends IndexController
         return $this->success('更新成功', url('index'));
     }
 
-     public function delete()
-    {
+    /**
+     * 课程的删除方法
+     */
+    public function delete() {
         try {
             // 实例化请求类
             $Request = Request::instance();
             
-            // 获取get数据
-            $id = Request::instance()->param('id/d');
+            // 获取课程id
+            $courseId = Request::instance()->param('id/d');
             
             // 判断是否成功接收
-            if (0 === $id) {
+            if (0 === $courseId) {
                 throw new \Exception('未获取到ID信息', 1);
             }
 
             // 获取要删除的对象
-            $Course = Course::get($id);
+            $Course = Course::get($courseId);
 
             // 要删除的对象存在
             if (is_null($Course)) {
-                throw new \Exception('不存在id为' . $id . '的课程，删除失败', 1);
+                throw new \Exception('不存在id为' . $courseId . '的课程，删除失败', 1);
             }
 
             // 删除对象
@@ -175,7 +163,7 @@ class CourseController extends IndexController
      * 文件导入部分
      * 上传文件
      */
-    public function file1() {
+    public function fileUpload() {
         // 接收课程信息，并进行保存
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
@@ -228,7 +216,6 @@ class CourseController extends IndexController
         $inputFileName = $href;
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
-
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
         // 将学生表中的数据存入数据库
@@ -352,7 +339,7 @@ class CourseController extends IndexController
         $Grade->coursegrade = $Course->begincougrade;
         $Grade->usgrade = 0;
         $Grade->resigternum = 0;
-        $Grade->allgrade = $Grade->usgrade * $Course->usmix / 100 + $Grade->coursegrade * (1 - $Course->usmix/100);
+        $Grade->allgrade = $Grade->usgrade * $Course->usmix / 100 + $Grade->coursegrade * (1 - $Course->usmix / 100);
         return $Grade->save();
     }
 }

@@ -24,7 +24,13 @@ class Grade extends Model {
      * 对考勤成绩进行重新计算，并返回当前考勤成绩
      */
     public function getUsgrade() {
-        $this->usgrade = $this->resigternum / $this->Course->resigternum * 100;
+        // 增加判断分母为零的情况
+        if ($this->Course->resigternum === 0) {
+            $this->usgrade = 0;
+        } else {
+            $this->usgrade = $this->resigternum / $this->Course->resigternum * 100;
+        }
+        
         // 将更改后的记录保存并返回
         $this->save();
         return $this->usgrade;  
