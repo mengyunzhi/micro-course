@@ -43,8 +43,7 @@ class TeacherController extends IndexController {
      * @author 梦云智 http://www.mengyunzhi.com
      * @DateTime 2016-11-07T13:52:07+0800
      */
-    public function delete()
-    {
+    public function delete() {
         try{
             //实例化请求类
         $Request=Request::instance();

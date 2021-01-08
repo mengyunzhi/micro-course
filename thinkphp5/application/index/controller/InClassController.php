@@ -34,7 +34,9 @@ class InClassController  extends IndexController {
 
         // 接收教室id，微信端登陆后绑定教室信息到教师中
         $classroomId = $Teacher->classroom_id;
-        $Classroom = Classroom::get($classroomId);
+        if (is_null($Classroom = Classroom::get($classroomId))) {
+            return $this->error('教室信息获取失败，请重新上课', url('Course/index'));
+        }
 
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
         $seats = Seat::where('classroom_id', '=', $classroomId)->select();
