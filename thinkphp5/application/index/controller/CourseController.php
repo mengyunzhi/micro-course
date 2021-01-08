@@ -25,7 +25,8 @@ class CourseController extends IndexController {
         $name = Request::instance()->param('name');
 
         //通过接受的id来实例化Teacher
-        $Teacher=Teacher::get($id);
+        $Teacher = Teacher::get($id);
+        $Term = Term::get(['state' => 1]);
 
         // 调用父类构造函数(必须)
         parent::__construct();
@@ -37,11 +38,7 @@ class CourseController extends IndexController {
         //每页显示2条数据
         $pageSize = 2;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
-            'query'=>[
-                'id' => $id,
-                ],
-            ]);
+        $courses = $Course->where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
 
         // 通过name获取查询信息
         if (!empty($name)) {
@@ -181,7 +178,7 @@ class CourseController extends IndexController {
         }
 
         // Excel表的导入
-        $uploaddir = 'data/';
+        $uploaddir = '/data/';
         // $uploaddir = "";
         $name = time() . $_FILES["userfile"]["name"];
         // dump($name);
@@ -196,13 +193,12 @@ class CourseController extends IndexController {
             echo "Possible file upload attack!\n";
         }
 
-        //$href 文件存储路径
-        $href = $uploaddir . $name;
-        // echo 'Here is some more debugging info:';
-        // print_r($_FILES);
-        // die();
-        $this->excel($href, $Course);
-        // print "</pre>";
+    //$href 文件存储路径
+   $href = $uploaddir . $name;
+    if(!$this->excel($href, $Course)) {
+        return $this->error('文件上传失败');
+    }
+    return $this->success('文件上传并且学生信息保存成功', url('add'));
   }
 
    /**
@@ -211,8 +207,11 @@ class CourseController extends IndexController {
     * @param href 文件存储路径
     * @param Course 保存的课程对象
     */
+
   public function excel($href, $Course) {
-        require_once dirname(__FILE__) . '/../PHPExcel.php';
+        /** Include path **/
+        require_once dirname(__FILE__) . '/../PHPExcel/IOFactory.php';
+
         $inputFileName = $href;
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
@@ -265,10 +264,11 @@ class CourseController extends IndexController {
             // 课程对应学生数量加一
             $Course->student_num++;
         }
+
         if (!$Course->save()) {
             return $this->success('操作失败', url('Course/add'));
         } 
-        return $this->success('新增課程成功', url('Course/index'));
+        return 1;
     }
 
     /**

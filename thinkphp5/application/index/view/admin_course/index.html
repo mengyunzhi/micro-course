@@ -1,6 +1,10 @@
 {extend name="index" /}
 {block name="title"}
 {/block}
+{block name="search"}
+<label class="sr-only" for="name">课程名</label>
+<input name="name" type="text" class="form-control" placeholder="课程名..." value="{:input('get.name')}">
+{/block}
 {block name="Add"}
 <div class="col-md-4 text-right">
     <a href="{:url('add?termId=' . $termId)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>

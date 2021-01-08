@@ -10,16 +10,20 @@ class AdminTeacherController extends Controller
 	public function index()
 	{
 		try {
+            $num = input('param.num');
             $pageSize = 5; // 每页显示5条数据
 
             // 实例化Teacher
             $Teacher = new Teacher; 
             
             if(!Teacher::isLogin())
-        {
+            {
             return $this->error('plz login first',url('Login/index'));
-        }
-
+            }
+            //按条件查询
+            if(!is_null($num)) {
+                $Teacher = Teacher::where('num', 'like', '%'. $num. '%');
+            }
             // 调用分页
             $teachers = $Teacher->paginate($pageSize);
 
@@ -77,7 +81,6 @@ class AdminTeacherController extends Controller
         try {
             // 获取传入ID
             $id = Request::instance()->param('id/d');
-            dump($id);
 
             // 判断是否成功接收
             if (is_null($id) || 0 === $id) {
@@ -143,6 +146,16 @@ class AdminTeacherController extends Controller
 		    }
 		    //获取要删除的对象
 		    $Teacher = Teacher::get($id);
+
+             //删除与本教师相关的课程信息和课程学生关联表信息
+            $courses = Course::where('tescher_id', '=', $id)->select();
+            foreach ($courses as $Course ) {
+                AdminCourse::deleteCourseStudent($Course->id);
+                if(!$Course->delete()) {
+                    return $this->error('删除本学期课程失败');
+                }
+            }
+
 		    //删除对象不存在
 		    if (is_null($Teacher)) 
 		    {

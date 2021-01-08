@@ -63,13 +63,11 @@ class TestController extends IndexController
     * 将Excel存入数据库
     * @param $href 文件存储路径
     */
-  public function excel($href) {
+  public function excel() {
         /** Include path **/
-        set_include_path(get_include_path() . PATH_SEPARATOR . '../../../Classes/');
-
-        /** PHPExcel_IOFactory */
-        include 'PHPExcel/IOFactory.php';
-        $inputFileName = $href;
+       
+        dirname(__FILE__) . '/../PHPExcel/IOFactory.php';
+        $inputFileName = '/data';
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
 
@@ -102,12 +100,9 @@ class TestController extends IndexController
      * 模板下载
      */
     public function templateDownload() {
-
-
         /** Include PHPExcel */
-        require_once dirname(__FILE__) . '/../PHPExcel.php';
-
-
+        require_once dirname(__FILE__) . '/../../PHPExcel.php';
+        die();
         // Create new PHPExcel object
         $objPHPExcel = new PHPExcel();
 
