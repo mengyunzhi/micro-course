@@ -9,69 +9,14 @@ use app\common\model\Course;
 /**
  * 教师管理，继承think\Controller后，就可以利用V层对数据进行打包了。
  */
-class TeacherController extends IndexController
-{
-    public function index()
-    {
-        //接受传来的ID值
-         $id = Request::instance()->param(1);
-         $name = Request::instance()->param('name');
-         echo $id;
-
-         //通过接受的id来实例化Teacher
-         $Teacher=Teacher::get($id);
-         //查询的情况时
-
-
-
-             // 调用父类构造函数(必须)
-        parent::__construct();
-        //验证用户是否登录
-        if(!Teacher::isLogin())
-        {
-            return $this->error('plz login first',url('Login/index'));
-        }
-
-
-        $pageSize=5;//每页显示5条数据
-
-        //实例化Course
-        $Course = new Course;
-        
-        //打印$Teacher 至控制台
-        trace($Teacher,'debug');
-
-        //按条件查询数据并调用分页
-         $courses = $Course->where('teacher_id', 'like', '%' . $id . '%')->paginate($pageSize, false, [
-            'query'=>[
-                'id' => $id,
-                ],
-            ]);
-
-         if (!empty($name))
-         {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
-         }
- 
-
-        //向V层传数据
-        $this->assign('courses',$courses);
-        $this->assign('Teacher',$Teacher);
-        //取回打包后的数据
-        $htmls=$this->fetch();
-        //将数据返回给用户
-        return $htmls;
-        
-    }
-
+class TeacherController extends IndexController {
     /**
      * 插入新数据
      * @return   html                   
      * @author 梦云智 http://www.mengyunzhi.com
      * @DateTime 2016-11-07T12:31:24+0800
      */
-    public function save()
-    {
+    public function save() {
         // 实例化
         $Course = new Course;
 

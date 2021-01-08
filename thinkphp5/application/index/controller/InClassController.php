@@ -733,12 +733,12 @@ class InClassController  extends IndexController {
         $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         $number = sizeof($CourseStudents) - sizeof($ClassDetails);
         $count = 0;
+        $Students = [];
         // 獲取未簽到的學生
         for ($i = 0; $i < $number; $i++) {
-            $Students = [];
             $flag = 1;
             for($j = 0; $j < sizeof($ClassDetails); $j++) {
-                if ($ClassDetails[$j]->student_id === $CourseStudents[$i]) {
+                if ($ClassDetails[$j]->student_id === $CourseStudents[$i]->student_id) {
                     $flag = 0;
                 }
             }
