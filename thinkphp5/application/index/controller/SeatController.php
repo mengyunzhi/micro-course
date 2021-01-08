@@ -40,40 +40,51 @@ class SeatController extends controller
 		
 	}
 
-	public function edit(){
+	public function edit() {
 		return $this->fetch();
 	}
 
 	/**
 	* 设置座位,当前状态是座位则编程过道，否则为座位.0为座位，1为过道，默认为0
 	*/
-	public function is_seat(){
-		$id = Request::instance()->param('id\d');
-		$Seat = new Seat;
-		$Seat = Seat::get($id);
+	public function is_seat() {
+        // 接收座位id，实例化请求
+        $Request = Request::instance();
+		$seatId = Request::instance()->param('id\d');
+		$Seat = Seat::get($seatId);
 
-		if($Seat->state == "1") {
-
-			$Seat->state = "0";
+		if($Seat->state === 1) {
+			$Seat->state = 0;
+		} else {
+			$Seat->state = 1;
 		}
 		
-		else {
-
-			$Seat->state = "1";
-		}
-		
-		$this->save();
+        // 将修改后的结果保存并判断
+		if (!$Seat->save()) {
+            return $this->error('座位状态更改失败', $Request->header('referer'));
+        }
 	}
-	//思路同上 1为有人，0为无人,默认为0
-	public function is_seated(){
-		$id = Request::instance()->param('id\d');
-		$Seat = new Seat;
-		$Seat = Seat::get($id);
-		if($Seat->isseated == "1")
-		$Seat->isseated = "0";
-		else 
-		$Seat->isseat = "1";
-		$this->save();
+
+	/**
+     * 思路同上，设置有无人做
+     */
+	public function is_seated() {
+        // 获取座位id，并将座位进行实例化
+        $Request = Request::instance();
+		$seatId = Request::instance()->param('id\d');
+		$Seat = Seat::get($seatId);
+
+        // 判断座位是否被坐，并更改状态
+		if($Seat->isseated === 1) {
+		$Seat->isseated = 0;
+        } else { 
+		$Seat->isseat = 1;
+        }
+
+        // 增加判断是否保存成功
+        if (!$Seat->save()) {
+            return $this->error('是否被坐状态更改失败', $Request = Request::instance(););
+        }
 	}
 
 	/**
@@ -123,8 +134,10 @@ class SeatController extends controller
         		if (is_null($Grade)) {
         			return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Login/afterSign?studentId=' . $studentId));
         		}
-        		// 该成绩签到次数加一并保存
+        		// 该成绩签到次数加并重新计算签到成绩和总成绩
         		$Grade->resigternum ++;
+                $Grade->getUsgrade();
+                $Grade->getAllgrade();
         		if (!$Grade->save()) {
         			return $this->error('签到次数加一失败，即将重新签到', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         		}

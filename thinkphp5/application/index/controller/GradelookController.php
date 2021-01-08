@@ -7,6 +7,9 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Grade;
+use Env;
+use PHPExcel_IOFactory;
+use PHPExcel;
 
 
 /**
@@ -223,5 +226,76 @@ class GradeLookController extends IndexController {
         $Grade->allgrade = $Grade->usgrade * $Grade->Course->usmix / 100 + $Grade->coursegrade * (100 - $Grade->Course->usmix) / 100;
         // 更新或保存
         return $Grade->validate(true)->save();
+    }
+
+    /**
+     * 将未签到的学生信息以Excel的形式输出
+     */
+    public function fileExportGrade() {
+        // 接收课程id并通过课程id获取该课程对应的所有成绩
+        $courseId = Request::instance()->param('courseId');
+        $Course = Course::get($courseId);
+        $Grades = Grade::where('course_id', '=', $courseId)->select();
+
+        // PHPExcel.php文件的引入
+        require_once dirname(__FILE__) . '/../PHPExcel.php';
+
+        // Create new PHPExcel object
+        $objPHPExcel = new PHPExcel();
+
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator("Yunzhi Meng")//创立者
+                                     ->setLastModifiedBy("yunzhi")//最后修改者
+                                     ->setTitle("Office 2007 XLSX Test Document")//文件名，以下的不用动
+                                     ->setSubject("Office 2007 XLSX Test Document")
+                                     ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+                                     ->setKeywords("office 2007 openxml php")
+                                     ->setCategory("Test result file");
+
+        // 添加数据
+        $objPHPExcel->setActiveSheetIndex(0)
+                    ->setCellValue('A1', '序号')
+                    ->setCellValue('B1', '姓名')
+                    ->setCellValue('C1', '学号')
+                    ->setCellValue('D1', '考勤成绩')
+                    ->setCellValue('E1', '表现成绩')
+                    ->setCellValue('F1', '总成绩');
+                    
+                    // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
+                    $count = 2;
+                    foreach ($Grades as $Grade) {
+                        // Miscellaneous glyphs, UTF-8
+                        $objPHPExcel->setActiveSheetIndex(0)
+                                    ->setCellValue('A' . $count, $count-1)
+                                    ->setCellValue('B' . $count, $Grade->Student->name)
+                                    ->setCellValue('C' . $count, $Grade->Student->num)
+                                    ->setCellValue('D' . $count, $Grade->getUsgrade())
+                                    ->setCellValue('E' . $count, $Grade->coursegrade)
+                                    ->setCellValue('F' . $count, $Grade->getAllgrade());
+                        $count++;
+                    }
+
+        // 导出的Excel表的表名，不是文件名
+        $objPHPExcel->getActiveSheet()->setTitle('上课情况汇总');
+
+        // 必须要有，否则导出的Excel用不了，设定活跃的表是哪个，设定的活跃表是表0
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit; 
     }
 }

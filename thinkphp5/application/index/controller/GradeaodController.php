@@ -167,12 +167,15 @@ class GradeaodController extends IndexController
     
     /**
      * 保存成绩，用于保存上课对上课表现成绩加减分后成绩的保存
-     * @param $Grade 将要保存的成绩
+     * @param Grade 将要保存的成绩
      */
     private function saveGrade(Grade &$Grade) {
         // 接收加减分传入的加减分分值，并将上课表现成绩进行修改
         $Grade->coursegrade += Request::instance()->post('aodNum');
         
+        // 重新计算总成绩并保存
+        $Grade->getAllgrade();
+
         // 更新或保存
         return $Grade->validate(true)->save();
     }
