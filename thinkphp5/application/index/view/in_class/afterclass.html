@@ -12,6 +12,7 @@
             <button class="btn btn-warning">导出表单</button>
     </td>
     </form>
+    </td>
 </table>
 <hr>
 <table class="table table-hover table-bordered" style="margin-bottom: 70px;">
@@ -30,7 +31,9 @@
         <td>{$_classDetail->student->num}</td>
         <td>{eq name="_classDetail->student->sex" value='0'}男{else /}女{/eq}</td>
         <td>{$_classDetail->aod_num}分</td>
-        <td><?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?></td>
+        <td>
+            <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
+        </td>
     </tr>
     {/volist}
 </table>

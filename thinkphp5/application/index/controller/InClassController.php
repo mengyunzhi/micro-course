@@ -766,16 +766,11 @@ class InClassController  extends IndexController
                     $count = 2;
                     foreach ($Students as $Student) {
                         // Miscellaneous glyphs, UTF-8
-                        if($Student->sex === 0) {
-                            $sex = '男';
-                        } else {
-                            $sex = '女';
-                        }
                         $objPHPExcel->setActiveSheetIndex(0)
                                     ->setCellValue('A' . $count, $count-1)
                                     ->setCellValue('B' . $count, $Student->name)
                                     ->setCellValue('C' . $count, $Student->num)
-                                    ->setCellValue('D' . $count, $sex);
+                                    ->setCellValue('D' . $count, $sex = $Student->sex === 0 ? '男' : '女');
                         $count++;
                     }
 
