@@ -9,7 +9,7 @@ class Grade extends Model {
     /**
      * 通过外键student_id获取对应的学生对象
      */
-	public function Student() {
+    public function Student() {
         return $this->belongsTo('student');
     }
 
@@ -27,15 +27,15 @@ class Grade extends Model {
         $this->usgrade = $this->resigternum / $this->Course->resigternum * 100;
         // 将更改后的记录保存并返回
         $this->save();
-		return $this->usgrade;	
-	}
+        return $this->usgrade;  
+    }
 
     /**
      * 对总成绩进行重新计算，并返回总成绩
      */
-	public function getAllgrade() {
-		$this->allgrade = $this->getUsgrade() * $this->Course->usmix / 100 + $this->coursegrade * (100-$this->Course->usmix) / 100;
+    public function getAllgrade() {
+        $this->allgrade = $this->getUsgrade() * $this->Course->usmix / 100 + $this->coursegrade * (100-$this->Course->usmix) / 100;
         $this->save();
-		return $this->allgrade;
+        return $this->allgrade;
     }
 }
