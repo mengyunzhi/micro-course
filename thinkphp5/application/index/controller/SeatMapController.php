@@ -13,9 +13,39 @@ use app\common\model\SeatAisle;
  */
 class SeatMapController extends Controller {
 	public function index(){
+		$name = input('param.name');
+		$seatMaps = new SeatMap;
+		if(!is_null($name)) {
+			$seatMaps = SeatMap::where('name', 'like', '%' . $name . '%');
+		}
+		$seatMaps = $seatMaps->order('id desc')->paginate(5);
+		$this->assign('seatMaps', $seatMaps);
+		return $this->fetch();
+	}
+
+	/**
+	 * 座位图模板显示
+	 */
+	public function template() {
+		$match = input('param.match');
+		
+		$url = '';
+		//判断上一级路由是否是教室那边
+		//字符串的模式匹配
+		if (preg_match("/add/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
+    		$url = 'classroom/add';
+    		$match = 1;
+		} elseif(preg_match("/edit/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
+			$url = 'classroom/edit';
+			$match = 1;
+		}
+		var_dump($match);
+		$classroomId = Request::instance()->param('classroomId');
+		var_dump($classroomId);
 		$seatMapAsc = SeatMap::order('id')->select();
 		$seatMapDesc = SeatMap::order('id desc')->select();
 		$id = Request::instance()->param('id');
+		$classroomId = input('param.classroomId/d');
 		
 		// 若是最后一个则下一个模板为最开始的模板
 		if($id == -2 || is_null($id)) {
@@ -24,7 +54,6 @@ class SeatMapController extends Controller {
 		}
 		// 若是第一个模板则上一个模板是最后的模板
 		if($id == -1) {
-			
 			$seatmap = $seatMapDesc[0];
 			$id = $seatmap->id;
 		}
@@ -35,6 +64,10 @@ class SeatMapController extends Controller {
 		$seatAisle = new SeatAisle;
 		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
 		rsort($seatAisle);
+
+		$this->assign('match', $match);
+		$this->assign('classroomId', $classroomId);
+		$this->assign('url', $url);
 		$this->assign('seatMap1', $seatMapAsc);
 		$this->assign('seatMap2', $seatMapDesc);
 		$this->assign('SeatMap',$SeatMap);
@@ -172,16 +205,6 @@ class SeatMapController extends Controller {
 		return $this->success('设置成功', $Request->header('referer')); 
 	}
 
-	public function template1(){
-
-		return $this->fetch();
-
-	}
-	public function template2(){
-
-		return  $this->fetch();
-
-	}
 	/**
 	 * 删除座位模板
 	 */

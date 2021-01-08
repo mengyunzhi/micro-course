@@ -21,10 +21,9 @@ class TermController extends IndexController
 
             // 实例化Term
             $Term = new Term; 
-            if(!Teacher::isLogin())
-        {
-            return $this->error('plz login first',url('Login/index'));
-        }
+            if(!Teacher::isLogin()) {
+                return $this->error('plz login first',url('Login/index'));
+            }
 
             // 定制查询信息
             if (!empty($name)) {
@@ -32,7 +31,6 @@ class TermController extends IndexController
             }
 
             // 按条件查询数据并调用分页
-             // 按条件查询数据并调用分页
             $terms = $Term->order('id desc')->paginate($pageSize, false, [
                 'query'=>[
                     'name' => $name,
