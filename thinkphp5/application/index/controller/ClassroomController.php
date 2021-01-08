@@ -47,9 +47,24 @@ class ClassroomController extends Controller
      * 增加教室
      */
     public function add() {
+      $seatMapId = Request::instance()->param('seatMapId');
       $seatMap = SeatMap::all();
+      $Classroom = new Classroom;
+
+      // 为对象属性赋值
+      $Classroom->id = 0;
+      $Classroom->name = '';
+      $Classroom->seat_map_id = 0;
+
+      // 如果存在上级路由（模板选择一级）传过来的值，则赋值
+      if(!is_null($seatMapId)) {
+        $Classroom->seat_map_id = $seatMapId;
+      }
+
+      // 向v层传值
+      $this->assign('Classroom', $Classroom);
       $this->assign('seatMaps', $seatMap);
-      return $this->fetch();
+      return $this->fetch('edit');
     }
 
     /**
@@ -119,14 +134,28 @@ class ClassroomController extends Controller
      * 则直接调用seatmap_change方法修改，否则修改对应模板号，若修改模板号则需要将之前教室对应的座位删除掉
      */
      public function edit() {
-      // 获取教室id，并将教室id实例化
-      $classroomId = Request::instance()->param('id/d');
+
+      // 获取教室相关信息，并将教室id实例化
+      $classroomId = Request::instance()->param('classroomId/d');
       $Classroom = Classroom::get($classroomId);
+      $seatMapId = Request::instance()->param('seatMapId');
+
+      //如果存在上级路由（模板选择一级）传过来的值，则赋值
+      if(!is_null($seatMapId)) {
+
+        $Classroom->seat_map_id = $seatMapId;
+      }
+
+      //座位实例化
       $seatMaps = SeatMap::all();
       $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+
+      //向V层传值
       $this->assign('seats', $seats);
       $this->assign('Classroom', $Classroom);
       $this->assign('seatMaps', $seatMaps);
+
+      //返回v层渲染
       return $this->fetch();
     }
 
@@ -137,6 +166,7 @@ class ClassroomController extends Controller
       // 获取教室的id，并对教室进行实例化
       $classroomId = input('post.id');
       $Classroom = Classroom::get($classroomId);
+      $seatChanged = 0;
 
       // 获取教室对象对应的座位图模板
       $forgettingId = $Classroom->seat_map_id;
@@ -146,8 +176,11 @@ class ClassroomController extends Controller
         $this->deleteSeat($Classroom->id);
         $Classroom->seat_map_id = input('post.seat_map_id');
         $this->saveSeatMap($Classroom);
+        $seatChanged = 1;
       }
-      elseif(!$Classroom->save()) {
+      $Classroom->save();
+      $Classroom1 = Classroom::get($classroomId);
+      if($Classroom->name != $Classroom1->name || $Classroom->seat_map_id != $Classroom1->seat_map_id) {
         return $this->error('座位未被正确更新');
       }
       return $this->success('保存成功', url('index'));

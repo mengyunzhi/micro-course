@@ -10,8 +10,8 @@ class Term extends Model{
      * 自定义自转换字换
      * @var array
      */
-    protected $type = [
+   /* protected $type = [
         'create_time' => 'datetime',
         'update_time' => 'datetime',
-    ];
+    ];*/
 }

@@ -24,8 +24,8 @@
                 <?php $y = 0; ?>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 <td>
-                    <a href="{:url('isSeat?id=' . $seat[$i][$j]->getData('id') . '&classroomId=' . $Classroom->id)}">
-                        {eq name='$seat[$i][$j]->getData("is_seat")' value='0'}
+                    <a href="{:url('isSeat?id=' . $seats[$i][$j]->getData('id') . '&classroomId=' . $Classroom->id)}">
+                        {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
                         <button class="btn btn-success" style="height: 50px;width: 80px;">座位 {$x}{$y}
                             <?php $y++;?>
                         </button>
