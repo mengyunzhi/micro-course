@@ -50,14 +50,41 @@ class LoginController extends Controller
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId');
+        if (is_null($classroomId)) {
+            return $this->error('教室信息传递失败，请从新扫码', url('Course/index'));
+        }
 
         // 获取教师id，并判断是否存在teacherId;接收教室id,并将其存入session中
         $teacherId = session('teacherId');
-        session('classroomId', $classroomId);
 
+        // 判断该老师是不是第一次登陆
         if (is_null($teacherId)) {
-            return $this->error('第一次请注册信息', url('teacherFirst?classroomId=' . $classroomId));
+            // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
+            if (is_null($username) || is_null($password)) {
+                return $this->error('请输入注册信息', url('teacherFirst?classroomId=' . $classroomId));
+            } else {
+                // 调用M层的方法对用户名密码进行判断
+                if (Teacher::login($username, $password)) {
+                    // 如果不是则认定为教师端登陆，跳转到教师端
+                    // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
+                    $teacherId = session('teacherId');
+                    $Teacher = Teacher::get($teacherId);
+                    $Teacher->classroom_id = $classroomId;
+                    if (!$Teacher->save()) {
+                        return $this->error('教室-老师信息绑定失败，请重新扫码', url('Course/index'));
+                    }
+                    return $this->success('login success', url('Course/index'));
+                } else {
+                    return $this->error('username or password incorrent', url('teacherFirst?classroomId=' . $classroomId));
+                }
+            }
         } else {
+            // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
+            $Teacher = Teacher::get($teacherId);
+            $Teacher->classroom_id = $classroomId;
+            if (!$Teacher->save()) {
+                return $this->error('教室-老师信息保存失败，请重新扫码', url('Course/index'));
+            }
             return $this->success('login success', url('Course/index'));
         }
     }
@@ -67,7 +94,7 @@ class LoginController extends Controller
      */
     public function teacherFirst() {
         // 获取教室id
-        $classroomId = Request::instance()->param();
+        $classroomId = Request::instance()->param('classroomId');
 
         // 将教室id传入v层
         $this->assign('classroomId', $classroomId);

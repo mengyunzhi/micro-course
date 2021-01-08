@@ -20,19 +20,20 @@ use PHPExcel;
 /**
 * 用于负责上课管理的各部分功能
 */
-class InClassController  extends IndexController
-{
+class InClassController  extends IndexController {
+    /**
+     * 首页负责展示上课座位图和上课基本信息
+     */
     public function index() {
-        // 获取老师对应的ID
+        // 获取老师对应的ID,并实例化教师对象
         $id =session('teacherId');
+        $Teacher = Teacher::get($id);
 
         // 接收reclass，该变量是用来判断是第一次设置签到时间
         $reClass = Request::instance()->param('reclass');
 
-        // 接收教室id，接收上课签到时间
-        // 由于目前没有设置扫码签到，故暂时设定classroom_id为1
-        $classroomId = Request::instance()->param('classroomId');
-        $classroomId = 35;
+        // 接收教室id，微信端登陆后绑定教室信息到教师中
+        $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
 
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
@@ -547,6 +548,11 @@ class InClassController  extends IndexController
             "classroom_id"=>$Classroom->id,
             "is_seated"=>1
         );
+
+        // 实例化教师对象，清除教师对象中的classroom_id字段内容
+        $Teacher = Teacher::get($Classroom->Course->Teacher->id);
+        $Teacher->classroom_id = 0;
+        $Teacher->save();
         
         // 根据该教室座位找出已被坐的座位
         $Seats = Seat::where($que)->select();
