@@ -90,7 +90,7 @@ class GradeaodController extends IndexController
         }
     
         // 成功跳转至InClass/index触发器,并传入教室id
-        return $this->success('上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '$reclass=' . 1)); 
+        return $this->success('上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
 
     /**
@@ -162,17 +162,20 @@ class GradeaodController extends IndexController
         }
 
         // 成功跳转至index触发器
-        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '$reclass=' . 1)); 
+        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
     
     /**
      * 保存成绩，用于保存上课对上课表现成绩加减分后成绩的保存
-     * @param $Grade 将要保存的成绩
+     * @param Grade 将要保存的成绩
      */
     private function saveGrade(Grade &$Grade) {
         // 接收加减分传入的加减分分值，并将上课表现成绩进行修改
         $Grade->coursegrade += Request::instance()->post('aodNum');
         
+        // 重新计算总成绩并保存
+        $Grade->getAllgrade();
+
         // 更新或保存
         return $Grade->validate(true)->save();
     }
