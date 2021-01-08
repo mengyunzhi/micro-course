@@ -82,9 +82,7 @@ class GradeaodController extends IndexController
 
         // 判断成绩是否获取成功，并保存修改后的成绩
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade,true)) {
-                return $this->error('成绩保存失败' . $Grade->getError());
-            }
+            $this->saveGrade($Grade,true);
         } else {
             return $this->error('当前操作的记录不存在');
         }
@@ -175,14 +173,11 @@ class GradeaodController extends IndexController
         
         // 重新计算总成绩并保存
         $Grade->getAllgrade();
-
-        // 更新或保存
-        return $Grade->validate(true)->save();
     }
 
     /**
      * 新增的加减分项属性内容的保存
-     * @param $Gradeaod 新增的加减分对象
+     * @param Gradeaod 新增的加减分对象
      */
     private function saveGradeaod(Gradeaod &$Gradeaod) {
         // 接收从add传入的加减分项的名称和分值

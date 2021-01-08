@@ -16,15 +16,15 @@ class CoursegradeController extends IndexController {
     public function index() {
         try {
             // 接收教室id，接收学生id
-            $classroomId = Request::instance()->param('classroomId');
-            $studentId = Request::instance()->param('studentId');
+            $classroomId = Request::instance()->param('classroomId/d');
+            $studentId = Request::instance()->param('studentId/d');
             
             // 实例化教室和学生
             $Classroom = Classroom::get($classroomId);
             $Student = Student::get($studentId);
 
             // 增加判断点击按钮是否存在学生
-            if (is_null($studentId)) {
+            if (is_null($studentId) || $studentId === 0) {
                 return $this->error('该座位不存在学生', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
 
