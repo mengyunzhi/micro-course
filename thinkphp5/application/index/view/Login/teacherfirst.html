@@ -17,14 +17,14 @@
 </head>
 
 <body style="background-color: grey">
-    <form action="{:url('Login/wxlogin')}" method="post">
+    <form action="{:url('Login/wxTeacher')}" method="post">
         <div class="login">
             <h2>Micro-course</h2>
             <div class="login-top">
                 <h1>LOGIN FORM</h1>
                 <form>
                     <label class="col-sm-2 control-label" style="font-size: 20px;">username:</label><input type="text" name="username" id="username" />
-                    <input type="hidden" name="seatId" id="classroomId" value="{:$classroomId}" />
+                    <input type="hidden" name="classroomId" id="classroomId" value="{:$classroomId}" />
                     <label class="col-sm-2 control-label" style="font-size: 20px;">password:</label><input type="password" name="password" id="password" />
                 </form>
                 <div class="forgot">

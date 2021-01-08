@@ -17,12 +17,13 @@ class PreClassController extends IndexController
 {
      public function index() {
 
-        // 获取老师对应的ID
+        // 获取老师对应的ID,实例化教师对象
         $id = session('teacherId');
+        $Teacher = Teacher::get($id);
 
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
-        $classroomId = 35;
+        $classroomId = $Teacher->classroom_id;
  
         // 实例化Classroom对象
         $Classroom = Classroom::get($classroomId);
@@ -63,7 +64,7 @@ class PreClassController extends IndexController
 
         // 删除上节课的信息
         if (!$this->clearClassroom($Classroom)) {
-                return $this->error('上一次上课信息清除失败,请重新上课', url('PreClass/index?classroomId=' . $Classroom->id));
+                return $this->error('上一次上课信息清除失败,请重新上课', url('PreClass/index'));
             }
     }
 
