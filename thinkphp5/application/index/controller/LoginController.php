@@ -67,6 +67,8 @@ class LoginController extends Controller
                 if (Teacher::login($username, $password)) {
                     // 如果不是则认定为教师端登陆，跳转到教师端
                     // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
+                    // 首先清除上一个教师和教室的绑定
+                    $this->clearContact($classroomId);
                     $teacherId = session('teacherId');
                     $Teacher = Teacher::get($teacherId);
                     $Teacher->classroom_id = $classroomId;
@@ -80,6 +82,8 @@ class LoginController extends Controller
             }
         } else {
             // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
+            // 首先清除上一个教师和教室的绑定
+            $this->clearContact($classroomId);
             $Teacher = Teacher::get($teacherId);
             $Teacher->classroom_id = $classroomId;
             if (!$Teacher->save()) {
@@ -102,7 +106,7 @@ class LoginController extends Controller
     }
 
     /**
-     * 负责第一次微信登陆的注册任务
+     * 负责学生第一次微信登陆的注册任务
      */
     public function firstWx() {
         // 获取从wxLogin传出的seatId
@@ -115,7 +119,7 @@ class LoginController extends Controller
     }
     
     /**
-     * 微信登陆
+     * 学生微信登陆
      */
     public function wxLogin() {
         // 接收post信息,并获取学生id
@@ -211,5 +215,20 @@ class LoginController extends Controller
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
         return $this->fetch();
+    }
+
+    /**
+     * 清空上一个老师与教室的绑定信息
+     * @param classroomId 扫码对应的教室id
+     */
+    public function clearContact($classroomId) {
+        // 判断是否存在classroom_id字段为该教室的教师对象，如果存在删除上一个教师的信息
+        $Teacher = Teacher::get(['classroom_id' => $classroomId]);
+        if (!is_null($Teacher)) {
+            $Teacher->classroom_id = 0;
+            if(!$Teacher->save()) {
+                return $this->error('上一个教师与教室信息解除失败,请重新上课', url('Course/index'));
+            }
+        }
     }
 }
