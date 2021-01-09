@@ -30,8 +30,7 @@
         <div class="row">
             <hr style="margin-top: 50px;">
             <br>
-            {$classroomId}
-            <?php $url1 = 'classroomId=' . $classroomId; ?>
+            <?php $url1 = 'classroomId=' . $classroomId . '&classroomName=' . $classroomName; ?>
             {eq name="$match" value=""}
             
             {else/}
@@ -89,8 +88,7 @@
                 <i class="glyphicon glyphicon-hand-right"></i>
                 &nbsp;上一个模板
             </a>
-            {$match}
-            <a href="{:url('template?id=' . $id2 . '&classroomId=' . $classroomId . '&match=' . $match)}" class="btn btn-primary " style="float: right;">
+            <a href="{:url('template?id=' . $id2 . '&classroomId=' . $classroomId . '&match=' . $match . '&classroomName=' . $classroomName)}" class="btn btn-primary " style="float: right;">
                 <i class="glyphicon glyphicon-hand-right "></i>
                 &nbsp;下一个模板
             </a>
