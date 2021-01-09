@@ -48,6 +48,7 @@ class ClassroomController extends Controller
      */
     public function add() {
       $seatMapId = Request::instance()->param('seatMapId');
+      $classroomName = input('param.classroomName');
       $seatMap = SeatMap::all();
       $Classroom = new Classroom;
 
@@ -59,6 +60,9 @@ class ClassroomController extends Controller
       // 如果存在上级路由（模板选择一级）传过来的值，则赋值
       if(!is_null($seatMapId)) {
         $Classroom->seat_map_id = $seatMapId;
+      }
+      if(!is_null($classroomName)) {
+        $Classroom->name = $classroomName;
       }
 
       // 向v层传值
@@ -142,7 +146,6 @@ class ClassroomController extends Controller
 
       //如果存在上级路由（模板选择一级）传过来的值，则赋值
       if(!is_null($seatMapId)) {
-
         $Classroom->seat_map_id = $seatMapId;
       }
 
@@ -158,7 +161,6 @@ class ClassroomController extends Controller
       //返回v层渲染
       return $this->fetch();
     }
-
     /**
      * 更新教室座位图
      */
@@ -180,6 +182,8 @@ class ClassroomController extends Controller
       }
       $Classroom->save();
       $Classroom1 = Classroom::get($classroomId);
+      dump($Classroom);
+      dumpa($Classroom1);
       if($Classroom->name != $Classroom1->name || $Classroom->seat_map_id != $Classroom1->seat_map_id) {
         return $this->error('座位未被正确更新');
       }
@@ -194,6 +198,8 @@ class ClassroomController extends Controller
     public function seatMapChange() {
       // 获取教室id,并实例化教室对象
       $classroomId = input('param.id');
+      dump($classroomId);
+      die();
       $Classroom = Classroom::get($classroomId);
 
       // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板

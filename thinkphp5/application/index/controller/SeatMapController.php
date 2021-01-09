@@ -23,6 +23,8 @@ class SeatMapController extends Controller {
 		return $this->fetch();
 	}
 
+	
+
 	/**
 	 * 座位图模板显示
 	 */
@@ -39,13 +41,12 @@ class SeatMapController extends Controller {
 			$url = 'classroom/edit';
 			$match = 1;
 		}
-		var_dump($match);
 		$classroomId = Request::instance()->param('classroomId');
-		var_dump($classroomId);
+		$classroomName = Request::instance()->param('classroomName');
+		var_dump($classroomName);
 		$seatMapAsc = SeatMap::order('id')->select();
 		$seatMapDesc = SeatMap::order('id desc')->select();
 		$id = Request::instance()->param('id');
-		$classroomId = input('param.classroomId/d');
 		
 		// 若是最后一个则下一个模板为最开始的模板
 		if($id == -2 || is_null($id)) {
@@ -66,6 +67,7 @@ class SeatMapController extends Controller {
 		rsort($seatAisle);
 
 		$this->assign('match', $match);
+		$this->assign('classroomName', $classroomName);
 		$this->assign('classroomId', $classroomId);
 		$this->assign('url', $url);
 		$this->assign('seatMap1', $seatMapAsc);
