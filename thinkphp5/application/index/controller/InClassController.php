@@ -34,7 +34,9 @@ class InClassController  extends IndexController {
 
         // 接收教室id，微信端登陆后绑定教室信息到教师中
         $classroomId = $Teacher->classroom_id;
-        $Classroom = Classroom::get($classroomId);
+        if (is_null($Classroom = Classroom::get($classroomId))) {
+            return $this->error('教室信息获取失败，请重新上课', url('Course/index'));
+        }
 
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
         $seats = Seat::where('classroom_id', '=', $classroomId)->select();
@@ -733,12 +735,12 @@ class InClassController  extends IndexController {
         $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         $number = sizeof($CourseStudents) - sizeof($ClassDetails);
         $count = 0;
+        $Students = [];
         // 獲取未簽到的學生
         for ($i = 0; $i < $number; $i++) {
-            $Students = [];
             $flag = 1;
             for($j = 0; $j < sizeof($ClassDetails); $j++) {
-                if ($ClassDetails[$j]->student_id === $CourseStudents[$i]) {
+                if ($ClassDetails[$j]->student_id === $CourseStudents[$i]->student_id) {
                     $flag = 0;
                 }
             }

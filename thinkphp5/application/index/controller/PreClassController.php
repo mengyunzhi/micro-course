@@ -16,7 +16,6 @@ use app\common\model\Seat;
 class PreClassController extends IndexController
 {
      public function index() {
-
         // 获取老师对应的ID,实例化教师对象
         $id = session('teacherId');
         $Teacher = Teacher::get($id);

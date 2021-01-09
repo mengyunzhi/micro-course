@@ -4,16 +4,16 @@
 {/block}
 {block name="content"}
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$course->name}</td>
+    <td><label>课程名称：{$course->name}</label></td>
     <td>
         <form action="{:url('fileExportGrade?courseId=' . $course->id)}">
             <button class="btn btn-warning">导出表单</button>
     </td>
-</table>
-<div class="col-md-4 text-right" style="float: right;">
+    <td style="float: right;">
     <a href="{:url('listindex?id=' . $course->getData('id'))}" class="btn btn-primary">&nbsp;降序</a>
     <a href="{:url('upindex?id=' . $course->getData('id'))}" class=" btn btn-danger btn-sm">&nbsp;升序</a>
-</div>
+    </td>
+</table>
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>

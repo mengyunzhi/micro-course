@@ -38,7 +38,7 @@ class CourseController extends IndexController {
         //每页显示2条数据
         $pageSize = 2;
         //按条件查询数据并调用分页
-        $courses = $Course->where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
+        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
 
         // 通过name获取查询信息
         if (!empty($name)) {
