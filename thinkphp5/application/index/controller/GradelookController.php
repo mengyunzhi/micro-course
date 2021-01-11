@@ -24,7 +24,10 @@ class GradeLookController extends IndexController {
 
             // 实例化课程
             $Course = Course::get($courseId);
-            $pageSize = 2; // 每页显示5条数据
+            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
+                return $this->error('无此操作', Request::instance()->header('referer'));
+            }
+            $pageSize = 2; // 每页显示2条数据
             $Students = $Course->Students;
 
             $Grades = Grade::where('course_id', '=',  $courseId . '%')->paginate($pageSize);

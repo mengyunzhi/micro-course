@@ -51,7 +51,7 @@ class LoginController extends Controller
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId');
         if (is_null($classroomId)) {
-            return $this->error('教室信息传递失败，请从新扫码', url('Course/index'));
+            return $this->error('教室信息传递失败，请从新扫码', Request::instance()->header('referer'));
         }
 
         // 获取教师id，并判断是否存在teacherId;接收教室id,并将其存入session中
@@ -73,9 +73,9 @@ class LoginController extends Controller
                     $Teacher = Teacher::get($teacherId);
                     $Teacher->classroom_id = $classroomId;
                     if (!$Teacher->save()) {
-                        return $this->error('教室-老师信息绑定失败，请重新扫码', url('Course/index'));
+                        return $this->error('教室-老师信息绑定失败，请重新扫码', Request::instance()->header('referer'));
                     }
-                    return $this->success('login success', url('Course/index'));
+                    return $this->success('login success', url('Teacherwx/index'));
                 } else {
                     return $this->error('username or password incorrent', url('teacherFirst?classroomId=' . $classroomId));
                 }
@@ -89,7 +89,7 @@ class LoginController extends Controller
             if (!$Teacher->save()) {
                 return $this->error('教室-老师信息保存失败，请重新扫码', url('Course/index'));
             }
-            return $this->success('login success', url('Course/index'));
+            return $this->success('login success', url('Teacherwx/index'));
         }
     }
 

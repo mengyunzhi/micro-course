@@ -72,19 +72,24 @@ class SeatController extends controller {
         $Classroom = Classroom::get($Seat->classroom_id);
         $classDetail = new ClassDetail();
 
+        // 为新建和更新上课详情做准备(获取上课课程对象)
+        $isUpdate = false;
+        $classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
+
         // 增加判断是否为已经扫码，更改座位情况
         $SeatFirst = Seat::get(['student_id' => $studentId]);
         if (!is_null($SeatFirst)) {
             $SeatFirst->studentId = null;
             $SeatFirst->is_seated = 0;
             // 获取对应的上课详情对象
-            $classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
+            
             $que = array(
                 'student_id' => $studentId,
                 'class_course_id' => $classCourse->id
             );
             // 如果是二次签到更换座位，那么重新建立classDetail对象
             $classDetail = ClassDetail::get($que);
+            $isUpdate = true;
         }
 
         // 通过座位id获取教室id，进而判断本教室是否处于上课状态
@@ -110,8 +115,7 @@ class SeatController extends controller {
         }
 
         // 创建一条上课数据,首先获取该课程对应的上课缓存信息
-        $classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
-        if (!$this->saveClassDetail($classCourse, $studentId, $seatId, $classDetail)) {
+        if (!$this->saveClassDetail($classCourse, $studentId, $seatId, $classDetail, $isUpdate)) {
             return $this->error('签到信息保存失败', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         }
  
@@ -123,17 +127,34 @@ class SeatController extends controller {
         if (!$Seat->save()) {
             return $this->error('座位信息更新失败，请重新扫码', url('sign?studentId=' . $studentId));
         }
-        return $this->success('扫码签到成功，请开始上课', url('Login/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
+        return $this->success('扫码签到成功，开始上课', url('Login/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
     }
 
     /**
      * 上课座位学生信息缓存
-     * @param classCourse 上课课程缓存信息
+     * @param ClassCourse 上课课程缓存信息
      * @param studentId 该座位学生id
      * @param seatId 学生所做的座位
      * @param ClassDetail 上课缓存待修改对象
      */
-    public function saveClassDetail($classCourse, $studentId, $seatId, ClassDetail &$ClassDetail) {
+    public function saveClassDetail($ClassCourse, $studentId, $seatId, ClassDetail &$ClassDetail, $isUpdate = false) {
+        // 如果不是更新，那么增加上课详情赋值
+        if (!$isUpdate) {
+            $ClassDetail->class_course_id = $ClassCourse->id;
+            $ClassDetail->student_id = $studentId;
+            $ClassDetail->aod_num = 0;
+        }
+
+        // 将之前座位信息删除并保存
+        $Seat = Seat::get(['student_id' => $studentId]);
+        if (!is_null($Seat)) {
+            $Seat->student_id = 0;
+            $Seat->is_seated = 0;
+            if (!$Seat->save()) {
+                return $this->error('座位信息更改失败，重新发起请求', url(Request::instance()->header('referer')));
+            }
+        }
+
         // 上课座位学生信息对象座位和更新时间字段进行修改
         $ClassDetail->seat_id = $seatId;
         $ClassDetail->update_time = time();

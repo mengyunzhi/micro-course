@@ -174,11 +174,11 @@ class CourseController extends IndexController {
 
         // 新增数据并验证。验证类
         if (!$Course->validate(true)->save()) {
-            return $this->error('保存错误：' . $Course->getError());
+            return $this->error('课程保存失败：' . $Course->getError());
         }
 
         // Excel表的导入
-        $uploaddir = '/data/';
+        $uploaddir = 'data/';
         // $uploaddir = "";
         $name = time() . $_FILES["userfile"]["name"];
         // dump($name);
@@ -198,7 +198,7 @@ class CourseController extends IndexController {
     if(!$this->excel($href, $Course)) {
         return $this->error('文件上传失败');
     }
-    return $this->success('文件上传并且学生信息保存成功', url('add'));
+    return $this->success('文件上传并且学生信息保存成功', url('index'));
   }
 
    /**
@@ -220,7 +220,8 @@ class CourseController extends IndexController {
         // 将学生表中的数据存入数据库
         $count = 1;
         if($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号"  || $sheetData[1]["D"] != "性别" || $sheetData[1]["E"] != "邮件" ) {
-            return $this->error('文件格式与模板格式不相符', url('file'));
+            $Course->delete();
+            return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
         $count = 0;
         foreach ($sheetData as $sheetDataTemp) {
