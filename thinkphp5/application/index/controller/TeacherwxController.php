@@ -11,6 +11,8 @@ use app\common\model\InClass;
 use app\common\model\Seat;
 use app\common\model\ClassCourse;
 use app\common\model\ClassDetail;
+use app\common\model\Grade;
+use app\common\model\Gradeaod;
 
 /**
  * 负责微信端教师界面的显示
@@ -89,10 +91,11 @@ class TeacherwxController extends IndexController {
         }
 
         // 通过加减分判断和课程id获取对应存在的加减分项
-        $gradeAods = Gradeaod::where(['aod_state' => $aodState, 'course_id' => $courseId]);
+        $gradeAods = Gradeaod::where(['aod_state' => $aodState, 'course_id' => $courseId])->select();
 
         $this->assign('Grade', $Grade);
         $this->assign('gradeAods', $gradeAods);
+        $this->assign('Student', $Seat->student);
 
         return $this->fetch();
     }
@@ -101,21 +104,44 @@ class TeacherwxController extends IndexController {
      * 微信端的加减分保存操作
      */
     public function update() {
+        // 接收教师id
+        $teacherId = session('teacherId');
+        $Teacher = Teacher::get($teacherId);
+        // 获取教室id，并对教室进行实例化
+        $classroomId = $Teacher->classroom_id;
+        $Classroom = Classroom::get($classroomId);
+
+        // 根据教室对象获取对应的ClassCourse对象
+        $ClassCourse = ClassCourse::get(['classroom_id' => $Classroom->id, 'begin_time' => $Classroom->begin_time]);
+        if (is_null($ClassCourse)) {
+            return $this->error('上课课程查找失败', Request::instance()->header('referer'));
+        }
+
         // 接收加减分项id和对应的成绩id
         // 实例化对象请求
         $Request = Request::instance();
         $gradeId = Request::instance()->param('gradeId/d');
-        $gradeAodId = Request::instance()->param('gradeAodId/d');
+        $aodNum = Request::instance()->param('aodNum/d');
 
         // 实例化成绩对象和加减分对象
         $Grade = Grade::get($gradeId);
-        $GradeAod = Gradeaod::get($gradeAodId);
 
         // 加减分操作并保存更改后的成绩
-        $Grade->coursegrade += $GradeAod->aod_num;
+        $Grade->coursegrade += $aodNum;
         if (!$Grade->save()) {
             return $this->error('成绩修改失败，请重新操作' . $Grade->getError());
         } 
+        // 根据上课课程获取上课详情对象,并进行修改
+        $que = array(
+            'class_course_id' => $ClassCourse->id,
+            'student_id' => $Grade->Student->id
+        );
+        $ClassDetail = ClassDetail::get($que);
+        $ClassDetail->aod_num += $aodNum;
+        if (!$ClassDetail->save()) {
+            return $this->error('上课详情更改失败', Request::instance()->header('referer'));
+        }
+
         return $this->success('成绩修改成功', url('wxAod'));
     }
 
@@ -198,11 +224,12 @@ class TeacherwxController extends IndexController {
         // 根据上课详情对象数组和课程学生对象数组获取未签学生对象数组
         $number = sizeof($classDetails);
         $numberOne = sizeof($courseStudents);
+        
         $count = 0;
         for ($i = 0; $i < $numberOne; $i ++) {
             $flag = 1;
             for($j = 0; $j < $number; $j ++) {
-                if ($courseStudents[$i]->student === $classDetails[$j]->student) {
+                if ($courseStudents[$i]->student == $classDetails[$j]->student) {
                     $flag = 0;
                 }
             }

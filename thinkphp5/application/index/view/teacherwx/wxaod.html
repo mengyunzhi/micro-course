@@ -15,8 +15,8 @@
         <td>{$key}</td>
         <td>{$_Seat->student->name}</td>
         <td>{$_Seat->student->num}</td>
-        <td><a class="btn btn-sm btn-primary" href="/index/WxTeacher/gradechange?studentId={$_Seat->student->id}&aodState=1&courseId={$Course->id}">加分</a> &nbsp;&nbsp;
-            <a class=" btn btn-danger btn-sm" href="/index/WxTeacher/gradechange?studentId={$_Seat->student->id}&aodState=0&courseId={$Course->id}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
+        <td><a class="btn btn-sm btn-primary" href="/index/Teacherwx/gradechange?seatId={$_Seat->id}&aodState=1&courseId={$Course->id}">加分</a> &nbsp;&nbsp;
+            <a class=" btn btn-danger btn-sm" href="/index/Teacherwx/gradechange?seatId={$_Seat->id}&aodState=0&courseId={$Course->id}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;减分</a></td>
     </tr>
     {/volist}
 </table>
