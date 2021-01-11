@@ -47,6 +47,7 @@ class LoginController extends Controller
      */
     public function wxTeacher() {
         // 接收用户名密码信息和教室id
+        $name = Request::instance()->post('name');
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId');
@@ -60,9 +61,22 @@ class LoginController extends Controller
         // 判断该老师是不是第一次登陆
         if (is_null($teacherId)) {
             // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
-            if (is_null($username) || is_null($password)) {
-                return $this->error('请输入注册信息', url('teacherFirst?classroomId=' . $classroomId));
+            if (is_null($username) || is_null($password || is_null($name))) {
+                return $this->error('请输入完整注册信息', url('teacherFirst?classroomId=' . $classroomId));
             } else {
+                // 首先根据姓名、用户名和密码判断数据库中是否存在该老师
+                $Teacher = Teacher::get(['name' => $name, 'username' => $username]);
+                if (is_null($Teacher)) {
+                    $Teacher = new Teacher();
+                    $Teacher->name = $name;
+                    $Teacher->username = $username;
+                    $Teacher->password = $this::encryptPassword($password);
+                    $Teacher->num = 0;
+                    if(!$Teacher->save()) {
+                        return $this->error('注册教师信息失败，请重新注册', Request::instance()->header('referer'));
+                    }
+                }
+                
                 // 调用M层的方法对用户名密码进行判断
                 if (Teacher::login($username, $password)) {
                     // 如果不是则认定为教师端登陆，跳转到教师端

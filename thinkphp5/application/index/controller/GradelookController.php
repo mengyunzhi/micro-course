@@ -73,30 +73,29 @@ class GradeLookController extends IndexController {
     public function listindex() {
         try {
             // 获取课程信息,同时如果有查询信息，获取对应学生的学号
-            $courseId = Request::instance()->param('id');
+            $courseId = Request::instance()->param('id/d');
             $num = Request::instance()->param('name');
 
             // 实例化课程
             $Course = Course::get($courseId);
-            $pageSize = 5; // 每页显示5条数据
+            $pageSize = 2; // 每页显示5条数据
 
             // 通过课程获取学生对象数组
             $Students = $Course->Students;
 
             // 按照总成绩递减的方式查找成绩对象数组，并通过降序的方式展示
-            $Grades = Grade::order('allgrade desc')->where('course_id', 'like', '%' . $courseId . '%')->paginate($pageSize);
+            $Grades = Grade::order('allgrade desc')->where('course_id', '=', $courseId)->paginate($pageSize);
             
             // 获取查询信息，并实现查找对应学生的成绩
-            if (!empty($num)) {
-                // 通过学号和课程号，获取该学生对象
-                $Students = Student::where('num', '=', $num)->select();
-
-                // 定制查询信息，通过课程id和学生对象信息获取对应的成绩
-                $que = array(
-                    "course_id" => $courseId,
-                    "student_id" => $Students[0]->id
-                );
-                $Grades = Grade::where($que)->paginate($pageSize);
+            if(!empty($num)) {
+                $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                // 直接向V层传数据
+                $this->assign('grades', $Grades);
+                $this->assign('students', $Students);
+                $this->assign('course', $Course);
+                return $this->fetch();
             }
 
             // 向V层传数据
@@ -131,24 +130,23 @@ class GradeLookController extends IndexController {
             
             // 实例化课程
             $Course = Course::get($courseId);
-            $pageSize = 5; // 每页显示5条数据
+            $pageSize = 2; // 每页显示5条数据
 
             // 根据课程获取该班对应的学生对象数组
             $Students = $Course->Students;
 
-            $Grades = Grade::order('allgrade asc')->where('course_id', 'like', '%' . $courseId . '%')->paginate($pageSize);
+            $Grades = Grade::order('allgrade asc')->where('course_id', '=', $courseId)->paginate($pageSize);
 
             // 获取查询信息，并实现查找对应学生的成绩
-            if (!empty($num)) {
-                // 通过学号，获取该学生对象
-                $Students = Student::where('num', '=', $num)->select();
-
-                // 定制查询信息，通过课程id和学生对象信息获取对应的成绩
-                $que = array(
-                    "course_id" => $courseId,
-                    "student_id" => $Students[0]->id
-                );
-                $Grades = Grade::where($que)->paginate($pageSize);
+            if(!empty($num)) {
+                $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                // 直接向V层传数据
+                $this->assign('grades', $Grades);
+                $this->assign('students', $Students);
+                $this->assign('course', $Course);
+                return $this->fetch();
             }
 
             // 向V层传数据
