@@ -13,8 +13,6 @@ class IndexController extends Controller
 	
 	public function __construct()
 	{
-		# code...
-
 		//调用父类构造函数
 		parent::__construct();
 		//验证用户是否登录

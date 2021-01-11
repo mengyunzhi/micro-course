@@ -2,41 +2,47 @@
 {block name="title"}
 {/block}
 {block name="search"}
- 
- {/block}
+{/block}
 {block name="search1"}
-
 {/block}
 {block name="hr1"}
-
 {/block}
 {block name="hr2"}
-
 {/block}
 {block name="Add"}
-
 {/block}
 {block name="content"}
 <div class="container">
-        <form action="{:url('update')}" method="post">
-            <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
-            <div class="from-group">
-                <input type="hidden" name="id" value="{$Student->getData('id')}" />
-                <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
-                <input type="text" name="name" id="name" class="form-control" value="{$Student->name}" />
-            </div>
-            <div class="form-group">
-                <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
-                <input type="text" name="num" id="num" class="form-control" value="{$Student->num}" />
-            </div>
-            <div class="form-group">
-                {volist name="Student->courses()->select()" id="course"}
-                <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="Student->getIsChecked($course)" value="true" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
-                {/volist}
-            </div>
-            <button type="submit" class="btn btn-default" style="margin-top: 20px">submit</button>
-        </form>
-    </div>
+    <form action="{:url('update')}" method="post">
+        <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
+        <div class="from-group">
+            <input type="hidden" name="id" value="{$Student->getData('id')}" />
+            <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
+            <input type="text" name="name" id="name" class="form-control" value="{$Student->name}" />
+        </div>
+        <div class="form-group">
+            <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
+            <input type="text" name="num" id="num" class="form-control" value="{$Student->num}" />
+        </div>
+        <div class="form-group">
+            <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
+            <select name="sex" class="form-control">
+                <option value="0" >男</option>
+                <option value="1" {eq name="Student->sex" value="1"} selected="selected" {/eq} >女 </option> 
+            </select> 
+        </div> 
+        <div class="form-group">
+            <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
+            <input type="email" name="email" id="email" class="form-control" value="{$Student->email}" />
+        </div>
+        <div class="form-group">
+            {volist name="Student->courses()->select()" id="course"}
+            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="Student->getIsChecked($course)" value="true" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
+            {/volist}
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 20px">submit</button>
+    </form>
+</div>
 {/block}
 {block name="render"}
 {/block}

@@ -25,16 +25,26 @@
             <input type="text" name="num" id="num" class="form-control" />
         </div>
         <div class="form-group">
-            {$courseId}
+            <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
+            <select name="sex" class="form-control">
+                <option value="0">男</option>
+                <option value="1">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
+            <input type="email" name="email" id="email" class="form-control" />
+        </div>
+        <div class="form-group">
             <label style="font-size: 20px;margin-top: 20px">对应课程</label>
-            <p style="color: blue">点击ctrl可以多选</p>
             <br>
-            <select multiple="multiple" size="5" name="courseIds[]" class="form-control">
-                {volist name="$Student->Courses()->select()" id="course"}
-                <option  value="{$course->id}" {eq name="$course->id" value="$courseId" selected="selected" }{/eq}>{$course->name} </option> {/volist} 
-            </select> 
+           
+                {volist name="Student->courses()->select()" id="course"}
+                <input type="checkbox" name="courseId[]" id="courseId_{$course->id}" value="{$course->id}" /> <label for="courseId_{$course->id}">{$course->name}</label>
+                {/volist}
+           
         </div> 
-        <button type="submit" class="btn btn-default" style="margin-top: 20px">
+        <button type="submit" class="btn btn-primary">
             submit
         </button>
     </form>

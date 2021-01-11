@@ -8,7 +8,7 @@ use app\common\model\Teacher;
 use app\common\model\Course;
 use app\common\model\Student;
 use app\common\model\CourseStudent;
-class TermController extends IndexController
+class TermController extends AdminJudgeController
 {
 	public function index()
 	{

@@ -14,37 +14,7 @@ use app\common\model\ClassDetail;
 /**
  * 座位管理，负责座位的信息更新和信息重置等
  */
-class SeatController extends controller
-{
-    public function index() {
-        // 获取教室id并获取对应的座位对象数组
-        $classroom_id = Request::instance()->param('id/d');
-        if (!is_null($classroom_id)) {
-            $Seats = Seat::where('classroom_id','=',$classroom_id)->select();
-        }
-
-        // 将座位对象数组传到V层进行渲染 
-        $this->assign('Seats',$Seats);
-        return $this->fetch();
-    }
-
-    /**
-    * 增加座位
-    */
-    public function add() {
-    
-    }
-    /**
-     * 挨个copy座位
-     */
-    public function saveSeat() {
-        
-    }
-
-    public function edit() {
-        return $this->fetch();
-    }
-
+class SeatController extends controller {
     /**
     * 设置座位,当前状态是座位则编程过道，否则为座位.0为座位，1为过道，默认为0
     */

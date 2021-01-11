@@ -15,7 +15,7 @@ use app\common\model\Teacher;
 /**
  * 教室管理
  */
-class ClassroomController extends Controller
+class ClassroomController extends AdminJudgeController
 {
     public function index()
     {
@@ -161,6 +161,7 @@ class ClassroomController extends Controller
       //返回v层渲染
       return $this->fetch();
     }
+    
     /**
      * 更新教室座位图
      */

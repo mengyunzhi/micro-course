@@ -6,29 +6,32 @@ use app\common\model\CourseStudent;
 use think\Request;
 use app\common\model\Course;
 use think\validate;
-class AdminStudentController extends Controller
+use app\common\model\ClassDetail;
+class AdminStudentController extends AdminJudgeController
 {
 	 public function index()
     {
         try {
             // 获取查询信息
-            $course_id = Request::instance()->param('id');
+            $courseId = Request::instance()->param('id');
             $num = Request::instance()->get('num');
             $page = Request::instance()->get('page');
             $pageSize = 5; // 每页显示5条数据
 
-            // 实例化Teacher
+            // 实例化Student
             $Student = new Student; 
             $coursestudent = new CourseStudent;
-            //$course_id = 1;
+
             // 定制查询信息
-            if(!empty($course_id)){
+            if(!empty($courseId)) {
+
                 // course-student表别名为a
-            	$coursestudents = CourseStudent::alias('a')->where('a.course_id','=',$course_id);
+            	$coursestudents = CourseStudent::alias('a')->where('a.course_id', '=', $courseId);
+
                 // student的表别名为s
                 if(!empty($num)){
                     $coursestudents = $coursestudents->
-                    join('student s','a.student_id = s.id')->where('s.num','=',$num);
+                    join('student s','a.student_id = s.id')->where('s.num', '=', $num);
                 }
 
                 // 按条件查询数据并调用分页
@@ -38,9 +41,9 @@ class AdminStudentController extends Controller
            
 
             // 向V层传数据
-            $this->assign('courseId', $course_id);
+            $this->assign('courseId', $courseId);
             $this->assign('coursestudents', $coursestudents);
-            //dump($coursestudents);die();
+
             // 取回打包后的数据
             $htmls = $this->fetch();
 
@@ -59,15 +62,13 @@ class AdminStudentController extends Controller
 	public function add(){
         $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);
-        $Student = new Student;
 		return $this->fetch();
 	}
 
 	public function edit()
 	{
-		$id = Request::instance()->post('id/d');
+		$id = Request::instance()->param('id/d');
 		$Student = Student::get($id);
-
 		if(is_null($Student)){
 			return $this->error('不存在ID为'.$id.'的记录');
 		}
@@ -80,14 +81,15 @@ class AdminStudentController extends Controller
 		$Student = new Student();
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
+        $courseIds = Request::instance()->post('courseId/a');       
+        // /a表示获取的类型为数组
 		//新增数据并验证
 		if (!$Student->validate(true)->save()) {
 			return $this->error('保存错误'.$Student->getError());
 		}
 		// -------------------------- 新增班级课程信息 -------------------------- 
         // 接course_id这个数组
-        $courseIds = Request::instance()->post('courseIds/a');       
-        // /a表示获取的类型为数组
+
 
         // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
         if (!is_null($courseIds)) {
@@ -108,13 +110,16 @@ class AdminStudentController extends Controller
 		}
 		//更新学生
 		$Student->name = Request::instance()->post('name');
+        $Student->num = Request::instance()->post('num');
+        $Student->sex = input('post.sex');
+        $Student->email = input('post.email');
 		if(is_null($Student->validate(true)->save())){
 			return $this->error('学生信息更改发生错误'.$Student->getError());
 		}
 		$map = ['student_id'=>$id];
 		//执行删除操作，由于可能存在删除0条记录的情况，用false来判断而不能使用
         // if (!KlassCourse::where($map)->delete()) {因为我们认为删除0条记录也为成功
-		if (false===$Student->CourseStudent()->where($map)->delete()) {
+		if (false===$Student->CourseStudents()->where($map)->delete()) {
 			return $this->error('删除信息发生错误'.$Student->CourseStudents()->getError());
 		}
 		//增加新数据
@@ -127,16 +132,13 @@ class AdminStudentController extends Controller
 		return $this->success('更新成功',$_POST['httpref']);
 	}
 
-	private function saveStudent(Student &$Student,$isUpdate= false)
+	private function saveStudent(Student &$Student)
     {
         //写入要传入的数据
-        $Student->name=Request::instance()->post('name');
-
-        if(!$isUpdate)
-        {
-            
-            $Student->num=Request::instance()->post('num/d');
-        }
+        $Student->name = Request::instance()->post('name');
+        $Student->num = Request::instance()->post('num/d');
+        $Student->sex = input('post.sex');
+        $Student->email = input('post.email');
 
         //更新并保存数据
         return $Student->validate(true)->save();
@@ -164,7 +166,7 @@ class AdminStudentController extends Controller
 
             // 删除对象
             if (!$Student->delete()) {
-                $message = '删除失败:' . $Teacher->getError();
+                $message = '删除失败:' . $Student->getError();
             }
         }
         //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
@@ -194,8 +196,9 @@ class AdminStudentController extends Controller
      * @param $studentId 要被删除的学生id
      */
     public function deleteCourseStudent($studentId) {
+
         $courseStudents = CourseStudent::where('student_id', '=', $studentId)->select();
-        foreach ($coursestudents as $CourseStudent) {
+        foreach ($courseStudents as $CourseStudent) {
             if(!$CourseStudent->delete()) {
                 return $this->error('删除课程学生关联失败');
             }
