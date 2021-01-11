@@ -33,7 +33,7 @@ class TeacherwxController extends IndexController {
         $pageSize = 2;
         $courses = Course::where('teacher_id', '=', $teacherId);
 
-        if (empty($name)) {
+        if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate($pageSize);
             $this->assign('courses', $courses);
             return $this->fetch();
@@ -69,7 +69,21 @@ class TeacherwxController extends IndexController {
             'classroom_id' => $classroomId,
              'is_seated' => '1'
             );
-        $seats = Seat::where($que)->paginate($pageSize);
+        $seats = Seat::where($que);
+
+        // 获取查询条件学生学号num
+        $num = Request::instance()->param('name');
+        if (!is_null($num)) {
+            $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
+            $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->select();
+            if (!empty($courseStudents)) {
+                $seats = $seats->where('student_id', '=', $courseStudents[0]->student_id)->paginate($pageSize);
+            } else {
+                return $this->error('查找不存在', Request::instance()->header('referer'));
+            }
+        } else {
+            $seats = Seat::where($que)->paginate($pageSize);
+        }
 
         $this->assign('seats', $seats);
         $this->assign('Teacher', $Teacher);
