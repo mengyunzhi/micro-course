@@ -5,10 +5,12 @@
 {block name="content"}
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$course->name}</td>
+    <td>
+        <div class="col-md-4 text-right" style="float: right;">
+            <a href="{:url('index?id=' . $course->getData('id'))}" class="btn btn-primary">&nbsp;返回</a>
+        </div>
+    </td>
 </table>
-<div class="col-md-4 text-right" style="float: right;">
-                    <a href="{:url('index?id=' . $course->getData('id'))}" class="btn btn-primary">&nbsp;返回</a>
-                </div>
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>
@@ -24,13 +26,14 @@
         <td>{$key}</td>
         <td>{$grade->Student->name}</td>
         <td>{$grade->Student->num}</td>
-        <td>{$grade->coursegrade}</td>
         <td>{$grade->getUsgrade()}</td>
+        <td>{$grade->coursegrade}</td>
         <td>{$grade->getAllgrade()}</td>
-        <td><a class="btn btn-default"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}
 </table>
+{:$grades->render()}
 {/block}
 {block name="page"}
 {/block}
