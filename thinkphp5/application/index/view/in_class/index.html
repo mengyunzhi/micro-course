@@ -115,7 +115,7 @@
     const app = Vue.createApp(RollCall).mount('#roll-call');
 
     // 获取后台数据，并传给RollCall中的data中的students
-    fetch('{:url("getStudents?classroomId=" . $classroomId)}')
+    fetch('{:url("getStudents?classroomId=" . $Classroom->id)}')
         .then(res => res.json())
         .then(data => app.$data.students = data);
     </script>

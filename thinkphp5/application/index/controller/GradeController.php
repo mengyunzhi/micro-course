@@ -52,6 +52,9 @@ class GradeController extends IndexController {
         // 接收课程id，并实例化课程对象
         $courseId = Request::instance()->param('id/d');
         $Course = Course::get($courseId);
+        if ($teacherId = session('teacherId') !== $Course->teacher_id) {
+                return $this->error('无此操作', Request::instance()->header('referer'));
+            }
 
         // 增加判断是否课程存在
         if(is_null($Course)) {
@@ -105,8 +108,12 @@ class GradeController extends IndexController {
      */
     public function courseGrade() {
         try {
-            // 接收课程id
-            $courseId = Request::instance()->param('courseId');
+            // 接收课程id,并实例化课程对象
+            $courseId = Request::instance()->param('courseId/d');
+            $Course = Course::get($courseId);
+            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
+                return $this->error('无此操作', Request::instance()->header('referer'));
+            }
 
             // 实例化课程对象
             $Course = Course::get($courseId);
