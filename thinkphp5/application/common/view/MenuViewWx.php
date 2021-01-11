@@ -22,7 +22,7 @@ class MenuViewWx {
 		 $signMenu->controller = 'Teacherwx';
 
 		 $this->menus = [$courseMenu, $courseGradeMenu, $signMenu];
-		 $this->viewHtml = view('index/menu', 
+		 $this->viewHtml = view('index/wxmenu', 
 		 	['menus' => $this->menus, 
 		 	'title' => config('app.title')]);
 	 }
