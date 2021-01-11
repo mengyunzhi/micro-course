@@ -33,28 +33,29 @@ class GradeLookController extends IndexController {
             $Grades = Grade::where('course_id', '=',  $courseId . '%')->paginate($pageSize);
 
             // 获取查询信息，并实现查找对应学生的成绩
-            if (!empty($num)) {
-                // 通过学号，获取该学生对象
-                $Students = Student::where('num', '=', $num)->select();
+            $num = Request::instance()->param('name/d');
+            if(!empty($num)) {
+                $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                // 直接向V层传数据
+                $this->assign('grades', $Grades);
+                $this->assign('students', $Students);
+                $this->assign('course', $Course);
+                return $this->fetch();
+            } else {
 
-                // 定制查询信息，通过课程id和学生对象信息获取对应的成绩
-                $que = array(
-                    "course_id" => $courseId,
-                    "student_id" => $Students[0]->id
-                );
-                $Grades = Grade::where($que)->paginate($pageSize);
+                // 向V层传数据
+                $this->assign('students', $Students);
+                $this->assign('grades', $Grades);
+                $this->assign('course', $Course);
+
+                // 取回打包后的数据
+                $htmls = $this->fetch();
+
+                // 将数据返回给用户
+                return $htmls;
             }
-
-            // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('grades', $Grades);
-            $this->assign('course', $Course);
-
-            // 取回打包后的数据
-            $htmls = $this->fetch();
-
-            // 将数据返回给用户
-            return $htmls;
 
         // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         } catch (\think\Exception\HttpResponseException $e) {
