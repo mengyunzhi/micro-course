@@ -21,17 +21,17 @@
                 <i class="glyphicon glyphicon-eye-open"></i>
                 &nbsp;查看座位图
             </a>
-            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}">
-                <i class="glyphicon glyphicon-trash"></i>
-                &nbsp;删除
+             <a class="btn btn-sm btn-warning" href="{:url('QRCode?id=' . $classroom->getData('id'))}">
+                <i class="glyphicon glyphicon-qrcode"></i>
+                &nbsp;生成二维码
             </a>
             <a class="btn btn-sm btn-primary" href="{:url('edit?classroomId=' . $classroom->getData('id'))}">
                 <i class="glyphicon glyphicon-pencil"></i>
                 &nbsp;编辑
             </a>
-            <a class="btn btn-sm btn-warning" href="{:url('QRCode?id=' . $classroom->getData('id'))}">
-                <i class="glyphicon glyphicon-pencil"></i>
-                &nbsp;生成二维码
+            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $classroom->getData('id'))}">
+                <i class="glyphicon glyphicon-trash"></i>
+                &nbsp;删除
             </a>
         </td>
     </tr>

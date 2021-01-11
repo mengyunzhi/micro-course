@@ -20,12 +20,13 @@
         <td>{$teacher->getData('name')}</td>
         <td>{$teacher->getData('num')}</td>
         <td>
+            <a class="btn btn-success btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
+                <span class="glyphicon glyphicon-eye-open"></span>
+                &nbsp;所教课程
+            </a>
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $teacher->getData('id'))}">
                 <i class="glyphicon glyphicon-pencil"></i>
                 &nbsp;编辑
-            </a>
-            <a class="btn btn-success btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
-                &nbsp;所教课程
             </a>
             <a class="btn btn-danger btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
                 <i class="glyphicon glyphicon-trash"></i>
