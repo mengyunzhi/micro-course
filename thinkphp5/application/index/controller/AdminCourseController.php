@@ -16,7 +16,7 @@ use app\common\model\Gradeaod;
 /**
  * 管理员课程端
  */
-class AdminCourseController extends Controller {
+class AdminCourseController extends AdminJudgeController {
     public function index()
     {
     	try{

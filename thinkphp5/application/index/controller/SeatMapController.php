@@ -43,7 +43,6 @@ class SeatMapController extends Controller {
 		}
 		$classroomId = Request::instance()->param('classroomId');
 		$classroomName = Request::instance()->param('classroomName');
-		var_dump($classroomName);
 		$seatMapAsc = SeatMap::order('id')->select();
 		$seatMapDesc = SeatMap::order('id desc')->select();
 		$id = Request::instance()->param('id');

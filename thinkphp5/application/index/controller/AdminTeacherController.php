@@ -5,7 +5,7 @@ use app\common\model\Teacher;//教师模型
 use think\Request;
 use think\validate;
 use think\controller\Term;
-class AdminTeacherController extends Controller
+class AdminTeacherController extends AdminJudgeController
 {
 	public function index()
 	{

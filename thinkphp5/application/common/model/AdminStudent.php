@@ -62,10 +62,6 @@ class AdminStudent extends Model
     {
         return $this->hasMany('AdminCourseStudent');
     }
-    public function AdminCourseStudents()
-    {
-    	return $this->hasMany('AdminCourseStudent');
-    }
 
     public function getName()
     {
