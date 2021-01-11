@@ -26,16 +26,24 @@ class TeacherwxController extends IndexController {
         $teacherId = session('teacherId');
         $Teacher = Teacher::get($teacherId);
         $classroomId = $Teacher->classroom_id;
+        $name = Request::instance()->param('name');
 
         // 获取该老师所教的所有课程
         // 分页页数为2
         $pageSize = 2;
-        $courses = Course::where('teacher_id', '=', $teacherId)->paginate($pageSize);
+        $courses = Course::where('teacher_id', '=', $teacherId);
 
-        // 将课程对象数组传入V层进行渲染
-        $this->assign('courses', $courses);
+        if (empty($name)) {
+            $courses = $courses->where('name', '=', $name)->paginate($pageSize);
+            $this->assign('courses', $courses);
+            return $this->fetch();
+        } else {
+            $courses = Course::where('teacher_id', '=', $teacherId)->paginate($pageSize);
+            // 将课程对象数组传入V层进行渲染
+            $this->assign('courses', $courses);
 
-        return $this->fetch();
+            return $this->fetch();
+        }
     }
     /**
      * 微信端扫码登陆后的跳转到上课表现成绩加减分部分
@@ -46,7 +54,7 @@ class TeacherwxController extends IndexController {
         $Teacher = Teacher::get($teacherId);
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
-        if (is_null($Classroom)) {
+        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));
         }
 
@@ -114,7 +122,7 @@ class TeacherwxController extends IndexController {
         // 根据教室对象获取对应的ClassCourse对象
         $ClassCourse = ClassCourse::get(['classroom_id' => $Classroom->id, 'begin_time' => $Classroom->begin_time]);
         if (is_null($ClassCourse)) {
-            return $this->error('上课课程查找失败', Request::instance()->header('referer'));
+            return $this->error('上课课程查找失败,请先开始上课', Request::instance()->header('referer'));
         }
 
         // 接收加减分项id和对应的成绩id
@@ -156,7 +164,7 @@ class TeacherwxController extends IndexController {
         // 将教师数据库字段classroom_id 赋值给变量$classroomId，并对教室对象实例化
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
-        if (is_null($Classroom)) {
+        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));
         }
 
@@ -166,7 +174,7 @@ class TeacherwxController extends IndexController {
         ]);
         // 获取到上课课程对象后增加判断是否为空，如果为空则返回提示:请先开始上课，并返回上一级
         if (is_null($ClassCourse)) {
-            return $this->error('上课课程查找失败', Request::instance()->header('referer'));
+            return $this->error('上课课程查找失败,请先开始上课', Request::instance()->header('referer'));
         }
 
         // 根据上课课程对象获取上课详情对象数组classDetails，外键为class_course_id

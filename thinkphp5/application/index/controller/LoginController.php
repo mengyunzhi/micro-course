@@ -223,7 +223,7 @@ class LoginController extends Controller
         $que = array(
             'student_id' => $studentId,
         );
-        $pageSize = 2;
+        $pageSize = 5;
         $classDetails = ClassDetail::where($que)->paginate($pageSize);
 
         // 将数据传入V层进行渲染
@@ -242,6 +242,71 @@ class LoginController extends Controller
             $Teacher->classroom_id = 0;
             if(!$Teacher->save()) {
                 return $this->error('上一个教师与教室信息解除失败,请重新上课', url('Course/index'));
+            }
+            // 通过教室id获取教室对象
+            $Classroom = Classroom::get($classroomId);
+            if (!$this->clearClassroom($Classroom)) {
+                return $this->error('教室信息修改失败', Request::instance()->header('referer'));
+            }
+        }
+    }
+
+    /**
+    * 清除教室中保留的上节课信息
+    * @param $Classroom 被清除教室对象
+    */
+    protected function clearClassroom(Classroom &$Classroom) {
+        // 实例化请求
+        $Request = Request::instance();
+
+        // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
+        $que = array(
+            "classroom_id"=>$Classroom->id,
+            "is_seated"=>1
+        );
+
+        // 实例化教师对象，清除教师对象中的classroom_id字段内容
+        $Teacher = Teacher::get($Classroom->Course->Teacher->id);
+        $Teacher->classroom_id = 0;
+        $Teacher->save();
+        
+        // 根据该教室座位找出已被坐的座位
+        $Seats = Seat::where($que)->select();
+
+        // 调用clearSeats方法对已做座位进行信息清空
+        $this->clearSeats($Seats);
+
+        // 将该教室对象的各个数据进行清空
+        $Classroom->begin_time = 0;
+        $Classroom->out_time = 0;
+        $Classroom->course_id = 0;
+        $Classroom->sign_time = 20;
+        $Classroom->sign_deadline_time = 0;
+        $Classroom->update_time = time();
+        $Classroom->out_time = 0;
+        $Classroom->begin_time = 0;
+        $Classroom->sign_begin_time = 0;
+
+        // 更新并保存数据
+        $Classroom->validate(true)->save();
+        return 1;
+    }
+
+    /**
+    * 清除教室对应的座位的座位信息
+    * @param $Seats 将被清除的座位对象数组
+    */
+    protected function clearSeats(array &$Seats) {
+        // 将该教室的各个座位的信息清空
+        // 首先得出该教室中的座位个数
+        $number = sizeof($Seats);
+
+        // 对该教室的每个座位信息进行逐个清空
+        for ($i = 0; $i < $number; $i++) {
+            $Seats[$i]->is_seated = 0;
+            $Seats[$i]->student_id = 0;
+            if (!$Seats[$i]->validate(true)->save()) {
+                return $this->error('座位信息重置失败', $Request->header('referer'));
             }
         }
     }

@@ -27,7 +27,7 @@
         <td>{$grade->coursegrade}</td>
         <td>{$grade->getUsgrade()}</td>
         <td>{$grade->getAllgrade()}</td>
-        <td><a class="btn btn-default"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
+        <td><a class="btn btn-sm btn-primary"  href="{:url('edit?id=' . $grade->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;成绩编辑</a>&nbsp;</td>
     </tr>
     {/volist}
 </table>
