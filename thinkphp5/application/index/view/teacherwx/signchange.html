@@ -1,0 +1,66 @@
+{extend name="wxindex"/}
+{block name="title"}
+课程管理
+{/block}
+{block name="search"}{/block}
+{block name="search1"}
+
+{/block}
+{block name="Add"}
+{/block}
+{block name="content"}
+
+<?php $time = date('Y-m-d'); ?>
+<br>
+<table class="table table-hover table-bordered" style="200px;">
+    <td>{$Course->name}:已签学生名单：</td>
+    </td>
+</table>
+<hr>
+<table class="table table-hover table-bordered" style="margin-bottom: 70px;">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>学生性别</th>
+        <th>加减分情况</th>
+        <th>签到时间</th>
+    </tr>
+    {volist name="classDetails" id="_classDetail" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_classDetail->student->name}</td>
+        <td>{$_classDetail->student->num}</td>
+        <td>{eq name="_classDetail->student->sex" value='0'}男{else /}女{/eq}</td>
+        <td>{$_classDetail->aod_num}分</td>
+        <td>
+            <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
+        </td>
+    </tr>
+    {/volist}
+</table>
+<table class="table table-hover table-bordered" style="200px;">
+    <td>{$Course->name}:未签到学生:{:sizeof($unSigns)}人</td>
+</table>
+<hr>
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>学生性别</th>
+        <th>操作</th>
+    </tr>
+    {volist name="unSigns" id="_student" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_student->name}</td>
+        <td>{$_student->num}</td>
+        <td>{eq name="$_student->sex" value='0'}男{else /}女{/eq}</td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('signUpdate?studentId=' . $_student->id . '&classCourseId=' . $ClassCourse->id)}">改签</a></td>
+    </tr>
+    {/volist}
+</table>
+{:$classDetails->render()}
+{/block}
+{/block}
