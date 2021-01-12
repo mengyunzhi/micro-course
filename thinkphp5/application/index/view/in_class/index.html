@@ -56,11 +56,13 @@
                 <label style="font-size: 15px;">
                     分钟
                 </label>
+                <input type="hidden" name="classroomId" value="{:$Classroom->id}">
                 <button>保存</button> 
             </td>
         </form>
         <form action="{:url('changeOutTime')}" method="post">
             <td>
+                <input type="hidden" name="classroomId" value="{:$Classroom->id}">
                 <label style="font-size: 15px;">
                     下课时间:
                     <select name="outTime">

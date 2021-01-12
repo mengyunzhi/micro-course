@@ -36,7 +36,7 @@
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 {eq name='seatAisles[$i * $SeatMap->y_map + $j]->getData("state")' value='1'}
                 <td  style="padding-left: 10px;padding-right: 10px;">
-                    <div style="font-color:white"><?php echo('过道'); ?></div>
+                    <?php echo('过道'); ?>
                 </td>{else /}
                 <td class="success" style="padding-left: 10px;padding-right: 10px;">
                     <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
