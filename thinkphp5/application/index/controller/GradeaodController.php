@@ -152,15 +152,13 @@ class GradeaodController extends IndexController
 
         // 通过新增加的加减分项对$Grade对象进行加减分
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade,true)) {
-                return $this->error('成绩保存失败' . $Grade->getError());
-            }
+            $this->saveGrade($Grade);
         } else {
             return $this->error('当前操作的记录不存在');
         }
 
         // 成功跳转至index触发器
-        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
+        return $this->success('新增成功,学生成绩修改成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
     
     /**

@@ -278,4 +278,18 @@ class TeacherwxController extends IndexController {
         // 对新增后的上课详情对象进行保存
         return $ClassDetail->save();
     }
+
+    /**
+     * 对补签学生签到次数进行加一
+     * @param studentId 学生对象ID
+     * @param courseId 上课课程id
+     */
+    public function changeGrade($studentId, $courseId) {
+        // 根据学生id和课程id获取该学生对应的成绩对象
+        $Grade = Grade::get(['student_id' => $studentId, 'course_id' => $courseId]);
+
+        // 签到次数加一，重新计算签到成绩和总成绩并保存
+        $Grade->resigternum += 1;
+        $Grade->getAllgrade();
+    }
 }
