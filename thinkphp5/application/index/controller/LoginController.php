@@ -224,7 +224,7 @@ class LoginController extends Controller
             'student_id' => $studentId,
         );
         $pageSize = 5;
-        $classDetails = ClassDetail::where($que)->paginate($pageSize);
+        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate($pageSize);
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
@@ -241,7 +241,7 @@ class LoginController extends Controller
         if (!is_null($Teacher)) {
             $Teacher->classroom_id = 0;
             if(!$Teacher->save()) {
-                return $this->error('上一个教师与教室信息解除失败,请重新上课', url('Course/index'));
+                return $this->error('上一个教师与教室信息解除失败,请重新上课', Request::instance()->header('referer'));
             }
             // 通过教室id获取教室对象
             $Classroom = Classroom::get($classroomId);
@@ -264,11 +264,6 @@ class LoginController extends Controller
             "classroom_id"=>$Classroom->id,
             "is_seated"=>1
         );
-
-        // 实例化教师对象，清除教师对象中的classroom_id字段内容
-        $Teacher = Teacher::get($Classroom->Course->Teacher->id);
-        $Teacher->classroom_id = 0;
-        $Teacher->save();
         
         // 根据该教室座位找出已被坐的座位
         $Seats = Seat::where($que)->select();
@@ -288,8 +283,7 @@ class LoginController extends Controller
         $Classroom->sign_begin_time = 0;
 
         // 更新并保存数据
-        $Classroom->validate(true)->save();
-        return 1;
+        return $Classroom->validate(true)->save();
     }
 
     /**

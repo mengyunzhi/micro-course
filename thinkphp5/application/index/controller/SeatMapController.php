@@ -37,7 +37,7 @@ class SeatMapController extends Controller {
 		if (preg_match("/add/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
     		$url = 'classroom/add';
     		$match = 1;
-		} elseif(preg_match("/edit/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
+		} else if(preg_match("/edit/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
 			$url = 'classroom/edit';
 			$match = 1;
 		}
@@ -192,12 +192,10 @@ class SeatMapController extends Controller {
 
 		// 如果是座位则切换为过道
 		if($SeatAisle->state === 1) {
-
 			$SeatAisle->state = 0;
 		}
 		// 反之切换为座位
 		else {
-
 			$SeatAisle->state = 1;
 		}
 		if(!$SeatAisle->save()) {

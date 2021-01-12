@@ -30,7 +30,7 @@ class InClassController  extends IndexController {
         $Teacher = Teacher::get($id);
 
         // 接收reclass，该变量是用来判断是第一次设置签到时间
-        $reClass = Request::instance()->param('reclass');
+        $reClass = Request::instance()->param('reclass/d');
 
         // 接收教室id，微信端登陆后绑定教室信息到教师中
         $classroomId = $Teacher->classroom_id;
@@ -46,7 +46,7 @@ class InClassController  extends IndexController {
         $newSeats = $this->seatDisplay($seats, $SeatTemplate);
 
         // 首先判断是不是已经设置上课时间等
-        if (empty($reClass)) {
+        if ($reClass !== 1) {
             // 如果是已经上课，就不需要重新接收courseId
             $courseId = Request::instance()->param('courseId');
             // 接受上课时间和课程ID
@@ -61,7 +61,7 @@ class InClassController  extends IndexController {
             // 存取时间和课程id,并更新和保存
             $this->saveCourse($Classroom, $courseId);
             if (is_null($Classroom->validate(true)->save())) {
-                return $this->error('签到时间或课程信息数据保存失败', $PreClass->getError());
+                return $this->error('签到时间或课程信息数据保存失败', Request::instance()->header('referer'));
             }
 
             // 将上课信息记录到ClassCourse类中
@@ -489,7 +489,7 @@ class InClassController  extends IndexController {
         if(!$Classroom->validate(true)->save()) {
             return $this->error('下课时间修改失败', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
         }
-        return $this->success('修改下课时间成功', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+        return $this->success('修改下课时间成功', url('index?classroomId=' . $Classroom->id . '&reclass=1'));
     }
 
     /**

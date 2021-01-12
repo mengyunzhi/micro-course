@@ -2,6 +2,9 @@
 {block name="title"}
 加减分
 {/block}
+{block name="search"}<div style="margin-top: 40px;"><label class="sr-only" for="name">姓名</label>
+    <input name="name" type="text" class="form-control" placeholder="学生学号..." value="{:input('get.name')}"></div>{/block}
+{block name="Add"}{/block}
 {block name="content"}
 <table class="table table-hover table-bordered">
     <tr class="info">

@@ -37,14 +37,17 @@ class GradeLookController extends IndexController {
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
                 $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
-                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
-                // 直接向V层传数据
-                $this->assign('grades', $Grades);
-                $this->assign('students', $Students);
-                $this->assign('course', $Course);
-                return $this->fetch();
+                if (sizeof($courseStudents) !== 0) {
+                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                    // 直接向V层传数据
+                    $this->assign('grades', $Grades);
+                    $this->assign('students', $Students);
+                    $this->assign('course', $Course);
+                    return $this->fetch();
+                } else {
+                    return $this->error('查找不存在', Request::instance()->header('referer'));
+                }
             } else {
-
                 // 向V层传数据
                 $this->assign('students', $Students);
                 $this->assign('grades', $Grades);
