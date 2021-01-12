@@ -5,7 +5,7 @@
 {block name="content"}
 
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$course->name}:已签到学生：{:sizeof($ClassDetails)}人</td>
+    <td>{$course->name}:已上课学生：{:sizeof($ClassDetails)}人</td>
     <td><div >
         <a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}">&nbsp;返回</a></td></div>
 </table>
@@ -15,7 +15,7 @@
         <th>学生姓名</th>
         <th>学生学号</th>
         <th>学生性别</th>
-        <th>签到时间</th>
+        <th>上课时间</th>
     </tr>
     {volist name="ClassDetails" id="_ClassDetail" key="key"}
     <tr>
@@ -28,7 +28,7 @@
     {/volist}
 </table>
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$course->name}:未签到学生名单:</td>
+    <td>{$course->name}:未上课学生名单:</td>
 </table>
 <table class="table table-hover table-bordered">
     <tr class="info">

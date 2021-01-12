@@ -12,10 +12,6 @@ class AdminCourse extends Model
      * 自定义自转换字换
      * @var array
      */
-    protected $type = [
-        'create_time' => 'datetime',
-        'update_time' => 'datetime',
-    ];
 	private $Teacher;
     /**
      * 获取对应的教师（辅导员）信息

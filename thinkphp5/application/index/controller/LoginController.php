@@ -43,7 +43,7 @@ class LoginController extends Controller
     }
 
     /**
-     * 负责教室端微信登陆，理论上与网页端不冲突
+     * 负责教师端微信登陆，理论上与网页端不冲突
      */
     public function wxTeacher() {
         // 接收用户名密码信息和教室id
@@ -174,6 +174,10 @@ class LoginController extends Controller
         return $this->success('login success', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
     }
 
+    /**
+     * 
+     */
+
     public function test123($key, $value = null )
     {
         if(is_null($value))
@@ -238,16 +242,23 @@ class LoginController extends Controller
     public function clearContact($classroomId) {
         // 判断是否存在classroom_id字段为该教室的教师对象，如果存在删除上一个教师的信息
         $Teacher = Teacher::get(['classroom_id' => $classroomId]);
+        $Classroom = Classroom::get($classroomId);
+        $teacherId = session('teacherId');
+
+        // 判断是否为同一老师在上课时间再次登录，如果不是则清除教室信息和教师绑定
         if (!is_null($Teacher)) {
-            $Teacher->classroom_id = 0;
-            if(!$Teacher->save()) {
-                return $this->error('上一个教师与教室信息解除失败,请重新上课', Request::instance()->header('referer'));
-            }
-            // 通过教室id获取教室对象
-            $Classroom = Classroom::get($classroomId);
-            if (!$this->clearClassroom($Classroom)) {
-                return $this->error('教室信息修改失败', Request::instance()->header('referer'));
-            }
+            if ($Teacher->id !== $teacherId || $Classroom->out_time < time()) {
+                if (!is_null($Teacher)) {
+                    $Teacher->classroom_id = 0;
+                    if(!$Teacher->save()) {
+                        return $this->error('教师与教室信息解除失败,请重新上课', Request::instance()->header('referer'));
+                    }
+                    // 教室信息重置
+                    if (!$this->clearClassroom($Classroom)) {
+                        return $this->error('教室信息修改失败', Request::instance()->header('referer'));
+                    }
+                }
+            }  
         }
     }
 

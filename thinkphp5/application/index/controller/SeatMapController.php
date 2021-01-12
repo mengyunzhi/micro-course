@@ -45,7 +45,7 @@ class SeatMapController extends Controller {
 		$classroomName = Request::instance()->param('classroomName');
 		$seatMapAsc = SeatMap::order('id')->select();
 		$seatMapDesc = SeatMap::order('id desc')->select();
-		$id = Request::instance()->param('id');
+		$id = Request::instance()->param('id/d');
 		
 		// 若是最后一个则下一个模板为最开始的模板
 		if($id == -2 || is_null($id)) {
@@ -53,7 +53,7 @@ class SeatMapController extends Controller {
 			$id = $seatmap->id;
 		}
 		// 若是第一个模板则上一个模板是最后的模板
-		if($id == -1) {
+		if($id === -1) {
 			$seatmap = $seatMapDesc[0];
 			$id = $seatmap->id;
 		}
@@ -62,8 +62,7 @@ class SeatMapController extends Controller {
 		$Course = Course::get($course_id);
 		$SeatMap = SeatMap::get($id);
 		$seatAisle = new SeatAisle;
-		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
-		rsort($seatAisle);
+		$seatAisle = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
 
 		$this->assign('match', $match);
 		$this->assign('classroomName', $classroomName);

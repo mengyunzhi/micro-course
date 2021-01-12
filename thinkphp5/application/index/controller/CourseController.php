@@ -101,14 +101,14 @@ class CourseController extends IndexController {
         if (is_null($Course = Course::get($courseId))) {
             return $this->error('不存在ID为' . $courseId . '的记录');
         }
-
+        
         // 更新课程信息(上课表现初始成绩、最高上课表现成绩、签到占比，签到一次占比)
         $Course->name = Request::instance()->post('name');
         $Course->resigternum = Request::instance()->post('resigternum');
         $Course->usmix = Request::instance()->post('usmix');
         $Course->courseup = Request::instance()->post('courseup');
         $Course->begincougrade = Request::instance()->post('begincougrade');
-        if (is_null($Course->validate(true)->save())) {
+        if (!$Course->save()) {
             return $this->error('课程信息更新发生错误：' . $Course->getError());
         }
         return $this->success('更新成功', url('index'));
