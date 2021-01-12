@@ -120,14 +120,14 @@
         .then(data => app.$data.students = data);
     </script>
     <div class="col-md-4 text-right" style="float: left;">
-        <button style="width: 80px;" class="btn btn-success">
-            &nbsp;已有学生
+        <button style="width: 100px;" class="btn btn-success">
+            <i class="glyphicon glyphicon-tag"></i>&nbsp;已有学生
         </button>
-        <button style="width: 80px;" class="btn btn-info">
-            &nbsp;座位为空
+        <button style="width: 100px;" class="btn btn-info">
+            <i class="glyphicon glyphicon-tag"></i>&nbsp;座位为空
         </button>
         <button style="width: 70px;"  class="btn btn-default">
-            &nbsp;过道
+            <i class="glyphicon glyphicon-tag"></i>&nbsp;过道
         </button>
     </div>
     <div class="col-md-4 text-right" style="float: right;">
@@ -159,7 +159,7 @@
                         </a>
                     </th>
                     <?php endfor; ?>
-                    <?php $x++; ?>
+                    <?php if ($y !== 0 ) $x++; ?>
                     <?php $y = 0; ?>
                 </tr>
                 <?php endfor; ?>

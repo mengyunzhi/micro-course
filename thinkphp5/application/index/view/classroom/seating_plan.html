@@ -20,29 +20,26 @@
     </h3>
     <div class="container">
         <table class="table table-bordered table-condensed ">
-            <?php $x = 0; ?>
+            <?php $x = 1; ?>
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php $y = 0; ?>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 {eq name='$seat[$i][$j]->getData("is_seat")' value='0'}
-                <td class="success" style="height: 50px;width: 50px;">
+                <td class="success" style="height: 40px;width: 40px;">
                     <p style="font-size: 25px;">
-                        <?php echo($x);echo($y); $y = $y + 1;?>
+                        <?php echo($x);echo(',');echo(++$y);?>
                     </p>
                 </td>
                 {else /}
-                <td class="default" style="height: 50px;width: 50px;">
+                <td class="default" style="height: 40px;width: 40px;">
                     <p style="font-size: 25px;">
                     </p>
                 </td>
                 {/eq}
                 <?php endfor; ?>
             </tr>
-            <?php if($y === 0): ?>
-            <?php $x--; ?>
-            <?php endif; ?>
-            <?php $x++; ?>
+            <?php if ($y !== 0 ) $x++; ?>
             <?php endfor; ?>
         </table>
     </div>

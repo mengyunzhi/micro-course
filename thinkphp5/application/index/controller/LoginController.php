@@ -224,7 +224,7 @@ class LoginController extends Controller
             'student_id' => $studentId,
         );
         $pageSize = 5;
-        $classDetails = ClassDetail::where($que)->paginate($pageSize);
+        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate($pageSize);
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);

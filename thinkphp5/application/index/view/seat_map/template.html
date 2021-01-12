@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{block name="title"}标题{/block}</title>
+    <title>{block name="title"}座位图模板{/block}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="">
 </head>
@@ -14,7 +14,7 @@
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
     <div class="row">
-        <hr style="margin-top: 50px;">
+        <hr style="margin-top: 30px;">
         <br>
         <?php $url1 = 'classroomId=' . $classroomId . '&classroomName=' . $classroomName; ?>
         {eq name="$match" value=""}
@@ -23,23 +23,29 @@
         {/eq}
     </div>
     <h3 style="margin-left: 545px;margin-bottom: 50px;">
-        <?php echo('模板' . $SeatMap->getData('id')) ?>
+        <?php echo($SeatMap->getData('name')) ?>
         <hr>
         <p style="color: green;">讲台</p>
+
     </h3>
     <div class="container">
         <table class="table table-bordered table-condensed ">
-            {volist name="seatAisles" id="seatAisle" key="key"}
-            {if($seatAisle->y === ($SeatMap->y_map-1))}
+            <?php $x = 1;$y = 0; ?>
+            <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
-                {/if}
-                {eq name='seatAisle->getData("state")' value='0'}
-                <td class="success" style="padding-left: 10px;padding-right: 10px;">{$key}</td>{else /}
-                <td style="padding-left: 10px;padding-right: 10px;">{$key}</td>{/eq}
-                {if($seatAisle->y === 0)}
+                <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
+                {eq name='seatAisles[$i * $SeatMap->y_map + $j]->getData("state")' value='1'}
+                <td  style="padding-left: 10px;padding-right: 10px;">
+                    <div style="font-color:white"><?php echo('过道'); ?></div>
+                </td>{else /}
+                <td class="success" style="padding-left: 10px;padding-right: 10px;">
+                    <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
+                </td>{/eq}
+                <?php endfor; ?>
             </tr>
-            {/if}
-            {/volist}
+            <?php if ($y !== 0 ) $x++; ?>
+            <?php $y = 0; ?>
+            <?php endfor; ?>
         </table>
     </div>
     <hr>
@@ -70,9 +76,8 @@
             &nbsp;上一个模板
         </a>
         <a href="{:url('template?id=' . $id2 . '&classroomId=' . $classroomId . '&match=' . $match . '&classroomName=' . $classroomName)}" class="btn btn-primary " style="float: right;">
-         
             &nbsp;下一个模板
-               <i class="glyphicon glyphicon-chevron-right "></i>
+            <i class="glyphicon glyphicon-chevron-right "></i>
         </a>
     </div>
     </div>

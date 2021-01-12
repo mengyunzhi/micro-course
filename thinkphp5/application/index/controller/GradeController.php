@@ -132,10 +132,14 @@ class GradeController extends IndexController {
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
                 $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
-                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
-                // 直接向V层传数据
-                $this->assign('Grades', $Grades);
-                return $this->fetch();
+                if (sizeof($courseStudents) !== 0) {
+                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                    // 直接向V层传数据
+                    $this->assign('Grades', $Grades);
+                    return $this->fetch();
+                } else {
+                    return $this->error('查找不存在', Request::instance()->header('referer'));
+                }
             }
 
             // 通过条件查询，获得该课程对应的上课成绩对象数组
