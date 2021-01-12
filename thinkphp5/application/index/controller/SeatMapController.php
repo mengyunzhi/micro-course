@@ -62,8 +62,7 @@ class SeatMapController extends Controller {
 		$Course = Course::get($course_id);
 		$SeatMap = SeatMap::get($id);
 		$seatAisle = new SeatAisle;
-		$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
-		rsort($seatAisle);
+		$seatAisle = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
 
 		$this->assign('match', $match);
 		$this->assign('classroomName', $classroomName);
