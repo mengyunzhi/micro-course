@@ -15,10 +15,6 @@ class AdminStudent extends Model
      * 自定义自转换字换
      * @var array
      */
-    protected $type = [
-        'create_time' => 'datetime',
-        'update_time' => 'datetime',
-    ];
     public function Courses()
     {
         return $this->belongsToMany('Admincourse',config('datebase.prefix') . 'Admincourse_student');

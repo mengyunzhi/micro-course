@@ -35,13 +35,12 @@ class AdminCourseController extends AdminJudgeController {
        	    $courses = Course::where('teacher_id', '=', $teacher_id);
        	    
        	    if (!empty($name)) {
-
         	$courses = $courses->where('name', 'like','%'.$name.'%');
             }
         }
        
-
         $courses = $courses->where('term_id','=', $Term->id);
+        
         $courses = $courses->order('id desc')->paginate($pageSize);
         $page = $courses->render(); 
 

@@ -174,6 +174,10 @@ class LoginController extends Controller
         return $this->success('login success', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
     }
 
+    /**
+     * 
+     */
+
     public function test123($key, $value = null )
     {
         if(is_null($value))

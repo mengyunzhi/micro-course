@@ -8,10 +8,6 @@ class AdminTeacher extends Model{
      * 自定义自转换字换
      * @var array
      */
-    protected $type = [
-        'create_time' => 'datetime',
-        'update_time' => 'datetime',
-    ];
 	 public function Admincourses()
     {
         return $this->belongsToMany('AdminCourse',  config('database.prefix') . 'Admincourse');
