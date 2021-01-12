@@ -242,18 +242,20 @@ class LoginController extends Controller
         $teacherId = session('teacherId');
 
         // 判断是否为同一老师在上课时间再次登录，如果不是则清除教室信息和教师绑定
-        if ($Teacher->id !== $teacherId || $Classroom->out_time < time()) {
-            if (!is_null($Teacher)) {
-                $Teacher->classroom_id = 0;
-                if(!$Teacher->save()) {
-                    return $this->error('教师与教室信息解除失败,请重新上课', Request::instance()->header('referer'));
+        if (!is_null($Teacher)) {
+            if ($Teacher->id !== $teacherId || $Classroom->out_time < time()) {
+                if (!is_null($Teacher)) {
+                    $Teacher->classroom_id = 0;
+                    if(!$Teacher->save()) {
+                        return $this->error('教师与教室信息解除失败,请重新上课', Request::instance()->header('referer'));
+                    }
+                    // 教室信息重置
+                    if (!$this->clearClassroom($Classroom)) {
+                        return $this->error('教室信息修改失败', Request::instance()->header('referer'));
+                    }
                 }
-                // 教室信息重置
-                if (!$this->clearClassroom($Classroom)) {
-                    return $this->error('教室信息修改失败', Request::instance()->header('referer'));
-                }
-            }
-        }  
+            }  
+        }
     }
 
     /**
