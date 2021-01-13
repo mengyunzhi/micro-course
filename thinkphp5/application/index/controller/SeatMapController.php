@@ -1,7 +1,7 @@
 <?php
 namespace app\index\controller;
 use think\Controller;
-use app\common\Classroom;
+use app\common\model\Classroom;
 use think\Request;
 use think\validate;
 use app\common\model\SeatMap;
@@ -90,15 +90,19 @@ class SeatMapController extends Controller {
 	}
 
 	/**
-	 * 增加模板
+	 * 增加和编辑模板
 	 */
 	public function add() {
 		$id = input('id');
-		$SeatMap = SeatMap::get($id);
-		if(is_null($SeatMap)) {
+		$SeatMap = new SeatMap;
 		$SeatMap->name = '';
 		$SeatMap->x_map = 0;
 		$SeatMap->y_map = 0;
+		$SeatMap1 = SeatMap::get($id);
+
+		//若传来的$id不为空，即执行编辑操作
+		if(!is_null($SeatMap1)) {
+			$SeatMap = $SeatMap1;
 		}
 		$this->assign('SeatMap', $SeatMap);
 		return $this->fetch();
@@ -122,7 +126,17 @@ class SeatMapController extends Controller {
 	/**
 	 * 修改对应被修改模板的教室
 	 */
-	public function
+	public function editClassroom() {
+		$seatMapId = input('seatMapId');
+		$classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
+		if(!empty($classrooms)) {
+			foreach ($classrooms as $Classroom) {
+				ClassroomController::deleteSeat($Classroom->id);
+				ClassroomController::saveSeat($seatMapId, $Classroom->id);
+			}
+		}
+		return $this->success('模板编辑成功', url('index'));
+	}
 
 	/**
 	 * 保存模板的行和列
@@ -132,6 +146,10 @@ class SeatMapController extends Controller {
 		$SeatMap = new SeatMap;
 		$SeatMap->name = input('post.name');
 		$SeatMapPre = SeatMap::where('name', '=', input('post.name'))->select();
+		$seatMaps = SeatMap::all();
+		if(empty($seatMaps)) {
+			$SeatMap->is_first = 1;
+		}
 		if(!empty($SeatMapPre)) {
 			$idPre = $SeatMapPre[0]->id;
 			$this->deleteSeatAisle($idPre);
@@ -172,6 +190,7 @@ class SeatMapController extends Controller {
 
 		return $this->success('请选择过道', $url);
 	}
+
 	/**
 	 * 保存单个座位
 	 * @param $seatMapId 对应模板的id
