@@ -19,7 +19,14 @@ class LoginController extends Controller
     {    //用户登录表单
     public function index()
     {
-        //显示登录表单
+        // 接收登陆信息
+        $username = Request::instance()->param('username');
+        $password = Request::instance()->param('password');
+
+        $this->assign('username', $username);
+        $this->assign('password', $password);
+
+        // 显示登录表单
         return $this->fetch();
     }
     // 处理用户提交的登录数据
@@ -33,12 +40,12 @@ class LoginController extends Controller
         if (Teacher::login($username, $password)) {
             // 判断是否为管理员，如果用户名是管理员则认定为管理员，跳转到管理员端
             if($username === 'admin') {
-                return $this->success('login success', url('Term/index'));
+                return $this->success('登陆成功', url('Term/index'));
             }
             // 如果不是则认定为教师端登陆，跳转到教师端
-            return $this->success('login success', url('Course/index'));
+            return $this->success('登录成功', url('Course/index'));
         } else {
-            return $this->error('username or password incorrent', url('index'));
+            return $this->error('用户名或密码不正确', url('index'));
         }
     }
 
@@ -350,7 +357,7 @@ class LoginController extends Controller
            return $this->error('新旧密码一致', url('passwordModification?username=' . $username));
         }
 
-        // 判断新密码位数是否符合标准
+        // 判断新密码位数是否符合标准c
         if(strlen($password) < 6 || strlen($password)>25) {
             return $this->error('密码位数错误', url('passwordModification?username=' . $username));
         }

@@ -21,7 +21,12 @@ class MenuViewWx {
 		 $signMenu->action = 'signChange';
 		 $signMenu->controller = 'Teacherwx';
 
-		 $this->menus = [$courseMenu, $courseGradeMenu, $signMenu];
+		 $passwordMenu = new Menu;
+		 $passwordMenu->title = '修改密码';
+		 $passwordMenu->action = 'changePassword';
+		 $passwordMenu->controller = 'Teacherwx';
+
+		 $this->menus = [$courseMenu, $courseGradeMenu, $signMenu, $passwordMenu];
 		 $this->viewHtml = view('index/wxmenu', 
 		 	['menus' => $this->menus, 
 		 	'title' => config('app.title')]);

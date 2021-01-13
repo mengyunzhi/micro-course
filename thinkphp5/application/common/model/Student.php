@@ -18,7 +18,7 @@ class Student extends Model
     /**
      * 增加登陆判断
      */
-    public function Login($username, $passward) {
+    static public function Login($username, $password) {
         // 定制查询信息，判断是否存在username
         $que = array(
             'username' => $username,
@@ -38,14 +38,26 @@ class Student extends Model
     /**
      * 验证密码是否正确
      */
-    public function checkPassword($password)
-    {
-        if ($this->getData('password') === $this::encryptPassword($password))
-        {
+    public function checkPassword($password) {
+        // 通过加密算法计算密码是否正确
+        if ($this->getData('password') === $this::encryptPassword($password)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * 设置学生登陆密码算法加密
+     */
+    static public function encryptPassword($password) {
+        // 增加判断传入密码是否为字符串
+        if(!is_string($password)) {
+            throw new \RuntimeException("传入变量类型非字符串，错误码2", 2);  
+        }
+        
+        // 如果密码合格直接加密
+        return sha1(md5($password) . 'mengyunzhi');
     }
 
     public function Course()

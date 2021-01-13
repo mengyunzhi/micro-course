@@ -25,18 +25,21 @@
                     <h1>请登录</h1>
                     <form>
                         <label class="col-sm-2 control-label" style="font-size: 20px;">用户名:</label><input type="text" name="username" id="username" value="{:$username}" />
+                        <input type="hidden" name="classroomId" id="classroomId" value="{:$classroomId}" />
                         <label class="col-sm-2 control-label" style="font-size: 20px;">密码:</label><input type="password" name="password" id="password" value="{:$password}" />
                     </form>
                     <div class="forgot">
                         <input type="submit" value="登陆">
                     </div>
                 </div>
+                
                 <div class="login-bottom">
+                    <h4>&nbsp;<a href="teacherfirst?classroomId=' . $Classroom->id">注册</a>&nbsp </h4>
                     <h3>梦云智欢迎你 &nbsp;<a href="#">welcome</a>&nbsp </h3>
                 </div>
             </div>
             <div class="copyright">
-                <p>创建 &copy; 于 2020 被 梦云智</a></p>
+                <p>创建 &copy; 于 2020 作者:梦云智</a></p>
             </div>
     </form>
 </body>

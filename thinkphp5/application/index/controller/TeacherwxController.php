@@ -292,4 +292,66 @@ class TeacherwxController extends IndexController {
         $Grade->resigternum += 1;
         $Grade->getAllgrade();
     }
+
+    /**
+     * 微信端增加密码修改
+     */
+    public function changePassword() {
+        // 接收教师id并对教师进行实例化
+        $teacherId = session('teacherId');
+        if (is_null($Teacher = Teacher::get($teacherId))) {
+            return $this->error('老师信息不存在', Request::instance()->header('referer'));
+        }
+
+        // 获取原密码、新密码、确认密码
+        $oldPassword = Request::instance()->param('oldPassword');
+        $newPassword = Request::instance()->param('newPassword');
+        $newPasswordAgain = Request::instance()->param('newPasswordAgain');
+
+        $this->assign('Teacher', $Teacher);
+        $this->assign('oldPassword', $oldPassword);
+        $this->assign('newPassword', $newPassword);
+        $this->assign('newPasswordAgain', $newPasswordAgain);
+        
+        return $this->fetch();
+    }
+
+    /**
+     * 教师微信端密码更新
+     */
+    public function passwordUpdate() {
+        // 接收教师id并对教师进行实例化
+        $teacherId = session('teacherId');
+
+        // 接收旧密码和新密码
+        $oldPassword = Request::instance()->param('oldPassword');
+        $newPassword = Request::instance()->param('newPassword');
+        $newPasswordAgain = Request::instance()->param('newPasswordAgain');
+        if (is_null($Teacher = Teacher::get($teacherId))) {
+            return $this->error('学生信息接收失败', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+        }
+
+        // 首先判断输入的原密码是否正确
+        if ($Teacher->password !== $Teacher->encryptPassword($oldPassword)) {
+            return $this->error('修改失败,原密码不正确', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+        } else {
+            // 原密码输入正确时
+            if ($newPasswordAgain === $newPassword) {
+                $Teacher->password = $Teacher->encryptPassword($newPassword);
+                // 如果新密码长度不符合要求，返回重新修改
+                if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
+                    return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                }
+                // 如果密码符合格式要求，下面保存
+                if (!$Teacher->save()) {
+                    return $this->error('新密码保存失败,请重新修改', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                } else {
+                    session('teacherId',null);
+                    return $this->success('密码修改成功,请重新登陆', url('Login/teacherIndex?username=' . $Teacher->username));
+                }
+            } else {
+                return $this->error('两次密码不相同，请确认新密码一致', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+            }
+        }
+    }
 }

@@ -190,7 +190,7 @@ class CourseController extends IndexController {
         if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
             
         } else {
-            echo "Possible file upload attack!\n";
+            return $this->error('新增课程成功', url('index'));
         }
 
     //$href 文件存储路径
@@ -198,7 +198,7 @@ class CourseController extends IndexController {
     if(!$this->excel($href, $Course)) {
         return $this->error('文件上传失败');
     }
-    return $this->success('文件上传并且学生信息保存成功', url('index'));
+    return $this->success('新增课程和学生成功', url('index'));
   }
 
    /**
@@ -239,6 +239,9 @@ class CourseController extends IndexController {
                     $Student->num = $sheetDataTemp["C"];
                     $Student->sex = $sheetDataTemp["D"];
                     $Student->email = $sheetDataTemp["E"];
+                    // 初始用户名设置就是学号，密码为6个0
+                    $Student->username = $sheetDataTemp["C"];
+                    $Student->password = $Student->encryptPassword('000000');
                     $Student->save(); 
                 }
                 // 新增中间表并保存,同时新增成绩 
