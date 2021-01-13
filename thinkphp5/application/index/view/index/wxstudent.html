@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 {volist name="menus" id="_menu"}
-                <li class="{$_menu->getClass()}"><a href="{:$_menu->getHref()}">{$_menu->title}</a></li>
+                <li class="{$_menu->getStudentClass()}"><a href="{:$_menu->getHref()}">{$_menu->title}</a></li>
                 {/volist}
             </ul>
             <ul class="nav navbar-nav navbar-right">

@@ -120,6 +120,11 @@ class SeatMapController extends Controller {
 	}
 
 	/**
+	 * 修改对应被修改模板的教室
+	 */
+	public function
+
+	/**
 	 * 保存模板的行和列
 	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
 	 */
@@ -190,6 +195,7 @@ class SeatMapController extends Controller {
 	 * 过道state = 1
 	 */
 	public function isSeat() {
+		$Request = Request::instance();
 		$id = Request::instance()->param('id/d');
 		$SeatAisle = new SeatAisle;
 		$SeatAisle = SeatAisle::get($id);
