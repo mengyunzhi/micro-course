@@ -17,7 +17,8 @@
     <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
     <a class="btn btn-warning" href="{:url('add')}" style="float: right;"><p style="text-align: center;margin: auto;">重设模板</p></a>
     <hr>
-    <table style="margin: auto;">
+    <form action="">
+        <table style="margin: auto;">
         <label class="container"><h3 style="text-align: center;">讲台</h3></label>
         {volist name="seatAisles" id="seatAisle" key="key"}
         {if($seatAisle->y === 0)}
@@ -25,9 +26,15 @@
             {/if}
             <th>
                 <a href="{:url('isSeat?id=' . $seatAisle->getData('id'))}">
-                    {eq name='seatAisle->getData("state")' value='0'}
-                    <button class="btn btn-info" style="width:60px;"><?php echo($seatAisle->x);echo ("-"); echo($seatAisle->y) ?></button>{else /}
-                    <button class="btn btn-default" style="width:60px;"><?php echo($seatAisle->x); echo($seatAisle->y) ?></button>{/eq}
+                    {eq name="seatAisle->getData("state")" value="0"}
+                        <button class="btn btn-info" style="width:60px;">
+                            <?php echo($seatAisle->x);echo ("-"); echo($seatAisle->y) ?>
+                        </button>
+                    {else /}
+                        <button class="btn btn-default" style="width:60px;">
+                            <?php echo($seatAisle->x); echo($seatAisle->y) ?>
+                        </button>
+                    {/eq}
                 </a>
             </th>
             {if($seatAisle->y === ($SeatMap->y_map-1))}
@@ -36,6 +43,8 @@
         {/volist}
     </table>
     <div style="margin-left: auto;margin-right: auto;">
-        <a href="{:url('index')}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">提交</button></a></div>
+        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">提交</button></div>
+    </form>
+    
 </div>
 {/block}

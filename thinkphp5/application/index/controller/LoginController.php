@@ -43,9 +43,9 @@ class LoginController extends Controller
                 return $this->success('登陆成功', url('Term/index'));
             }
             // 如果不是则认定为教师端登陆，跳转到教师端
-            return $this->success('登录成功', url('Course/index'));
+            return $this->success('登陆成功', url('Course/index'));
         } else {
-            return $this->error('用户名或密码不正确', url('index'));
+            return $this->error('用户名或密码不正确', url('index?username=' . $username));
         }
     }
 

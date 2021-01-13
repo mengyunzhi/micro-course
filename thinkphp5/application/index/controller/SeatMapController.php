@@ -22,9 +22,7 @@ class SeatMapController extends Controller {
 		$this->assign('seatMaps', $seatMaps);
 		return $this->fetch();
 	}
-
 	
-
 	/**
 	 * 座位图模板显示
 	 */
@@ -192,7 +190,6 @@ class SeatMapController extends Controller {
 	 * 过道state = 1
 	 */
 	public function isSeat() {
-		$Request = Request::instance();
 		$id = Request::instance()->param('id/d');
 		$SeatAisle = new SeatAisle;
 		$SeatAisle = SeatAisle::get($id);
@@ -234,11 +231,32 @@ class SeatMapController extends Controller {
 				$SeatMap[1]->is_first = 1;
 				$SeatMap[1]->save();
 			}
+			if(!$this->deleteClassrooms($SeatMap->id)) {
+				return $this->error('删除模板对应的你教室失败', url('index'));
+			}
 			if($seatMap->delete()) {
 				return $this->success('删除成功', url('index'));
 			}
 		}
 	}
+
+	/**
+	 * 删除模板对应的教室
+	 * @param $seatMapId
+	*/
+	public function deleteClassrooms($seatMapId) {
+		$classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
+		if(!empty($classrooms)) {
+			foreach ($classrooms as $Classroom) {
+				if(!ClassroomController::deleteSeat($Classroom->id) || !$Classroom->delete()) {
+					return flase;
+				}
+			}
+		}
+		return ture;
+	}
+
+
 	/**
 	 * 挨个删除座位
 	 */
