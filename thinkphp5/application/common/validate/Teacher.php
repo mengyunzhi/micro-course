@@ -5,8 +5,7 @@ use think\Validate;     // 内置验证类
 class Teacher extends Validate
 {
     protected $rule = [
-    	'username'=>'require|unique:teacher|length:6,25',
-    	'password'=>'require',
+    	'username'=>'require|unique:teacher|length:4,25',
         'name'=>'require|length:2,25',
     ];
 }

@@ -384,8 +384,6 @@ class LoginController extends Controller
         $password = input('post.password');
         $username = input('post.username');
         $Teacher =  Teacher::get(['username' => $username]);
-        dump('1');
-        dump($Teacher);
 
         //判断用户名是否存在
         if(is_null($Teacher)) {
@@ -404,14 +402,12 @@ class LoginController extends Controller
 
         // 判断新密码位数是否符合标准c
         if(strlen($password) < 6 || strlen($password)>25) {
-            return $this->error('密码位数错误', url('passwordModification?username=' . $username));
+            return $this->error('密码长度应为6到25之间', url('passwordModification?username=' . $username));
         }
         $Teacher->password = $Teacher->encryptPassword($password);
         if(!$Teacher->save()) {
-            dump('error');die();
             return $this->error('密码更新失败', url('passwordModification?username=' . $username));
         }
-        dump('success');die();
 
         return $this->success('密码修改成功,请重新登录', url('index?username=', $username));
     }
