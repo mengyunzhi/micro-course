@@ -50,7 +50,7 @@ class LoginController extends Controller
     }
 
     /**
-     * 负责教师端微信登陆，理论上与网页端不冲突
+     * 负责教师端微信登陆
      */
     public function wxTeacher() {
         // 接收用户名密码信息和教室id
@@ -66,51 +66,40 @@ class LoginController extends Controller
         $teacherId = session('teacherId');
 
         // 判断该老师是不是第一次登陆
-        if (is_null($teacherId)) {
-            // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
-            if (is_null($username) || is_null($password || is_null($name))) {
-                return $this->error('请输入完整注册信息', url('teacherFirst?classroomId=' . $classroomId));
-            } else {
-                // 首先根据姓名、用户名和密码判断数据库中是否存在该老师
-                $Teacher = Teacher::get(['name' => $name, 'username' => $username]);
-                if (is_null($Teacher)) {
-                    $Teacher = new Teacher();
-                    $Teacher->name = $name;
-                    $Teacher->username = $username;
-                    $Teacher->password = $this::encryptPassword($password);
-                    $Teacher->num = 0;
-                    if(!$Teacher->save()) {
-                        return $this->error('注册教师信息失败，请重新注册', Request::instance()->header('referer'));
-                    }
-                }
-                
-                // 调用M层的方法对用户名密码进行判断
-                if (Teacher::login($username, $password)) {
-                    // 如果不是则认定为教师端登陆，跳转到教师端
-                    // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
-                    // 首先清除上一个教师和教室的绑定
-                    $this->clearContact($classroomId);
-                    $teacherId = session('teacherId');
-                    $Teacher = Teacher::get($teacherId);
-                    $Teacher->classroom_id = $classroomId;
-                    if (!$Teacher->save()) {
-                        return $this->error('教室-老师信息绑定失败，请重新扫码', Request::instance()->header('referer'));
-                    }
-                    return $this->success('login success', url('Teacherwx/index'));
-                } else {
-                    return $this->error('username or password incorrent', url('teacherFirst?classroomId=' . $classroomId));
-                }
-            }
+         // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
+        if (is_null($username) || is_null($password) || is_null($name)) {
+            return $this->error('请输入完整注册信息', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
         } else {
-            // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
-            // 首先清除上一个教师和教室的绑定
-            $this->clearContact($classroomId);
-            $Teacher = Teacher::get($teacherId);
-            $Teacher->classroom_id = $classroomId;
-            if (!$Teacher->save()) {
-                return $this->error('教室-老师信息保存失败，请重新扫码', url('Course/index'));
+            // 保存教师信息
+            if (!is_null($Teacher = Teacher::get(['username' => $username]))) {
+                return $this->error('用户名已存在', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+            } else {
+                if (strlen($password) > 25 || strlen($password) < 6) {
+                    return $this->error('注册失败,请保证密码在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                } else {
+                    if (strlen($username) > 25 || strlen($username) < 6) {
+                        return $this->error('注册失败,请保证用户名在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                    } else {
+                        $Teacher = new Teacher();
+                        $Teacher->name = $name;
+                        $Teacher->username = $username;
+                        $Teacher->num = 0;
+                        $Teacher->classroom_id = $classroomId;
+                        $Teacher->password = $Teacher->encryptPassword($password);
+                        if (!$Teacher->validate()->save()) {
+                            return $this->error('注册失败,请保证教师姓名长度2-4位', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                        } 
+                    }
+                }
             }
-            return $this->success('login success', url('Teacherwx/index'));
+          // 调用M层的方法对用户名密码进行判断，同时存储登陆的session
+            if (Teacher::login($username, $password)) {
+                // 如果不是则认定为教师端登陆，跳转到教师端
+                // 如果登陆成功后，实例化教师对象，并修改教师classroom_id属性
+                // 首先清除上一个教师和教室的绑定
+                $this->clearContact($classroomId);
+                return $this->success('注册成功', url('Teacherwx/index'));
+            } 
         }
     }
 
@@ -118,8 +107,20 @@ class LoginController extends Controller
      * 负责老师的第一次登陆注册
      */
     public function teacherFirst() {
+
         // 获取教室id
         $classroomId = Request::instance()->param('classroomId');
+
+        // 接收教师姓名、用户名、密码
+        $name = Request::instance()->param('name');
+        $username = Request::instance()->param('username');
+        $password = Request::instance()->param('password');
+
+        // 将三种信息传入V层防止第一次信息输入不完整重新输入
+        $this->assign('name', $name);
+        $this->assign('username', $username);
+        $this->assign('password', $password);
+
 
         // 将教室id传入v层
         $this->assign('classroomId', $classroomId);
@@ -127,58 +128,59 @@ class LoginController extends Controller
     }
 
     /**
-     * 负责学生第一次微信登陆的注册任务
+     * 学生登陆首页
      */
-    public function firstWx() {
+     public function studentWx() {
+         // 接收上次登陆失败返回的信息
+        $username = Request::instance()->param('username');
+        $password = Request::instance()->param('password');
+
         // 获取从wxLogin传出的seatId
         $seatId = Request::instance()->param('seatId');
 
         // 将$seatId传入V层
+        $this->assign('password', $password);
+        $this->assign('username', $username);
         $this->assign('seatId', $seatId);
         // 直接到V层渲染
         return $this->fetch();
     }
     
     /**
-     * 学生微信登陆
+     * 学生登陆
      */
     public function wxLogin() {
         // 接收post信息,并获取学生id
-        $studentName = Request::instance()->post('studentName');
-        $studentNum = Request::instance()->post('studentNum');
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
         $seatId = Request::instance()->param('seatId');
-        $studentId = session('studentId');
 
-        // 第一次登陆需要根据传入的学号和姓名判断是否存在该学生
         if (is_null($studentId)) {
-            if (is_null($studentNum)) {
-                return $this->error('请注册后再登陆', url('firstWx?seatId=' . $seatId));
-            }
-            $que = array(
-                'name' => $studentName,
-                'num' => $studentNum
-            );
-            $Student = Student::get($que);
-            if (is_null($Student)) {
-                return $this->error('注册失败，请检查你的学号姓名是否正确', url('firstWx?seatId=' . $seatId));
+             if (is_null($username) || is_null($password)) {
+                return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password));
             } else {
-                // 对该学生的用户名密码进行赋值
-                $Student->username = $username;
-                $Student->password = $password;
-                if(!$Student->save()) {
-                return $this-error('用户名密码信息记录失败', url('firstWx?seatId=' . $seatId));
+                 if (Student::Login($username, $password)) {
+                    // 登陆成功
+                    $Student = Student::get($studentId = session('studentId'));
+                    // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
+                    if (is_null($seatId)) {
+                        return $this->error('登陆成功', url('Student/aftersign?studentId' . $St));
+                    }
+                    return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
                 } else {
-                    session('studentId', $Student->getData('id'));
+                     return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password));
                 }
             } 
+             // 第二种session未过期，直接登陆
         } else {
             $Student = Student::get($studentId);
+             // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
+            if (is_null($seatId)) {
+                return $this->error('登陆成功', url('Student/aftersign?studentId' . $Student->id));
+            }
+            return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
 
-        // 登陆成功
-        return $this->success('login success', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
     }
 
     /**
@@ -203,43 +205,10 @@ class LoginController extends Controller
      public function logOut()
     {
         if (Teacher::logOut()) {
-            return $this->success('logout success', url('index'));
+            return $this->success('注销成功', url('index'));
         } else {
-            return $this->error('logout error', url('index'));
+             return $this->error('注销失败', url('index'));
         }
-    }
-
-    /**
-     * 负责学生端登陆后的显示
-     */
-    public function afterSign() {
-        // 获取学生id，并将学生对象实例化
-        $studentId = Request::instance()->param('studentId');
-        $seatId = Request::instance()->param('seatId');
-        $Student = Student::get($studentId);
-
-        // 如果座位id接收值非空，说明正常扫码上课成功
-        if (!is_null($seatId)) {
-            // 实例化座位对象
-            $Seat = Seat::get($seatId);
-            // 通过座位id获取对应的教室信息
-            $Classroom = Classroom::get($Seat->classroom_id);
-            // 通过教室和教室的上课开始时间确定classCourse的id
-            $classCourse = classCourse::get(['begin_time' => $Classroom->begin_time,
-                'classroom_id' => $Classroom->id ] 
-            );
-        }
-
-        // 通过中间表和学生id，获取该学生所上的课程
-        $que = array(
-            'student_id' => $studentId,
-        );
-        $pageSize = 5;
-        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate($pageSize);
-
-        // 将数据传入V层进行渲染
-        $this->assign('classDetails', $classDetails);
-        return $this->fetch();
     }
 
     /**
@@ -322,6 +291,82 @@ class LoginController extends Controller
             }
         }
     }
+
+     /**
+     * 老师微信端登陆方法
+     */
+    public function teacherIndex() {
+        // 首先获取教师id，判断session是否过期
+        $teacherId = session('teacherId');
+        $classroomId = Request::instance()->param('classroomId');
+
+        // 如果session还没有过期的情况下，直接登陆
+        if (!is_null($teacherId)) {
+            // 绑定教师信息和教室信息
+            $Teacher = Teacher::get($teacherId);
+            if (is_null($Teacher)) {
+                return $this->error('教师信息不存在', url('teacherLogin?class'));
+            } else {
+                $Teacher->classroom_id = $classroomId;
+                if (!$Teacher->save()) {
+                    return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
+                }
+            }
+            return $this->success('登陆成功', url('teacherwx/index'));
+        }
+
+        // 接收用户名和密码,避免二次登陆重新输入账号密码
+        $password = Request::instance()->param('password');
+        $username = Request::instance()->param('username');
+        $classroomId = Request::instance()->param('classroomId');
+
+        $this->assign('username', $username);
+        $this->assign('classroomId', $classroomId);
+        $this->assign('password', $password);
+
+        // 调用index模板
+        return $this->fetch();
+    }
+
+    /**
+     * 老师微信登陆判断
+     */
+    public function teacherLogin() {
+        // session如果已经过期状况
+        // 接收用户名和密码
+        $password = Request::instance()->param('password');
+        $username = Request::instance()->param('username');
+        $classroomId = Request::instance()->param('classroomId');
+
+        // 通过判断用户名密码是否为空来区分登陆和密码不正确重新登陆状况
+        if (!is_null($username) && !is_null($password)) {
+            // 直接调用M层方法，进行登录。
+            if (Teacher::login($username, $password)) {
+                // 如果不是则认定为教师端登陆，跳转到教师端
+                // 获取教师id
+                $teacherId = session('teacherId');
+                $Teacher = Teacher::get($teacherId);
+                if (!is_null($Teacher)) {
+                    return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
+                } else {
+                    // 绑定教师和教室信息
+                    $Teacher->classroom_id = $classroomId;
+                    if (!$Teacher->save()) {
+                        return $this->error('教室-老师信息绑定失败', Request::instance()->header('referer'));
+                    }
+                }
+                // 登陆成功后也保存成功教室信息
+                return $this->success('登陆成功', url('teacherwx/index'));
+            } else {
+                // 登陆不成功状况
+                return $this->error('用户名或密码不正确', url('teacherIndex?username=' . $username . '&password=' . $password));
+            }
+        } else {
+            // 用户名密码输入不完整状况，重新输入
+            return $this->error('请输入完整的信息', Request::instance()->header('referer'));
+        }
+    }
+
     /**
      * 教师密码修改
      */
