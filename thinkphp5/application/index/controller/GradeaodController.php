@@ -37,7 +37,7 @@ class GradeaodController extends IndexController
             );
 
             // 查出的理论上是个数组，所以传值要传入第一项数据
-            $Grade = Grade::where($que)->select();
+            $Grade = Grade::get($que);
  
             // 定制查询信息，根据aodId和课程id获取该course对应的加分减分项
             $que = array(
@@ -48,7 +48,7 @@ class GradeaodController extends IndexController
 
             // 将实例化的值传入V层
             $this->assign('Student', $Student);
-            $this->assign('Grade', $Grade[0]);
+            $this->assign('Grade', $Grade);
             $this->assign('Gradeaods', $Gradeaods);
             $this->assign('Classroom', $Classroom);
 
