@@ -35,11 +35,9 @@ class GradeaodController extends IndexController
                 "student_id" => $studentId,
                 "course_id" => $Classroom->course_id
             );
-            $CourseStudent = CourseStudent::get($que);
 
             // 查出的理论上是个数组，所以传值要传入第一项数据
-            $Grade = Grade::get(['course_student_id' => $CourseStudent->id]);
- 
+            $Grade = Grade::where($que)->select();
             // 定制查询信息，根据aodId和课程id获取该course对应的加分减分项
             $que = array(
                 "course_id" => $Classroom->course_id,
@@ -49,10 +47,9 @@ class GradeaodController extends IndexController
 
             // 将实例化的值传入V层
             $this->assign('Student', $Student);
-            $this->assign('Grade', $Grade);
+            $this->assign('Grade', $Grade[0]);
             $this->assign('Gradeaods', $Gradeaods);
             $this->assign('Classroom', $Classroom);
-            $this->assign('CourseStudent', $CourseStudent);
 
             // 取回打包后的数据
             $htmls = $this->fetch();
@@ -102,7 +99,6 @@ class GradeaodController extends IndexController
         $classroomId = Request::instance()->param('classroomId/d');
         $studentId = Request::instance()->param('studentId');
         $va = Request::instance()->param('va/d');
-        $CourseStudent = in
 
         // 实例化教室对象、课程对象、学生对象
         $Classroom = Classroom::get($classroomId);
@@ -156,15 +152,13 @@ class GradeaodController extends IndexController
 
         // 通过新增加的加减分项对$Grade对象进行加减分
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade,true)) {
-                return $this->error('成绩保存失败' . $Grade->getError());
-            }
+            $this->saveGrade($Grade);
         } else {
             return $this->error('当前操作的记录不存在');
         }
 
         // 成功跳转至index触发器
-        return $this->success('加减分项新增成功,学生上课表现成绩保存成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
+        return $this->success('新增成功,学生成绩修改成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)); 
     }
     
     /**
