@@ -3,6 +3,7 @@
 namespace app\common\model;
 use think\Model;    //  导入think\Model类
 use think \ db \ Query;
+
 /**
  * Teacher 教师表
  */
@@ -15,7 +16,6 @@ class Teacher extends Model
         // 验证用户是否存在
         $map = array('username' => $username);
         $Teacher = self::get($map);
-        
         if (!is_null($Teacher)) {
             // 验证密码是否正确
             if ($Teacher->checkPassword($password)) {

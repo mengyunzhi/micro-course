@@ -10,13 +10,13 @@ use app\common\model\Grade;
 use app\common\model\Seat;
 use app\common\model\Classroom;
 use app\common\model\ClassCourse;
+use think\validate;
 
 /**
  * 负责教师和学生扫码登陆
  */
 class LoginController extends Controller
-    {
-    //用户登录表单
+    {    //用户登录表单
     public function index()
     {
         //显示登录表单
@@ -314,5 +314,53 @@ class LoginController extends Controller
                 return $this->error('座位信息重置失败', $Request->header('referer'));
             }
         }
+    }
+    /**
+     * 教师密码修改
+     */
+    public function passwordModification() {
+        $username = input('username');
+        $this->assign('username', $username);
+        return $this->fetch();
+    }
+
+    /**
+     * 教师密码修改
+     */
+    public function tpm() {
+        $oldPassword = input('post.oldPassword');
+        $password = input('post.password');
+        $username = input('post.username');
+        $Teacher =  Teacher::get(['username' => $username]);
+        dump('1');
+        dump($Teacher);
+
+        //判断用户名是否存在
+        if(is_null($Teacher)) {
+            return $this->error('用户名不存在', url('passwordModification'));
+        }
+
+        //判断旧密码是否正确
+        if(!Teacher::login($username, $oldPassword)) {
+           return $this->error('旧密码错误', url('passwordModification?username=' . $username));
+        }
+
+        //判断新旧密码是否一致
+        if($oldPassword === $password) {
+           return $this->error('新旧密码一致', url('passwordModification?username=' . $username));
+        }
+
+        // 判断新密码位数是否符合标准
+        if(strlen($password) < 6 || strlen($password)>25) {
+            return $this->error('密码位数错误', url('passwordModification?username=' . $username));
+        }
+        $Teacher->password = $Teacher->encryptPassword($password);
+        if(!$Teacher->save()) {
+            dump('error');die();
+            return $this->error('密码更新失败', url('passwordModification?username=' . $username));
+        }
+        dump('success');die();
+
+        return $this->success('密码修改成功,请重新登录', url('index?username=', $username));
     }
 }

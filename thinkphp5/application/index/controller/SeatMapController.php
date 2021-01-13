@@ -94,7 +94,15 @@ class SeatMapController extends Controller {
 	/**
 	 * 增加模板
 	 */
-	public function add(){
+	public function add() {
+		$id = input('id');
+		$SeatMap = SeatMap::get($id);
+		if(is_null($SeatMap)) {
+		$SeatMap->name = '';
+		$SeatMap->x_map = 0;
+		$SeatMap->y_map = 0;
+		}
+		$this->assign('SeatMap', $SeatMap);
 		return $this->fetch();
 	}
 	/**
