@@ -17,8 +17,7 @@ use app\common\model\ClassCourse;
 class LoginController extends Controller
     {
     //用户登录表单
-    public function index()
-    {
+    public function index() {
         // 接收登陆信息
         $username = Request::instance()->param('username');
         $password = Request::instance()->param('password');
@@ -45,7 +44,6 @@ class LoginController extends Controller
             // 如果不是则认定为教师端登陆，跳转到教师端
             return $this->success('登陆成功', url('Course/index'));
         } else {
-
             return $this->error('用户名或密码不正确', url('index?username=' . $username . '&password=' . $password));
         }
     }

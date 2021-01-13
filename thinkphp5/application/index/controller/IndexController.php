@@ -10,22 +10,24 @@ use app\common\view\MenuView;
  */
 class IndexController extends Controller
 {
-	
-	public function __construct()
-	{
-		//调用父类构造函数
-		parent::__construct();
-		//验证用户是否登录
-		if(!Teacher::isLogin())
-		{
-			return $this->error('plz login first',url('Login/index'));
-		}
-		
-		$this->assign('menuView', new menuView());
-	}
+    
+    public function __construct()
+    {
+        //调用父类构造函数
+        parent::__construct();
+        //验证用户是否登录
+        if(!Teacher::isLogin())
+        {
+            return $this->error('plz login first',url('Login/index'));
+        }
+        
+        $this->assign('menuView', new menuView());
+    }
 
-	public function index()
-	{
-
-	}
+    public function index()
+    {
+        $url = url('index/login/index');
+        header("Location: $url");
+        exit();
+    }
 }

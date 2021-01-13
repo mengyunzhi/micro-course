@@ -284,7 +284,7 @@ class Process
         } while ($running);
 
         while ($this->isRunning()) {
-            usleep(1000);
+            //usleep(1000);
         }
 
         if ($this->processInformation['signaled'] && $this->processInformation['termsig'] !== $this->latestSignal) {

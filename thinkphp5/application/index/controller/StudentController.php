@@ -95,6 +95,7 @@ class StudentController extends IndexController
         // 接收学生id和当前所在页数和课程id   
         $page = Request::instance()->param('page');
         $course_id=Request::instance()->param('course_id/d');
+        $id = Request::instance()->param('id');
 
         // 对课程和学生进行实例化
         $Course =Course::get($course_id);
