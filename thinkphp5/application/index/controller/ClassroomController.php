@@ -25,22 +25,19 @@ class ClassroomController extends AdminJudgeController
 
       if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
-
       }
-      $Course = Course::get(3);
 
       // 查询
       if(!empty($name)){
       	$Classroom->where('name','like','%'.$name.'%');
       }
-       $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
-                'query'=>[
-                    'name' => $name,
-                    ],
-                ]);
-        $this->assign('classrooms', $classrooms);
-        $this->assign('Course', $Course);
-        return $this->fetch();
+      $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
+              'query'=>[
+                  'name' => $name,
+                  ],
+              ]);
+      $this->assign('classrooms', $classrooms);
+      return $this->fetch();
     }
 
     /**
@@ -340,7 +337,7 @@ class ClassroomController extends AdminJudgeController
     $this->assign('SeatMap', $SeatMap);
     $this->assign('Classroom', $Classroom);
     $url = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/wxlogin?classroomId=' . $Classroom->id . '&seatId=';
-    $urlTeacher = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/wxTeacher?classroomId=' . $Classroom->id;
+    $urlTeacher = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/teacherIndex?classroomId=' . $Classroom->id;
     $this->assign('url', $url);
     $this->assign('urlTeacher', $urlTeacher);
     return $this->fetch();

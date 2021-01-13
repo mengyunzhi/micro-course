@@ -68,7 +68,9 @@ class SeatController extends controller {
 
         // 获取学生id和教室座位id,并实例化教室座位对象
         $seatId = Request::instance()->param('seatId');
-        $Seat = Seat::get($seatId);
+        if (is_null($Seat = Seat::get($seatId))) {
+            return $this->error('座位获取失败，请重新签到扫码', Request::instance()->header('referer'));
+        }
         $Classroom = Classroom::get($Seat->classroom_id);
         $classDetail = new ClassDetail();
 
@@ -94,7 +96,7 @@ class SeatController extends controller {
 
         // 通过座位id获取教室id，进而判断本教室是否处于上课状态
         if ($Classroom->course_id === 0) {
-            return $this->error('当前教室并未开始上课', url('Login/afterSign?studentId=' . $studentId));
+            return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
             // 获取此学生和此课程对应的成绩
             $que = array(
@@ -103,7 +105,7 @@ class SeatController extends controller {
             );
             $Grade = Grade::get($que);
             if (is_null($Grade)) {
-                return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Login/afterSign?studentId=' . $studentId));
+                return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Student/afterSign?studentId=' . $studentId));
             }
             // 增加判断是否在签到截止时间内
             if ($Classroom->sign_deadline_time >= time()) {
@@ -127,7 +129,7 @@ class SeatController extends controller {
         if (!$Seat->save()) {
             return $this->error('座位信息更新失败，请重新扫码', url('sign?studentId=' . $studentId));
         }
-        return $this->success('扫码签到成功，开始上课', url('Login/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
+        return $this->success('扫码签到成功，开始上课', url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
     }
 
     /**

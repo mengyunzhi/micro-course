@@ -7,6 +7,8 @@ use app\index\controller\Login;
 use app\common\model\Grade;
 use app\common\model\Seat;
 use app\common\model\Classroom;
+use app\common\model\ClassDetail;
+use app\common\model\ClassCourse;
 use app\common\model\CourseStudent;
 class StudentController extends IndexController
 {
@@ -76,7 +78,7 @@ class StudentController extends IndexController
 		$Student->email='';
 		$Student->num='';
 		$Student->name='';
-		$Student->id=0;
+        $Student->id = 0;
          
         $this->assign('page',$page);
         $this->assign('Course',$course);
@@ -91,7 +93,6 @@ class StudentController extends IndexController
      */
 	public function edit() {
         // 接收学生id和当前所在页数和课程id   
-		$id=Request::instance()->param('id/d');
         $page = Request::instance()->param('page');
         $course_id=Request::instance()->param('course_id/d');
 
@@ -191,7 +192,10 @@ class StudentController extends IndexController
                 $Student->num = Request::instance()->post('num/d');
                 $Student->sex = Request::instance()->post('sex/d');
                 $Student->email = Request::instance()->post('email');
-                //更新并保存数据
+                // 学生的用户名默认就是学号
+                $Student->username = $Student->num;
+                $Student->password = $Student->encryptPassword('000000');
+                // 更新并保存数据
                 return $Student->validate(true)->save();  
             }
         } else {
@@ -301,4 +305,99 @@ class StudentController extends IndexController
 	// 进行跳转
 	return $this->success('删除成功', $Request->header('referer'));   
     }
+
+    /**
+     * 负责学生端登陆后的显示
+     */
+    public function afterSign() {
+        // 获取学生id，并将学生对象实例化
+        $studentId = Request::instance()->param('studentId');
+        $Student = Student::get($studentId);
+        if (is_null($Student)) {
+            return $this->error('学生信息不存在,请重新登陆', Request::instance()->header('referer'));
+        }
+
+        // 通过中间表和学生id，获取该学生所上的课程
+        $que = array(
+            'student_id' => $studentId,
+        );
+        $pageSize = 5;
+        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate($pageSize);
+
+        // 将数据传入V层进行渲染
+        $this->assign('classDetails', $classDetails);
+        $this->assign('Student', $Student);
+        return $this->fetch();
+    }
+
+    /**
+     * 学生微信端密码修改
+     */
+    public function changePassword() {
+        // 获取学生id
+        $studentId = Request::instance()->param('studentId');
+        if (is_null($Student = Student::get($studentId))) {
+            return $this->error('学生信息实例化失败', Request::instance()->header('referer'));
+        }
+
+        // 获取新旧密码防止第一次设置失败
+        $oldPassword = Request::instance()->param('oldPassword');
+        $newPassword = Request::instance()->param('newPassword');
+        $newPasswordAgain = Request::instance()->param('newPasswordAgain');
+
+        $this->assign('Student', $Student);
+        $this->assign('oldPassword', $oldPassword);
+        $this->assign('newPassword', $newPassword);
+        $this->assign('newPasswordAgain', $newPasswordAgain);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 密码更新
+     */
+    public function passwordUpdate() {
+        // 接收新旧密码和学生id，并实例化学生对象
+        $studentId = Request::instance()->param('studentId');
+        $oldPassword = Request::instance()->param('oldPassword');
+        $newPassword = Request::instance()->param('newPassword');
+        $newPasswordAgain = Request::instance()->param('newPasswordAgain');
+        if (is_null($Student = Student::get($studentId))) {
+            return $this->error('学生信息接收失败', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+        }
+
+        // 首先判断输入的原密码是否正确
+        if ($Student->password !== $Student->encryptPassword($oldPassword)) {
+            return $this->error('修改失败,原密码不正确', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+        } else {
+            // 原密码输入正确时
+            if ($newPasswordAgain === $newPassword) {
+                $Student->password = $Student->encryptPassword($newPassword);
+                if (!$Student->save()) {
+                    return $this->error('新密码保存失败,请重新修改', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                } else {
+                    // 如果新密码长度不符合要求，返回重新修改
+                    if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
+                        return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                    }
+                    session('studentId',null);
+                    return $this->success('密码修改成功,请重新登陆', url('Login/studentwx?username=' . $Student->username));
+                }
+            } else {
+                return $this->error('两次密码不相同，请确认新密码一致', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+            }
+        }
+    }
+
+    /**
+     * 学生注销方法
+     */
+    public function logOut() {
+        // 直接将session清空
+        session('studentId', null);
+
+        // 跳转到登陆界面
+        return $this->success('注销成功', url('Login/studentWx'));
+    }
+
 }
