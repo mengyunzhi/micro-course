@@ -35,10 +35,9 @@
             <tr>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 {eq name='seatAisles[$i * $SeatMap->y_map + $j]->getData("state")' value='1'}
-                <td  style="padding-left: 10px;padding-right: 10px;height: 31px;width: 86px;">
-                    
+                <td style="padding-left: 10px;padding-right: 10px;">
                 </td>{else /}
-                <td class="success" style="padding-left: 10px;padding-right: 10px;">
+                <td class="success" style="padding-left: 10px;padding-right: 10px; text-align: center;">
                     <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
                 </td>{/eq}
                 <?php endfor; ?>

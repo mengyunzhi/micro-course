@@ -229,10 +229,8 @@ class TermController extends AdminJudgeController
         $Term->ptime = input('post.ptime');
         $Term->ftime = input('post.ftime');
         $Term1 = Term::where('state', '=', 1)->select();
-        var_dump($Term1);
         if(empty($Term1)) {
             $Term->state = 1;
-            var_dump($Term);
         }
 
         // 更新或保存

@@ -23,10 +23,5 @@ class IndexController extends Controller {
         $this->assign('menuView', new menuView());
     }
 
-    public function index()
-    {
-        $url = url('index/login/index');
-        header("Location: $url");
-        exit();
-    }
+   
 }

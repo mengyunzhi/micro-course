@@ -15,6 +15,8 @@ use app\common\model\ClassCourse;
  * 负责教师和学生扫码登陆验证
  */
 class LoginController extends Controller {
+
+    //用户登录表单
     public function index() {
         // 接收登陆信息
         $username = Request::instance()->param('username');
@@ -115,7 +117,7 @@ class LoginController extends Controller {
         $this->assign('username', $username);
         $this->assign('password', $password);
 
-        // 将教室id传入v层
+        // 将教室id传入v层s
         $this->assign('classroomId', $classroomId);
         return $this->fetch();
     }
@@ -177,25 +179,6 @@ class LoginController extends Controller {
             }
             return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
-    }
-
-    /**
-     * 
-     */
-
-    public function test123($key, $value = null )
-    {
-        if(is_null($value))
-        {
-
-        }
-        else {
-
-        }
-    }
-    public function test()
-    {
-        var_dump(input('post.'));
     }
 
     /**

@@ -81,7 +81,8 @@ class AdminStudentController extends AdminJudgeController
 		$Student = new Student();
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
-        $courseIds = Request::instance()->post('courseId/a');       
+        $courseIds = Request::instance()->post('courseId/a'); 
+        $Student->email = input('post.email');      
         // /a表示获取的类型为数组
 		//新增数据并验证
 		if (!$Student->validate(true)->save()) {

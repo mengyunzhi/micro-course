@@ -11,6 +11,26 @@ use think \ db \ Query;
 // 我的类名叫做Teacher,对应的文件名为Teacher.php.该类继承了Model类,Model我们在文件头中,提前使用use进行了导入
 class Teacher extends Model
 {
+	/**
+     * 获取要显示的创建时间
+     * @param  int $value 时间戳
+     * @return string  转换后的字符串
+     * @author panjie <panjie@yunzhiclub.com>
+     */
+    public function getCreateTimeAttr($value)
+    {
+        return date('Y-m-d', $value);
+    }
+    /**
+     * 获取要显示的更新时间
+     * @param  int $value 时间戳
+     * @return string  转换后的字符串
+     * @author panjie <panjie@yunzhiclub.com>
+     */
+    public function getUpdateTimeAttr($value)
+    {
+        return date('Y-m-d', $value);
+    }
 	 static public function login($username, $password)
     {
         // 验证用户是否存在
