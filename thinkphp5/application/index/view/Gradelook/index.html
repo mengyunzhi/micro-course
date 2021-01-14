@@ -7,11 +7,11 @@
     <td><label style="font-size: 15px;">课程名称：{$course->name}</label></td>
     <td style="width: 300px;">
         <form action="{:url('fileExportGrade?courseId=' . $course->id)}">
-            <button class="btn btn-info"><i class="glyphicon glyphicon-download"></i>&nbsp;导出表单</button>
+            <button class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;导出表单</button>
     </td>
     <td style="float: right;width: 200px;">
-    <a href="{:url('listindex?id=' . $course->getData('id'))}"  class="btn btn-primary">&nbsp;降序</a>
-    <a href="{:url('upindex?id=' . $course->getData('id'))}" class="btn btn-info">&nbsp;升序</a>
+    <a href="{:url('listindex?id=' . $course->getData('id'))}"  class="btn btn-primary"><i class="glyphicon glyphicon-arrow-down"></i>&nbsp;降序</a>
+    <a href="{:url('upindex?id=' . $course->getData('id'))}" class="btn btn-info"><i class="glyphicon glyphicon-arrow-up"></i>&nbsp;升序</a>
     </td>
 </table>
 <table class="table table-hover table-bordered">

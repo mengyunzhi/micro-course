@@ -18,7 +18,9 @@ class IndexController extends Controller
         //验证用户是否登录
         if(!Teacher::isLogin())
         {
-            return $this->error('plz login first',url('Login/index'));
+            $url = url('index/login/index');
+            header("Location: $url");
+            exit();
         }
         
         $this->assign('menuView', new menuView());
