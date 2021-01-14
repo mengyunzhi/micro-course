@@ -1,4 +1,3 @@
-
 <?php
 namespace app\index\controller;
 use think\Request;     //请求
@@ -334,7 +333,7 @@ class LoginController extends Controller {
                 // 获取教师id
                 $teacherId = session('teacherId');
                 $Teacher = Teacher::get($teacherId);
-                if (!is_null($Teacher)) {
+                if (is_null($Teacher)) {
                     return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
                 } else {
                     // 绑定教师和教室信息
