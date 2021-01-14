@@ -54,8 +54,13 @@ class TeacherwxController extends IndexController {
         $Teacher = Teacher::get($teacherId);
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
-        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
+        // 判断是否处于上课状态：两种情况
+        if (is_null($Classroom)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));
+        } else {
+            if ($Classroom->course_id === 0) {
+                return $this->error('请先开始上课', Request::instance()->header('referer'));
+            }
         }
 
         // 根据教室获取课程id
@@ -133,6 +138,15 @@ class TeacherwxController extends IndexController {
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
 
+        // 判断是否处于上课状态：两种情况
+        if (is_null($Classroom)) {
+            return $this->error('当前已下课', Request::instance()->header('referer'));
+        } else {
+            if ($Classroom->course_id === 0) {
+                return $this->error('当前已下课', Request::instance()->header('referer'));
+            }
+        }
+
         // 根据教室对象获取对应的ClassCourse对象
         $ClassCourse = ClassCourse::get(['classroom_id' => $Classroom->id, 'begin_time' => $Classroom->begin_time]);
         if (is_null($ClassCourse)) {
@@ -178,8 +192,13 @@ class TeacherwxController extends IndexController {
         // 将教师数据库字段classroom_id 赋值给变量$classroomId，并对教室对象实例化
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
-        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
+        // 判断是否处于上课状态：两种情况
+        if (is_null($Classroom)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));
+        } else {
+            if ($Classroom->course_id === 0) {
+                return $this->error('请先开始上课', Request::instance()->header('referer'));
+            }
         }
 
         // 通过get方法，利用教室对象的begin_time和course_id字段获取上课课程对象ClassCourse(别用select方法，就用get)
@@ -233,6 +252,20 @@ class TeacherwxController extends IndexController {
         if (!$this->saveDetail($ClassDetail, $studentId, $classCourseId)) {
             return $this->error('上课签到状态修改失败，请重新修改', Request::instance()->header('referer'));
         }
+
+        // 通过学生id和课程id获取该学生此门课程成绩，签到次数加一，同时从新计算成绩
+        $que = array(
+            'student_id' => $studentId,
+            'course_id' => $ClassCourse->course_id
+        );
+        $Grade = Grade::get($que);
+        if (is_null($Grade)) {
+            return $this->error('该学生成绩查找失败', Request::instance()->header('referer'));
+        } else {
+            $Grade->resigternum ++;
+            $Grade->getAllgrade();
+        }
+
         return $this->success('签到状态修改成功', url('signChange'));
     }
 
