@@ -18,17 +18,17 @@
     <form action="{:url('save')}" method="post">
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板名称:</label>
-            <input name="name" id="name" class="form-control" />
+            <input name="name" id="name" class="form-control" value="{$SeatMap->name}"/>
         </div>
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板总行数:</label>
-            <input name="xMap" id="xMap" class="form-control" />
+            <input name="xMap" id="xMap" class="form-control" value="{$SeatMap->x_map}" />
         </div>
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板总列数:</label>
-            <input name="yMap" id="yMap" class="form-control" />
+            <input name="yMap" id="yMap" class="form-control" value="{$SeatMap->y_map}"/>
         </div>
-        <a href="{:url('save')}"><button type="submit" class="btn btn-primary" style="margin-top: 20px">submit</button></a>
+        <a href="{:url('save')}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button></a>
     </form>
 </div>
 {/block}

@@ -141,13 +141,20 @@ class TermController extends AdminJudgeController
             } 
             $Term = new Term;
             $Term = Term::all();
-            foreach ($Term as $Term1) {
+            $Term1 = Term::get($id);
+            // 如果该学期已激活，则冻结该学期，反之激活
+            if($Term1->state === 1) {
+                $Term = $Term1;
+                $Term->state = 0;
+            } else {
+                foreach ($Term as $Term1) {
                 $Term1->state = 0;
                 $Term1->save();
             }
             $Term = Term::get($id);
             Term::$Term_id = $id;
             $Term->state = '1';
+            }
             $Term->save();
 
         // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
@@ -158,7 +165,7 @@ class TermController extends AdminJudgeController
         } catch (\Exception $e) {
             return $e->getMessage();
         } 
-        return $this->success('激活成功', $Request->header('referer')); 
+        return $this->success('状态修改成功', $Request->header('referer')); 
     }
     public function delete()
     {
@@ -221,6 +228,12 @@ class TermController extends AdminJudgeController
         $Term->name = input('post.name');
         $Term->ptime = input('post.ptime');
         $Term->ftime = input('post.ftime');
+        $Term1 = Term::where('state', '=', 1)->select();
+        var_dump($Term1);
+        if(empty($Term1)) {
+            $Term->state = 1;
+            var_dump($Term);
+        }
 
         // 更新或保存
         return $Term->validate(true)->save();

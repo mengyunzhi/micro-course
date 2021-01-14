@@ -1,3 +1,4 @@
+
 <?php
 namespace app\index\controller;
 use think\Controller;
@@ -362,5 +363,51 @@ class LoginController extends Controller
             // 用户名密码输入不完整状况，重新输入
             return $this->error('请输入完整的信息', Request::instance()->header('referer'));
         }
+    }
+}
+
+    /**
+     * 教师密码修改
+     */
+    public function passwordModification() {
+        $username = input('username');
+        $this->assign('username', $username);
+        return $this->fetch();
+    }
+
+    /**
+     * 教师密码修改
+     */
+    public function tpm() {
+        $oldPassword = input('post.oldPassword');
+        $password = input('post.password');
+        $username = input('post.username');
+        $Teacher =  Teacher::get(['username' => $username]);
+
+        //判断用户名是否存在
+        if(is_null($Teacher)) {
+            return $this->error('用户名不存在', url('passwordModification'));
+        }
+
+        //判断旧密码是否正确
+        if(!Teacher::login($username, $oldPassword)) {
+           return $this->error('旧密码错误', url('passwordModification?username=' . $username));
+        }
+
+        //判断新旧密码是否一致
+        if($oldPassword === $password) {
+           return $this->error('新旧密码一致', url('passwordModification?username=' . $username));
+        }
+
+        // 判断新密码位数是否符合标准c
+        if(strlen($password) < 6 || strlen($password)>25) {
+            return $this->error('密码长度应为6到25之间', url('passwordModification?username=' . $username));
+        }
+        $Teacher->password = $Teacher->encryptPassword($password);
+        if(!$Teacher->save()) {
+            return $this->error('密码更新失败', url('passwordModification?username=' . $username));
+        }
+
+        return $this->success('密码修改成功,请重新登录', url('index?username=', $username));
     }
 }
