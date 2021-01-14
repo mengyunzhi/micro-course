@@ -45,7 +45,7 @@ glyphicon glyphicon-arrow-up"></i>&nbsp;返回</a></td></div>
         <td>{$_student->name}</td>
         <td>{$_student->num}</td>
         <td>{eq name="$_student->sex" value='0'}男{else /}女{/eq}</td>
-        <td><a class="btn btn-sm btn-primary" href="{:url('signUpdate?studentId=' . $_student->id . '&classCourseId=' . $ClassCourse->id)}">改签</a></td>
+        <td><a class="btn btn-sm btn-primary" href="{:url('signUpdate?studentId=' . $_student->id . '&classCourseId=' . $ClassCourse->id)}"><i class="glyphicon glyphicon-ok"></i>&nbsp;改签</a></td>
     </tr>
     {/volist}
 </table>

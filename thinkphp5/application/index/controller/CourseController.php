@@ -42,7 +42,7 @@ class CourseController extends IndexController {
 
         // 通过name获取查询信息
         if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(2);
         }
 
         //向V层传数据

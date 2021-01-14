@@ -14,8 +14,7 @@ class TestController extends Controller
 {
 	public function index()
 	{
-        $password = '123456';
-		return sha1(md5($password) . 'mengyunzhi');
+        return $this->fetch();
 	}
 
     /**

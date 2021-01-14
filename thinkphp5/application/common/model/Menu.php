@@ -37,6 +37,15 @@ class Menu {
                     return '';
                 }
             }
+            // 管理员判断
+            if (request()->controller() === 'AdminCourse' || request()->controller() === 'AdminStudent') {
+                if ($this->controller === 'AdminTeacher') {
+                    return 'active';
+                } else {
+                    return '';
+                }
+            } 
+
 
             // 第三种是直属的
             if (request()->controller() === $this->controller) {

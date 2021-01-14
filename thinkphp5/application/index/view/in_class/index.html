@@ -47,7 +47,7 @@
         <form action="{:url('changeSignTime')}" method="post">
             <td>
                 <label style="font-size: 15px;">
-                    签到课程:{:$Course->name}
+                    上课课程:{:$Course->name}
                 </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <label style="font-size: 15px;">
                     签到时长:
@@ -133,10 +133,10 @@
         </button>
     </div>
     <div style="float: left;margin-left: 60px;">
-        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-default"><i class="glyphicon glyphicon-zoom-in"></i>&nbsp;查看签到情况</a>
+        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-default"><i class="glyphicon glyphicon-zoom-in"></i>&nbsp;查看上课情况</a>
     </div>
     <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-exclamation-sign"></i>&nbsp;下课</button></a>
+        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-off"></i>&nbsp;下课</button></a>
     </div>
     <div class="row" style="margin-top: 25px;">
         <hr>

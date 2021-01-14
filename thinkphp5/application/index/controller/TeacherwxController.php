@@ -374,6 +374,11 @@ class TeacherwxController extends IndexController {
                 // 如果新密码长度不符合要求，返回重新修改
                 if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
                     return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                } else {
+                    // 增加判断，原密码和新密码不得一致
+                    if($newPasswordAgain === $oldPassword) {
+                        return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                    }
                 }
                 // 如果密码符合格式要求，下面保存
                 if (!$Teacher->save()) {

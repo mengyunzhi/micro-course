@@ -40,7 +40,7 @@
             <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="Student->getIsChecked($course)" value="true" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
             {/volist}
         </div>
-        <button type="submit" class="btn btn-primary" style="margin-top: 20px">submit</button>
+        <button type="submit"  class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
     </form>
 </div>
 {/block}

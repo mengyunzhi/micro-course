@@ -22,8 +22,10 @@ class GradeLookController extends IndexController {
             $courseId = Request::instance()->param('id');
             $num = Request::instance()->param('name');
 
-            // 实例化课程
-            $Course = Course::get($courseId);
+            //实例化课程,并增加判断是否为当前教师
+            if (is_null($Course = Course::get($courseId))) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            }
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
