@@ -382,6 +382,10 @@ class StudentController extends IndexController
                     // 如果新密码长度不符合要求，返回重新修改
                     if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
                         return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                    } else {
+                        if($newPasswordAgain === $oldPassword) {
+                            return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                        }
                     }
                     session('studentId',null);
                     return $this->success('密码修改成功,请重新登陆', url('Login/studentwx?username=' . $Student->username));

@@ -26,8 +26,8 @@
         <td>{$key}</td>
         <td>{$coursestudent->Student->getData('name')}</td>
         <td>{$coursestudent->Student->getData('num')}</td>
-        <td>{$coursestudent->Student->create_time}</td>
-        <td>{$coursestudent->Student->update_time}</td>
+        <td><?php echo(date('Y/m/d G:i', $coursestudent->Student->create_time));?></td>
+        <td><?php echo(date('Y/m/d G:i', $coursestudent->Student->update_time));?></td>
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
             <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
