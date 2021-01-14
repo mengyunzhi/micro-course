@@ -1,3 +1,4 @@
+
 <?php
 namespace app\index\controller;
 use think\Request;     //请求
