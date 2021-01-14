@@ -23,7 +23,9 @@ class StudentController extends IndexController
             $page = Request::instance()->param('page');
             
             //实例化课程,并增加判断是否为当前教师
-            $course = Course::get($id);
+            if (is_null($course = Course::get($id))) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            }
             if($course->teacher->id != session('teacherId')){
                 $this->error('无此权限');
             }

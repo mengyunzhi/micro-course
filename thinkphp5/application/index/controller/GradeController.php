@@ -117,7 +117,10 @@ class GradeController extends IndexController {
         try {
             // 接收课程id,并实例化课程对象
             $courseId = Request::instance()->param('courseId/d');
-            $Course = Course::get($courseId);
+            //实例化课程,并增加判断是否为当前教师
+            if (is_null($Course = Course::get($courseId))) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            }            
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
