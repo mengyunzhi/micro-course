@@ -42,7 +42,7 @@ class CourseController extends IndexController {
 
         // 通过name获取查询信息
         if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate();
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(2);
         }
 
         //向V层传数据
@@ -62,6 +62,10 @@ class CourseController extends IndexController {
         $id = Request::instance()->param('id');
         // 查询处于激活的学期
         $Term = Term::get(['state' => 1]);
+        // 判断当前是否有已被激活的学期
+        if (is_null($Term)) {
+            return $this->error('当前未处于学期中', Request::instance()->header('referer'));
+        }
 
         // 实例化教师对象      
         $Teacher = Teacher::get($id);
@@ -85,6 +89,12 @@ class CourseController extends IndexController {
         $Course=Course::get($courseId);
         if(is_null($Course)) {
             return $this->error('不存在Id为:' . $courseId . '的课程');
+        }
+
+        // 增加判断恶意修改情况
+        $teacherId = session('teacherId');
+        if ($teacherId !== $Course->Teacher->id) {
+            return $this->error('无此权限', Request::instance()->header('referer'));
         }
 
         $this->assign('Course', $Course);

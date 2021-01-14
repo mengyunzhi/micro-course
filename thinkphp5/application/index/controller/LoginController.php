@@ -1,6 +1,5 @@
 <?php
 namespace app\index\controller;
-use think\Controller;
 use think\Request;     //请求
 use app\common\model\Teacher; //教师模型
 use app\common\model\CourseStudent;
@@ -14,8 +13,7 @@ use app\common\model\ClassCourse;
 /**
  * 负责教师和学生扫码登陆
  */
-class LoginController extends Controller
-    {
+class LoginController extends IndexController {
     //用户登录表单
     public function index() {
         // 接收登陆信息
@@ -127,7 +125,7 @@ class LoginController extends Controller
     public function studentWx() {
         // 接收上次登陆失败返回的信息
         $username = Request::instance()->param('username');
-        $password = Request::instance()->param('password');
+        $password = '';
 
         // 获取从wxLogin传出的seatId
         $seatId = Request::instance()->param('seatId');
@@ -314,7 +312,7 @@ class LoginController extends Controller
 
         // 接收用户名和密码,避免二次登陆重新输入账号密码
         $password = Request::instance()->param('password');
-        $username = Request::instance()->param('username');
+        $username = '';
         $classroomId = Request::instance()->param('classroomId');
 
         $this->assign('username', $username);

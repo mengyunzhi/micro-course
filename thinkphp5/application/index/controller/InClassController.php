@@ -12,6 +12,7 @@ use app\common\model\PreClass;
 use app\common\model\SeatMap;
 use app\common\model\ClassDetail;
 use app\common\model\ClassCourse;
+use app\common\model\Grade;
 use Env;
 use PHPExcel_IOFactory;
 use PHPExcel;
@@ -169,13 +170,15 @@ class InClassController  extends IndexController {
 
         // 根据课程获取该课程所对应的中间表信息
         $CourseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
-        
-        // 新建学生和上课缓存数组
-        $Students = [];
-        $classDetails = [];
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
 
-        // 调用unsignStu函数和aodHappened函数获取未签到学生和上课缓存信息
-        $this->unsignStu($CourseStudents, $Seats, $Students);
+        // 新建学生数组接收未签到学生并调用unsignStu函数获取未签到学生
+        $Students = [];
+        $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
+
+        // 新建上课缓存数组查看加减分记录 
+        $classDetails = [];
+        // 利用aodHappened函数上课详情信息
         $this->aodHappened($courseId, $ClassCourse->id, $classDetails);
 
         // 返回提示信息：课程结束：显示应到多少人实到多少人，加减分情况
@@ -224,10 +227,11 @@ class InClassController  extends IndexController {
 
         // 获取上课缓存数组，进而获得已签名单和签到时间
         $ClassCourse = ClassCourse::get(['classroom_id' => $classroomId, 'begin_time' => $Classroom->begin_time]);
-        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate($pageSize); 
-        
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select(); 
         // 将Students，CourseStudents,Seats传入求未签到学生的函数
-        $this->unsignStu($CourseStudents, $Seats, $Students);
+        $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
+
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate($pageSize); 
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);
@@ -236,9 +240,64 @@ class InClassController  extends IndexController {
         $this->assign('Classroom', $Classroom);
         $this->assign('course', $Course);
         $this->assign('Classroom', $Classroom);
+        $this->assign('ClassCourse', $ClassCourse);
 
         // 返回渲染后的学生信息
         return $this->fetch();
+    }
+
+    /**
+     * 签到更改方法
+     */
+    public function signUpdate() {
+        // 接收对应的学生id和上课课程id
+        $studentId = Request::instance()->param('studentId');
+        $classCourseId = Request::instance()->param('classCourseId');
+
+        // 实例化上课课程对象，并判断是否为空
+        $ClassCourse = ClassCourse::get($classCourseId);
+        if (is_null($ClassCourse)) {
+            return $this->error('上课课程接收失败，请重新更改', Request::instance()->header('referer'));
+        }
+
+        // 新建上课详情对象，并进行赋值和保存
+        $ClassDetail = new ClassDetail();
+        if (!$this->saveDetail($ClassDetail, $studentId, $classCourseId)) {
+            return $this->error('上课签到状态修改失败，请重新修改', Request::instance()->header('referer'));
+        }
+
+        // 通过学生id和课程id获取该学生此门课程成绩，签到次数加一，同时从新计算成绩
+        $que = array(
+            'student_id' => $studentId,
+            'course_id' => $ClassCourse->course_id
+        );
+        $Grade = Grade::get($que);
+        if (is_null($Grade)) {
+            return $this->error('该学生成绩查找失败', Request::instance()->header('referer'));
+        } else {
+            $Grade->resigternum ++;
+            $Grade->getAllgrade();
+        }
+
+        return $this->success('签到状态修改成功', Request::instance()->header('referer'));
+    }
+
+        /**
+     * 上课详情对象赋值保存
+     * @param ClassDetail 待修改的上课详情对象
+     * @param studentId 学生对象id
+     * @param classCourseId 上课课程对象id
+     */
+    public function saveDetail(&$ClassDetail, $studentId, $classCourseId) {
+        // 对传入的上课详情对象进行赋值
+        $ClassDetail->student_id = $studentId;
+        $ClassDetail->class_course_id = $classCourseId;
+        // 对于补签学生默认上课座位id是-1
+        $ClassDetail->seat_id = -1;
+        $ClassDetail->aod_num = 0;
+
+        // 对新增后的上课详情对象进行保存
+        return $ClassDetail->save();
     }
 
     /**
@@ -493,27 +552,26 @@ class InClassController  extends IndexController {
     }
 
     /**
-    * 获取未签到学生
-    * @param $CourseStudents 根据课程id得出的中间表
-    * @param $Seats 传入的已被坐的座位
-    * @param $Students 传入的用于存储未签到学生的对象数组
-    */
-    public function unsignStu($CourseStudents, $Seats, &$Students) {
-        // 获取学生人数，并通过学生总人数和已签学生人数获取未签学生信息
-        //number为学生总人数，havenumber为已签到学生人数，count负责计数方便将学生信息存入学生对象数组
+     * 获取未签到的学生
+     * @param classDetails 上课详情对象数组
+     * @param courseStudents 课程学生中间表对象数组
+     * @param unSigns 用于存储的学生对象数组
+     */
+    public function unSignStudents($classDetails, $courseStudents, &$unSigns) {
+        // 根据上课详情对象数组和课程学生对象数组获取未签学生对象数组
+        $number = sizeof($classDetails);
+        $numberOne = sizeof($courseStudents);
+        
         $count = 0;
-        $number = sizeof($CourseStudents);
-        $haveNumber = sizeof($Seats);
-        for ($i = 0; $i < $number; $i++) {
+        for ($i = 0; $i < $numberOne; $i ++) {
             $flag = 1;
-            for ($j = 0; $j < $haveNumber; $j++) {
-                if ($CourseStudents[$i]->student == $Seats[$j]->student) {
+            for($j = 0; $j < $number; $j ++) {
+                if ($courseStudents[$i]->student == $classDetails[$j]->student) {
                     $flag = 0;
                 }
-            } 
-            if($flag === 1) {
-                $Students[$count++] = $CourseStudents[$i]->student; 
-                // dump($Students);
+            }
+            if ($flag === 1) {
+                $unSigns[$count++] = $courseStudents[$i]->student;
             }
         }
     }

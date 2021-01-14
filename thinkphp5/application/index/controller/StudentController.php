@@ -23,7 +23,9 @@ class StudentController extends IndexController
             $page = Request::instance()->param('page');
             
             //实例化课程,并增加判断是否为当前教师
-            $course = Course::get($id);
+            if (is_null($course = Course::get($id))) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            }
             if($course->teacher->id != session('teacherId')){
                 $this->error('无此权限');
             }
@@ -380,6 +382,10 @@ class StudentController extends IndexController
                     // 如果新密码长度不符合要求，返回重新修改
                     if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
                         return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                    } else {
+                        if($newPasswordAgain === $oldPassword) {
+                            return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                        }
                     }
                     session('studentId',null);
                     return $this->success('密码修改成功,请重新登陆', url('Login/studentwx?username=' . $Student->username));

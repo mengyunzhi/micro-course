@@ -2,6 +2,9 @@
 {block name="title"}
 课程管理
 {/block}
+{block name="search"}{/block}
+{block name="search1"}{/block}
+{block name="Add"}{/block}
 {block name="content"}
 <?php $time = date('Y-m-d'); ?>
 <br>
@@ -9,7 +12,7 @@
     <td>{$Course->name}:已签学生名单：</td>
     <td>
         <form action="{:url('fileExportGrade?classCourseId=' . $ClassCourse->id)}">
-            <button class="btn btn-warning"><i class="glyphicon glyphicon-download">导出表单</i></button>
+            <button class="btn btn-warning"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;导出表单</button>
     </td>
     </form>
     </td>
@@ -41,7 +44,7 @@
     <td>{$Course->name}:未签到学生:{:sizeof($students)}人</td>
     <td>
         <form action="{:url('fileExportSign?courseId=' . $Course->id . '&classCourseId=' . $ClassCourse->id)}">
-            <button class="btn btn-warning"><i class="glyphicon glyphicon-download">导出表单</i></button>
+            <button class="btn btn-warning"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;导出表单</button>
         </form>
     </td>
 </table>

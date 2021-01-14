@@ -298,9 +298,11 @@ class SeatMapController extends Controller {
 			}
 		}
 		return true;
+	}
+
 
 	/**
-	
+	 * 挨个删除座位
 	 */
 	public function DeleteSeatAisle($id) {
 		$seatAisles = SeatAisle::where('seat_map_id', '=', $id)->select();

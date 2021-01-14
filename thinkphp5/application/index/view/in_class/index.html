@@ -47,7 +47,7 @@
         <form action="{:url('changeSignTime')}" method="post">
             <td>
                 <label style="font-size: 15px;">
-                    签到课程:{:$Course->name}
+                    上课课程:{:$Course->name}
                 </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <label style="font-size: 15px;">
                     签到时长:
@@ -71,7 +71,7 @@
                         <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35 </option> 
                         <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30 </option> 
                         <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15 </option> 
-                    </select>分 
+                    </select>
                 </label> 
                 <button>保存</button>
             </td>
@@ -132,12 +132,15 @@
             <i class="glyphicon glyphicon-tag"></i>&nbsp;过道
         </button>
     </div>
+    <div style="float: left;margin-left: 60px;">
+        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-default"><i class="glyphicon glyphicon-zoom-in"></i>&nbsp;查看上课情况</a>
+    </div>
     <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button style="width: 100px;" class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')">&nbsp;下课</button></a>
+        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-off"></i>&nbsp;下课</button></a>
     </div>
     <div class="row" style="margin-top: 25px;">
         <hr>
-        <div class="container">
+        <div class="container" >
             <table style="margin: auto;">
                 <label class="container">
                     <h3 style="text-align: center;">讲台</h3>
@@ -168,9 +171,7 @@
             </table>
         </div>
     </div>
-    <div style="float: left;">
-        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-info">&nbsp;查看签到情况</a>
-    </div>
+    
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
