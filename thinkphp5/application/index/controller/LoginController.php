@@ -1,3 +1,4 @@
+
 <?php
 namespace app\index\controller;
 use think\Request;     //请求
@@ -361,7 +362,6 @@ class LoginController extends IndexController {
             return $this->error('请输入完整的信息', Request::instance()->header('referer'));
         }
     }
-
 
     /**
      * 教师密码修改
