@@ -17,8 +17,7 @@
 </head>
 
 <body style="background-color: grey">
-    {php}$action=request()->action()==='teacherIndex'?'teacherLogin':'login';{/php}
-        <form action="{:url($action)}" method="post">
+        <form action="{:url('teacherLogin')}" method="post">
             <div class="login">
                 <h2>微课堂</h2>
                 <div class="login-top">
