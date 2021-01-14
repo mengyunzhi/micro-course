@@ -1,6 +1,5 @@
 <?php
 namespace app\index\controller;
-use think\Controller; 
 use think\Request;     //请求
 use think\Controller;
 use app\common\model\Teacher; //教师模型
@@ -180,42 +179,6 @@ class LoginController extends Controller {
             }
             return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
-    }
-
-    /**
-     * 老师微信端登陆方法
-     */
-    public function teacherIndex() {
-        // 首先获取教师id，判断session是否过期
-        $teacherId = session('teacherId');
-        $classroomId = Request::instance()->param('classroomId');
-
-        // 如果session还没有过期的情况下，直接登陆
-        if (!is_null($teacherId)) {
-            // 绑定教师信息和教室信息
-            $Teacher = Teacher::get($teacherId);
-            if (is_null($Teacher)) {
-                return $this->error('教师信息不存在', url('teacherLogin?class'));
-            } else {
-                $Teacher->classroom_id = $classroomId;
-                if (!$Teacher->save()) {
-                    return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
-                }
-            }
-            return $this->success('登陆成功', url('teacherwx/index'));
-        }
-
-        // 接收用户名和密码,避免二次登陆重新输入账号密码
-        $password = Request::instance()->param('password');
-        $username = '';
-        $classroomId = Request::instance()->param('classroomId');
-
-        $this->assign('username', $username);
-        $this->assign('classroomId', $classroomId);
-        $this->assign('password', $password);
-
-        // 调用index模板
-        return $this->fetch();
     }
 
     /**
