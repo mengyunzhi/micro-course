@@ -1,7 +1,7 @@
-
 <?php
 namespace app\index\controller;
 use think\Request;     //请求
+use think\Controller;
 use app\common\model\Teacher; //教师模型
 use app\common\model\CourseStudent;
 use app\common\model\Student;
@@ -12,14 +12,13 @@ use app\common\model\Classroom;
 use app\common\model\ClassCourse;
 
 /**
- * 负责教师和学生扫码登陆
+ * 负责教师和学生扫码登陆验证
  */
-class LoginController extends IndexController {
-    //用户登录表单
+class LoginController extends Controller {
     public function index() {
         // 接收登陆信息
         $username = Request::instance()->param('username');
-        $password = Request::instance()->param('password');
+        $password = '';
 
         $this->assign('username', $username);
         $this->assign('password', $password);
@@ -27,9 +26,10 @@ class LoginController extends IndexController {
         // 显示登录表单
         return $this->fetch();
     }
-    // 处理用户提交的登录数据
-    public function login()
-    {
+    /**
+     * web端处理登陆提交的信息
+     */
+    public function login() {
         // 接收post信息
         $username = Request::instance()->param('username');
         $password = Request::instance()->param('password');
@@ -198,15 +198,6 @@ class LoginController extends IndexController {
         var_dump(input('post.'));
     }
 
-     public function logOut()
-    {
-        if (Teacher::logOut()) {
-            return $this->success('注销成功', url('index'));
-        } else {
-            return $this->error('注销失败', url('index'));
-        }
-    }
-
     /**
      * 清空上一个老师与教室的绑定信息
      * @param classroomId 扫码对应的教室id
@@ -301,7 +292,7 @@ class LoginController extends IndexController {
             // 绑定教师信息和教室信息
             $Teacher = Teacher::get($teacherId);
             if (is_null($Teacher)) {
-                return $this->error('教师信息不存在', url('teacherLogin?class'));
+                return $this->error('教师信息不存在', url('teacherIndex?class'));
             } else {
                 $Teacher->classroom_id = $classroomId;
                 if (!$Teacher->save()) {
@@ -342,7 +333,7 @@ class LoginController extends IndexController {
                 // 获取教师id
                 $teacherId = session('teacherId');
                 $Teacher = Teacher::get($teacherId);
-                if (!is_null($Teacher)) {
+                if (is_null($Teacher)) {
                     return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
                 } else {
                     // 绑定教师和教室信息
@@ -364,47 +355,24 @@ class LoginController extends IndexController {
     }
 
     /**
-     * 教师密码修改
+     * web端教师登出
      */
-    public function passwordModification() {
-        $username = input('username');
-        $this->assign('username', $username);
-        return $this->fetch();
-    }
+    public function logOut() {
+        if (Teacher::logOut()) {
+            return $this->success('注销成功', url('index'));
+        } else {
+            return $this->error('注销失败', Request::instance()->header('referer'));
+        }
+    } 
 
     /**
-     * 教师密码修改
+     * 微信端教师登出
      */
-    public function tpm() {
-        $oldPassword = input('post.oldPassword');
-        $password = input('post.password');
-        $username = input('post.username');
-        $Teacher =  Teacher::get(['username' => $username]);
-
-        //判断用户名是否存在
-        if(is_null($Teacher)) {
-            return $this->error('用户名不存在', url('passwordModification'));
+    public function wxLogOut() {
+        if (Teacher::logOut()) {
+            return $this->success('注销成功', url('teacherIndex'));
+        } else {
+            return $this->error('注销失败', Request::instance()->header('referer'));
         }
-
-        //判断旧密码是否正确
-        if(!Teacher::login($username, $oldPassword)) {
-           return $this->error('旧密码错误', url('passwordModification?username=' . $username));
-        }
-
-        //判断新旧密码是否一致
-        if($oldPassword === $password) {
-           return $this->error('新旧密码一致', url('passwordModification?username=' . $username));
-        }
-
-        // 判断新密码位数是否符合标准c
-        if(strlen($password) < 6 || strlen($password)>25) {
-            return $this->error('密码长度应为6到25之间', url('passwordModification?username=' . $username));
-        }
-        $Teacher->password = $Teacher->encryptPassword($password);
-        if(!$Teacher->save()) {
-            return $this->error('密码更新失败', url('passwordModification?username=' . $username));
-        }
-
-        return $this->success('密码修改成功,请重新登录', url('index?username=', $username));
     }
 }
