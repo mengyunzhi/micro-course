@@ -2,6 +2,7 @@
 namespace app\index\controller;
 use think\Controller;
 use app\common\model\Teacher;//教师模型
+use app\common\model\Course;
 use think\Request;
 use think\validate;
 use think\controller\Term;
@@ -129,11 +130,11 @@ class AdminTeacherController extends AdminJudgeController
 
         // 新增数据
         if (!$this->saveTeacher($Teacher)) {
-            return $this->error('操作失败' . $Teacher->getError());
+            return $this->error('新增失败' . $Teacher->getError());
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('新增成功', url('index'));
     }
 	public function delete(){
 		try{
@@ -148,7 +149,7 @@ class AdminTeacherController extends AdminJudgeController
 		    $Teacher = Teacher::get($id);
 
              //删除与本教师相关的课程信息和课程学生关联表信息
-            $courses = Course::where('tescher_id', '=', $id)->select();
+            $courses = Course::where('teacher_id', '=', $id)->select();
             foreach ($courses as $Course ) {
                 AdminCourse::deleteCourseStudent($Course->id);
                 if(!$Course->delete()) {

@@ -1,4 +1,3 @@
-
 <?php
 namespace app\index\controller;
 use think\Controller;
@@ -117,7 +116,7 @@ class LoginController extends Controller
         $this->assign('username', $username);
         $this->assign('password', $password);
 
-        // 将教室id传入v层
+        // 将教室id传入v层s
         $this->assign('classroomId', $classroomId);
         return $this->fetch();
     }
@@ -364,7 +363,6 @@ class LoginController extends Controller
             return $this->error('请输入完整的信息', Request::instance()->header('referer'));
         }
     }
-}
 
     /**
      * 教师密码修改

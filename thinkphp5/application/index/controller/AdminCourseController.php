@@ -9,7 +9,7 @@ use think\Request;
 use think\validate;
 use app\common\model\Term;
 use app\common\model\ClassDetail;
-use app\common\model\Classcourse;
+use app\common\model\ClassCourse;
 use app\common\model\Grade;
 use app\common\model\Gradeaod;
 
@@ -21,6 +21,7 @@ class AdminCourseController extends AdminJudgeController {
     {
     	try{
             $Term = new Term;
+           
     		$teacher_id=Request::instance()->param('id/d');
     		$name = Request::instance()->get('name');
     		$courses = new Course;
@@ -29,6 +30,9 @@ class AdminCourseController extends AdminJudgeController {
                 'state' => 1
             ];
             $Term = Term::get($que);
+            if(is_null($Term)) {
+            return $this->error('当前无学期开放', $_SERVER['HTTP_REFERER']);
+        }
     	if(!empty($teacher_id))
     	{
     	    $pageSize = 5;
@@ -170,7 +174,7 @@ class AdminCourseController extends AdminJudgeController {
      * @param $courseId 要被删除的课程id
      */
     public function deleteCourseStudent($courseId) {
-        $courseStudents = CourseStudent::where('course_id', '=', $CourseId)->select();
+        $courseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
         foreach ($courseStudents as $CourseStudent) {
             if(!$CourseStudent->delete()) {
                 return $this->error('删除课程学生关联失败');
