@@ -10,17 +10,12 @@ use Env;
 use PHPExcel_IOFactory;
 use PHPExcel;
 
-class TestController extends IndexController
+class TestController extends Controller
 {
 	public function index()
 	{
-		$i=1;
-		for($i;$i<5;$i++)
-		{
-			echo "数字为".$i;
-		}
-		$this->assign('i',$i);
-		return $this->fetch();
+        $password = '123456';
+		return sha1(md5($password) . 'mengyunzhi');
 	}
 
     /**

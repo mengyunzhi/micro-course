@@ -18,15 +18,27 @@
         <td>{$term->getData('name')}</td>
         <td>{$term->getData('ptime')}</td>
         <td>{$term->getData('ftime')}</td>
-        <td>{eq name='term->getData("state")' value='0'}已冻结{else /}已激活{/eq}</td>
+        {eq name='term->getData("state")' value='0'}
+
         <td>
-            <a class="btn btn-success btn-sm" href="{:url('is_open?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-check"></i>&nbsp;{eq name='term->getData("state")' value='0'}激活{else /}冻结{/eq}</a>
+            未激活
+        </td>
+        {else /}
+        <td> <span class="label label-warning">已激活</span></td>
+        {/eq}
+        <td>
+            {eq name='term->getData("state")' value='0'}
+                <a class="btn btn-success btn-sm" href="{:url('is_open?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-check"></i>&nbsp;激活</a>
+            {else /}
+                <a class="btn btn-warning btn-sm" href="{:url('is_open?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-check"></i>&nbsp;冻结</a>
+            {/eq}
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $term->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $term->getData('id'))}" onClick="return confirm('确定删除，删除此学期将会删除掉与之相关的所有课程信息！');"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;</td>
+            {eq name='term->getData("state")' value='0'}<a class="btn btn-danger btn-sm " href="{:url('delete?id=' . $term->getData('id'))}" onClick="return confirm('确定删除，删除此学期将会删除掉与之相关的所有课程信息！');"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;{else /}<a class="btn btn-danger btn-sm disabled" href="{:url('delete?id=' . $term->getData('id'))}" onClick="return confirm('确定删除，删除此学期将会删除掉与之相关的所有课程信息！');"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;{/eq}
+            </td>
     </tr>
     {/volist}
 </table>
 {/block}
 {block name="render"}
- {$terms->render()}
+{$terms->render()}
 {/block}

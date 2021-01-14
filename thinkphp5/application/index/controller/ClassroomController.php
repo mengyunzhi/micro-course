@@ -275,10 +275,12 @@ class ClassroomController extends AdminJudgeController
      * @param $id 教室id
      */
     public function deleteSeat($id) {
-      $Seats = Seat::where('classroom_id', '=', $id)->select();
-      foreach ($Seats as $Seat) {
-        if(!$Seat->delete()) {
-          return $this->error('座位未被正确删除');
+      $seats = Seat::where('classroom_id', '=', $id)->select();
+      if(!empty($seats)) {
+        foreach ($seats as $Seat) {
+          if(!$Seat->delete()) {
+            return $this->error('座位未被正确删除');
+          }
         }
       }
       return 1;
