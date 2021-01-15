@@ -44,6 +44,10 @@ class ClassroomController extends AdminJudgeController
      * 增加教室
      */
     public function add() {
+      //判断模板是否存在
+      if(empty(SeatMap::all())) {
+        return $this->error('当前不存在座位图模板，无法添加教室', url('index'));
+      }
       $seatMapId = Request::instance()->param('seatMapId');
       $classroomName = input('param.classroomName');
       $seatMap = SeatMap::all();
@@ -72,6 +76,7 @@ class ClassroomController extends AdminJudgeController
      * 保存教室
      */
     public function save() {
+      dump('save');
       // 新建教室信息，并进行保存
       $Classroom = new Classroom;
       $Classroom->name = input('post.name');
@@ -95,6 +100,7 @@ class ClassroomController extends AdminJudgeController
      * @param $Classroom 教室对象
      */
     public function saveSeatMap($Classroom) {
+      dump('saveSeatMap');
       // 将教室保存，并判断保存是否成功
       if(!$Classroom->save()) {
         return $this->error('教室未被正确保存');
@@ -111,6 +117,7 @@ class ClassroomController extends AdminJudgeController
      * @param $classroomId 教室id
      */
     public function saveSeat($seatMapId, $classroomId) {
+      dump('saveSeat');
       // 通过座位图id获取对应的座位模板的id，从而获得与座位模板对应的座位
       $seatAisles = new SeatAisle;
       $seatAisles = SeatAisle::where('seat_map_id', '=', $seatMapId)->select();
@@ -238,6 +245,9 @@ class ClassroomController extends AdminJudgeController
       // 接收教室id，并根据教室id查找出该教室的所有座位，同时对教室进行实例化
       $classroomId = Request::instance()->param('id');
       $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+      if(empty($seats)) {
+        return $this->error('此教室无座位图', url('index'));
+      }
       $Classroom = Classroom::get($classroomId);
 
       // 通过教室id获取对应的教室模板，并判断是否存在

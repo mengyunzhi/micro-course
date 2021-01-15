@@ -217,4 +217,35 @@ class AdminStudentController extends AdminJudgeController
             }
         }
     }
+
+    /**
+     * 密码重置
+     */
+    public function pR() {
+        $id = Request::instance()->param('id');
+        $Student =  $Student = Student::get(['id' => $id]);
+        if(is_null($Student)) {
+            return $this->error('未获取到教师信息', url('index'));
+        }
+        $this->assign('Student', $Student);
+        return $this->fetch();
+    }
+     /**
+      * 重置密码
+      */
+    public function passwordReset() {
+        $Request = Request::instance();
+        $id = input('id');
+        $Student = Student::get(['id' => $id]);
+        $Student->username = input('username');
+        $Student->password = input('password');
+        if(strlen($Student->password) < 6 || strlen($Student->password)>25) {
+            return $this->error('密码长度应为6到25之间', url('pR?id=' . $id));
+        }
+        if(!$Student->save()) {
+            return $this->error('密码重置失败', url('index'));
+        }
+        return $this->success('密码重置成功', $Request->header('referer'));
+     }
+
 }

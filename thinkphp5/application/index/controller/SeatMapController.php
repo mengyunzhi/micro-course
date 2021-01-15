@@ -28,6 +28,11 @@ class SeatMapController extends Controller {
 	 * 座位图模板显示
 	 */
 	public function template() {
+
+		// 判断有无模板
+		if(empty(SeatMap::all())) {
+			return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
+		}
 		$match = input('param.match');
 		
 		$url = '';
@@ -96,12 +101,10 @@ class SeatMapController extends Controller {
 	public function add() {
 		$id = input('id');
 		$SeatMap = new SeatMap;
-		$seatMaps = SeatMap::all();
-		
 		$SeatMap->name = '';
 		$SeatMap->x_map = 0;
 		$SeatMap->y_map = 0;
-		$SeatMap1 = SeatMap::get($id);
+		$SeatMap1 = SeatMap::get(['id' => $id]);
 
 		//若传来的$id不为空，即执行编辑操作
 		if(!is_null($SeatMap1)) {
@@ -138,8 +141,9 @@ class SeatMapController extends Controller {
 		$classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
 		if(!empty($classrooms)) {
 			foreach ($classrooms as $Classroom) {
-				ClassroomController::deleteSeat($Classroom->id);
-				ClassroomController::saveSeat($seatMapId, $Classroom->id);
+				$ClassroomController = new ClassroomController;
+				$ClassroomController->deleteSeat($Classroom->id);
+				$ClassroomController->saveSeat($seatMapId, $Classroom->id);
 			}
 		}
 		return $this->success('模板编辑成功', url('index'));
@@ -292,10 +296,16 @@ class SeatMapController extends Controller {
 		$classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
 		if(!empty($classrooms)) {
 			foreach ($classrooms as $Classroom) {
-				if(!ClassroomController::deleteSeat($Classroom->id) || !$Classroom->delete()) {
+				$ClassroomController = new ClassroomController;
+				if(!$ClassroomController->deleteSeat($Classroom->id) || !$Classroom->delete()) {
 					return flase;
 				}
+				if(!$Classroom->delete()) {
+					return $this->error('教室' . $Classroom->name . '未被正确删除');
+				}
+				
 			}
+
 		}
 		return true;
 	}

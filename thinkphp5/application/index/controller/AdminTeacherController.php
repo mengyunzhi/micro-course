@@ -47,21 +47,6 @@ class AdminTeacherController extends AdminJudgeController
         } 
 	}
 
-
-	public function insert()
-    {
-        // 实例化Teacher空对象
-        $Teacher= new Teacher();
-        
-        // 为对象的属性赋值
-        $Teacher->id=0;
-        $Teacher->name=$postData['name'];
-		$Teacher->num=$postData['num'];
-     
-        // 执行对象的插入数据操作
-        $Teacher->save();
-        return $Teacher->name . '成功增加至数据表中。新增ID为:' . $Teacher->id;
-    }
 	public function add()
     {
         // 实例化
@@ -72,6 +57,7 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->name = '';
         $Teacher->username = '';
         $Teacher->num = '';
+        $Teacher->password = '';
         $this->assign('Teacher', $Teacher);
 
         // 调用edit模板
@@ -119,6 +105,8 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
         $Teacher->num = input('post.num');
+        $Teacher->num = input('post.password');
+
 
         // 更新或保存
         return $Teacher->validate(true)->save();
@@ -209,5 +197,31 @@ class AdminTeacherController extends AdminJudgeController
         return $e->getMessage();
          }
     }
-    
+
+    public function pR() {
+        $id = Request::instance()->param('id');
+        $Teacher =  $Teacher = Teacher::get(['id' => $id]);
+        if(is_null($Teacher)) {
+            return $this->error('未获取到教师信息', url('index'));
+        }
+        $this->assign('Teacher', $Teacher);
+        return $this->fetch();
+    }
+     /**
+      * 重置密码
+      */
+    public function passwordReset() {
+        $Request = Request::instance();
+        $id = input('id');
+        $Teacher = Teacher::get(['id' => $id]);
+        $Teacher->username = input('username');
+        $Teacher->password = input('password');
+        if(strlen($Teacher->password) < 6 || strlen($Teacher->password)>25) {
+            return $this->error('密码长度应为6到25之间', url('pR?id=' . $id));
+        }
+        if(!$Teacher->save()) {
+            return $this->error('密码重置失败', url('index'));
+        }
+        return $this->success('密码重置成功', $Request->header('referer'));
+     }
 }
