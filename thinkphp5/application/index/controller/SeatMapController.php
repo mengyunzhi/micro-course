@@ -66,9 +66,9 @@ class SeatMapController extends Controller {
 		// 实例化课程
 		$Course = Course::get($course_id);
 		$SeatMap = SeatMap::get($id);
-		$seatAisle = new SeatAisle;
-		$seatAisle = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
-		if(empty($seatAisle)) {
+		$seatAisles = new SeatAisle;
+		$seatAisles = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
+		if(empty($seatAisles)) {
 			return $this->error('当前模板座位图为空，请重新编辑或删除该模板', url('index'));
 		}
 
@@ -79,7 +79,7 @@ class SeatMapController extends Controller {
 		$this->assign('seatMap1', $seatMapAsc);
 		$this->assign('seatMap2', $seatMapDesc);
 		$this->assign('SeatMap',$SeatMap);
-		$this->assign('seatAisles', $seatAisle);
+		$this->assign('seatAisles', $seatAisles);
 		$this->assign('Course',$Course);
 		return $this->fetch();
 
@@ -105,6 +105,10 @@ class SeatMapController extends Controller {
 	public function add() {
 		$id = input('id');
 		$SeatMap = new SeatMap;
+		$SeatMap->id = 0;
+		if(!is_null($id)) {
+		$SeatMap->id = $id;
+		}
 		$SeatMap->name = '';
 		$SeatMap->x_map = '';
 		$SeatMap->y_map = '';
@@ -158,38 +162,58 @@ class SeatMapController extends Controller {
 	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
 	 */
 	public function save() {
-		$SeatMap = new SeatMap;
-		$SeatMap->name = input('post.name');
-		$SeatMapPre = SeatMap::where('name', '=', input('post.name'))->select();
-		
-		//如果是模板编辑
-		if(!empty($SeatMapPre)) {
-			$idPre = $SeatMapPre[0]->id;
-			$this->deleteSeatAisle($idPre);
-			$SeatMapPre[0]->delete();
-		}
-		//首个座位图是第一个
-		$seatMaps = SeatMap::all();
-		if(empty($seatMaps)) {
-			$SeatMap->is_first = 1;
-		}
+		if(input('id') != 0) {
+			$SeatMap = SeatMap::get(['id' => input('id')]);
+			if(is_null($SeatMap)) {
+				$SeatMap = new SeatMap;
+				$SeatMap->id = input('id');
+			}
+			$this->deleteSeatAisle(input('id'));
+		} else 	{
+					$SeatMap = new SeatMap;
 
+					//首个座位图是第一个
+					$seatMaps = SeatMap::all();
+					if(empty($seatMaps)) {
+						$SeatMap->is_first = 1;
+					}
+				}
+		$SeatMap->name = input('name');
 		$SeatMap->x_map = Request::instance()->post('xMap');
 		$SeatMap->y_map = Request::instance()->post('yMap');
+
 		if(!$SeatMap->save()) {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
 		$id = $SeatMap->id;
-		$SeatMap = SeatMap::all();
-
-		// 将新增的模板设置为最后一个
-		foreach ($SeatMap as $seatMap) {
-			if($seatMap->id != $id) {
-				$seatMap->is_last = 0;
-				$seatMap->save();
+		if(input('id') === 0) {
+			$seatMaps = SeatMap::all();
+			foreach ($seatMaps as $seatMap) {
+				if($seatMap->id != $id) {
+					$seatMap->is_last = 0;
+					$seatMap->save();
+				}
 			}
 		}
+		
+		
 		$this->addseatAisle($id, url('edit?id=' . $id));
+	}
+
+	/**
+	 * 模板重置
+	 */
+	public function seatMapReset() {
+
+		$SeatMapPre = SeatMap::get(['id' => input('id')]);
+		//如果是模板编辑
+		if(!empty($SeatMapPre)) {
+			$idPre = $SeatMapPre->id;
+			$this->deleteSeatAisle($idPre);
+			$SeatMapPre->delete();
+		}
+		return $this->success('请重新填写模板信息', url('add?id=' . input('id')));
+
 	}
 
 	/**
