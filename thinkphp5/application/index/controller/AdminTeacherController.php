@@ -16,17 +16,13 @@ class AdminTeacherController extends AdminJudgeController
 
             // 实例化Teacher
             $Teacher = new Teacher; 
-            
-            if(!Teacher::isLogin())
-            {
-            return $this->error('plz login first',url('Login/index'));
-            }
+
             //按条件查询
             if(!is_null($num)) {
                 $Teacher = Teacher::where('num', 'like', '%'. $num. '%');
             }
             // 调用分页
-            $teachers = $Teacher->paginate($pageSize);
+            $teachers = $Teacher->where('username', '<>', 'admin')->paginate($pageSize);
 
             // 向V层传数据
             $this->assign('teachers', $teachers);
@@ -46,7 +42,7 @@ class AdminTeacherController extends AdminJudgeController
             return $e->getMessage();
         } 
 	}
-
+    
 	public function add()
     {
         // 实例化

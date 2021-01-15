@@ -15,7 +15,6 @@ use app\common\model\ClassCourse;
  * 负责教师和学生扫码登陆验证
  */
 class LoginController extends Controller {
-
     //用户登录表单
     public function index() {
         // 接收登陆信息
