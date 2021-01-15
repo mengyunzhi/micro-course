@@ -15,6 +15,7 @@ class Student extends Model
     {
         return date('Y-m-d', $value);
     }
+    
     /**
      * 获取要显示的更新时间
      * @param  int $value 时间戳

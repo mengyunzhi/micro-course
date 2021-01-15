@@ -26,8 +26,8 @@
                 <i class="glyphicon glyphicon-eye-open"></i>
                 &nbsp;查看模板
             </a>
-            <a class="btn btn-sm btn-primary" href="{:url('add?id=' . $SeatMap->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
-            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $SeatMap->id)}">
+            <a class="btn btn-sm btn-primary" href="{:url('add?id=' . $SeatMap->getData('id'))}" onClick="return confirm('对应此模板的教室座位将被重置，确定编辑？');"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
+            <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $SeatMap->id)}" onClick="return confirm('对应此模板的教室也将被删除，确定删除？');">
                 <i class="glyphicon glyphicon-trash"></i>
                 &nbsp;删除
             </a>

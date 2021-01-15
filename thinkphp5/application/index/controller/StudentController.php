@@ -406,5 +406,4 @@ class StudentController extends IndexController
         // 跳转到登陆界面
         return $this->success('注销成功', url('Login/studentWx'));
     }
-
 }

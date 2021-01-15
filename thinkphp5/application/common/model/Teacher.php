@@ -31,6 +31,7 @@ class Teacher extends Model
     {
         return date('Y-m-d', $value);
     }
+
 	 static public function login($username, $password)
     {
         // 验证用户是否存在
@@ -52,9 +53,6 @@ class Teacher extends Model
      * @param  string $password 密码
      * @return bool           
      */
-    
-
-	//验证密码是否正确
 	public function checkPassword($password)
 	{
 		if ($this->getData('password') === $this::encryptPassword($password))
@@ -65,7 +63,7 @@ class Teacher extends Model
 		}
 	}
 
-	//设计算法加密
+
 	static public function encryptPassword($password)
 	{
 		if(!is_string($password))
