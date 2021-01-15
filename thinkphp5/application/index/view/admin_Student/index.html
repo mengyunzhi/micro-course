@@ -26,6 +26,10 @@
         <td>{$coursestudent->Student->getData('num')}</td>
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>
+            <a class="btn btn-sm btn-warning" href="{:url('passwordReset?id=' . $coursestudent->Student->getData('id'))}" onClick="return confirm('密码将重置为123456，确定重置？')">
+                <i class="glyphicon glyphicon-pencil"></i>
+                &nbsp;重置密码
+            </a>
             <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $coursestudent->Student->getData('id'))}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>&nbsp;
         </td>
     </tr>

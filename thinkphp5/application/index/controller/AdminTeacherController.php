@@ -47,21 +47,6 @@ class AdminTeacherController extends AdminJudgeController
         } 
 	}
 
-
-	public function insert()
-    {
-        // 实例化Teacher空对象
-        $Teacher= new Teacher();
-        
-        // 为对象的属性赋值
-        $Teacher->id=0;
-        $Teacher->name=$postData['name'];
-		$Teacher->num=$postData['num'];
-     
-        // 执行对象的插入数据操作
-        $Teacher->save();
-        return $Teacher->name . '成功增加至数据表中。新增ID为:' . $Teacher->id;
-    }
 	public function add()
     {
         // 实例化
@@ -72,6 +57,7 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->name = '';
         $Teacher->username = '';
         $Teacher->num = '';
+        $Teacher->password = '';
         $this->assign('Teacher', $Teacher);
 
         // 调用edit模板
@@ -119,6 +105,8 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
         $Teacher->num = input('post.num');
+        $Teacher->num = input('post.password');
+
 
         // 更新或保存
         return $Teacher->validate(true)->save();
@@ -209,5 +197,19 @@ class AdminTeacherController extends AdminJudgeController
         return $e->getMessage();
          }
     }
-    
+
+     /**
+      * 重置密码
+      */
+    public function passwordReset() {
+        $Request = Request::instance();
+        $id = input('id');
+        $Teacher = Teacher::get(['id' => $id]);
+        $password = '123456';
+        $Teacher->password = $Teacher->encryptPassword($password);
+        if(!$Teacher->save()) {
+            return $this->error('密码重置失败', url('index'));
+        }
+        return $this->success('密码重置成功', $Request->header('referer'));
+     }
 }

@@ -29,10 +29,10 @@
                 </a>
                 <hr>
                 <div class="form-group">
-                    <label for="seat_map_id">对应模板编号</label>
+                    <label for="seat_map_name">对应模板名称</label>
                     <select class="form-control" name="seat_map_id" value="">
                         {volist name="seatMaps" id="SeatMap" key="key"}
-                        <option value="{$SeatMap->id}" {eq name="SeatMap->getData('id')" value="$Classroom->getData('seat_map_id')" } selected="selected" {/eq}> {$SeatMap->id}
+                        <option value="{$SeatMap->id}" {eq name="SeatMap->getData('id')" value="$Classroom->getData('seat_map_id')" } selected="selected" {/eq}> {$SeatMap->name}
                         </option>
                         {/volist}
                     </select>
