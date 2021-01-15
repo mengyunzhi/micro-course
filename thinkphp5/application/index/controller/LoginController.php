@@ -285,8 +285,8 @@ class LoginController extends Controller {
         }
 
         // 接收用户名和密码,避免二次登陆重新输入账号密码
-        $password = Request::instance()->param('password');
-        $username = '';
+        $username = Request::instance()->param('username');
+        $password = '';
         $classroomId = Request::instance()->param('classroomId');
 
         $this->assign('username', $username);

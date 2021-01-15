@@ -28,6 +28,13 @@ class CourseController extends IndexController {
         $Teacher = Teacher::get($id);
         $Term = Term::get(['state' => 1]);
 
+        // 增加判断是否当前处于学期激活中
+        if ($Term === null) {
+            $termId = 0;
+        } else {
+            $termId = $Term->id;
+        }
+
         // 调用父类构造函数(必须)
         parent::__construct();
         //验证用户是否登录
@@ -38,7 +45,7 @@ class CourseController extends IndexController {
         //每页显示2条数据
         $pageSize = 2;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
+        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate($pageSize);
 
         // 通过name获取查询信息
         if (!empty($name)) {

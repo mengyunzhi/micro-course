@@ -23,5 +23,14 @@ class IndexController extends Controller {
         $this->assign('menuView', new menuView());
     }
 
+    /**
+     * 负责跳转到登陆界面
+     */
+    public function index() {
+            $url = url('index/login/index');
+            header("Location: $url");
+            exit();
+        $this->assign('menuView', new menuView());
+    }
    
 }

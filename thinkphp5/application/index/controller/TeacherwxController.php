@@ -12,6 +12,7 @@ use app\common\model\Seat;
 use app\common\model\ClassCourse;
 use app\common\model\ClassDetail;
 use app\common\model\Grade;
+use app\common\model\Term;
 use app\common\model\Gradeaod;
 
 /**
@@ -30,8 +31,17 @@ class TeacherwxController extends IndexController {
 
         // 获取该老师所教的所有课程
         // 分页页数为2
+        // 获取学期被激活的对象
+        $Term = Term::get(['state' => 1]);
+        // 增加判断是否当前处于学期激活中
+        if ($Term === null) {
+            $termId = 0;
+        } else {
+            $termId = $Term->id;
+        }
+
         $pageSize = 2;
-        $courses = Course::where('teacher_id', '=', $teacherId);
+        $courses = Course::where('teacher_id', '=', $teacherId)->where('term_id', '=', $termId);
 
         if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate($pageSize);
