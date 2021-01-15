@@ -76,7 +76,7 @@ class ClassroomController extends AdminJudgeController
      * 保存教室
      */
     public function save() {
-      
+
       // 新建教室信息，并进行保存
       $Classroom = new Classroom;
       $Classroom->name = input('post.name');
@@ -343,6 +343,9 @@ class ClassroomController extends AdminJudgeController
     $id = input('param.id/d');
     $Classroom = Classroom::get($id);
     $seats = Seat::where('classroom_id', '=', $id)->select();
+    if(empty($seats)) {
+      return $this->error('当前教室无座位', url('index'));
+    }
     $SeatMap = SeatMap::get($Classroom->seat_map_id);
     $seats = $this->seatDisplay($seats, $SeatMap);
     $this->assign('seats', $seats);
