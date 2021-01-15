@@ -76,7 +76,7 @@ class ClassroomController extends AdminJudgeController
      * 保存教室
      */
     public function save() {
-      dump('save');
+      
       // 新建教室信息，并进行保存
       $Classroom = new Classroom;
       $Classroom->name = input('post.name');
@@ -100,7 +100,7 @@ class ClassroomController extends AdminJudgeController
      * @param $Classroom 教室对象
      */
     public function saveSeatMap($Classroom) {
-      dump('saveSeatMap');
+
       // 将教室保存，并判断保存是否成功
       if(!$Classroom->save()) {
         return $this->error('教室未被正确保存');
@@ -117,7 +117,7 @@ class ClassroomController extends AdminJudgeController
      * @param $classroomId 教室id
      */
     public function saveSeat($seatMapId, $classroomId) {
-      dump('saveSeat');
+
       // 通过座位图id获取对应的座位模板的id，从而获得与座位模板对应的座位
       $seatAisles = new SeatAisle;
       $seatAisles = SeatAisle::where('seat_map_id', '=', $seatMapId)->select();

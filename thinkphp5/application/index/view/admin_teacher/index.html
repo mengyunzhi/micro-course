@@ -44,7 +44,7 @@
                 <i class="glyphicon glyphicon-pencil"></i>
                 &nbsp;编辑
             </a>
-            <a class="btn btn-sm btn-warning" href="{:url('pR?id=' . $teacher->getData('id'))}">
+            <a class="btn btn-sm btn-warning" href="{:url('passwordReset?id=' . $teacher->getData('id'))}" onClick="return confirm('密码将重置为123456，确定重置？')">
                 <i class="glyphicon glyphicon-pencil"></i>
                 &nbsp;重置密码
             </a>

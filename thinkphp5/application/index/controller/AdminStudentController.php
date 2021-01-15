@@ -7,6 +7,8 @@ use think\Request;
 use app\common\model\Course;
 use think\validate;
 use app\common\model\ClassDetail;
+use app\common\model\Teacher;
+
 class AdminStudentController extends AdminJudgeController
 {
 	 public function index()
@@ -219,29 +221,15 @@ class AdminStudentController extends AdminJudgeController
     }
 
     /**
-     * 密码重置
-     */
-    public function pR() {
-        $id = Request::instance()->param('id');
-        $Student =  $Student = Student::get(['id' => $id]);
-        if(is_null($Student)) {
-            return $this->error('未获取到教师信息', url('index'));
-        }
-        $this->assign('Student', $Student);
-        return $this->fetch();
-    }
-     /**
       * 重置密码
       */
     public function passwordReset() {
         $Request = Request::instance();
+        $Teacher = new Teacher;
         $id = input('id');
         $Student = Student::get(['id' => $id]);
-        $Student->username = input('username');
-        $Student->password = input('password');
-        if(strlen($Student->password) < 6 || strlen($Student->password)>25) {
-            return $this->error('密码长度应为6到25之间', url('pR?id=' . $id));
-        }
+        $password = '123456';
+        $Student->password = $Teacher->encryptPassword($password);
         if(!$Student->save()) {
             return $this->error('密码重置失败', url('index'));
         }

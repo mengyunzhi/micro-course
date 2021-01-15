@@ -198,15 +198,6 @@ class AdminTeacherController extends AdminJudgeController
          }
     }
 
-    public function pR() {
-        $id = Request::instance()->param('id');
-        $Teacher =  $Teacher = Teacher::get(['id' => $id]);
-        if(is_null($Teacher)) {
-            return $this->error('未获取到教师信息', url('index'));
-        }
-        $this->assign('Teacher', $Teacher);
-        return $this->fetch();
-    }
      /**
       * 重置密码
       */
@@ -214,11 +205,8 @@ class AdminTeacherController extends AdminJudgeController
         $Request = Request::instance();
         $id = input('id');
         $Teacher = Teacher::get(['id' => $id]);
-        $Teacher->username = input('username');
-        $Teacher->password = input('password');
-        if(strlen($Teacher->password) < 6 || strlen($Teacher->password)>25) {
-            return $this->error('密码长度应为6到25之间', url('pR?id=' . $id));
-        }
+        $password = '123456';
+        $Teacher->password = $Teacher->encryptPassword($password);
         if(!$Teacher->save()) {
             return $this->error('密码重置失败', url('index'));
         }
