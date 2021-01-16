@@ -8,6 +8,7 @@ use app\common\model\Course;
 use think\validate;
 use app\common\model\ClassDetail;
 use app\common\model\Teacher;
+use app\common\model\Grade;
 
 class AdminStudentController extends AdminJudgeController
 {
@@ -71,9 +72,12 @@ class AdminStudentController extends AdminJudgeController
 	{
 		$id = Request::instance()->param('id/d');
 		$Student = Student::get($id);
+        $courseStudents = CourseStudent::where('student_id', '=', $id)->select();
+
 		if(is_null($Student)){
 			return $this->error('不存在ID为'.$id.'的记录');
 		}
+        $this->assign('courseStudents', $courseStudents);
 		$this->assign('Student',$Student);
 		return $this->fetch();
 	}
@@ -84,7 +88,8 @@ class AdminStudentController extends AdminJudgeController
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
         $courseIds = Request::instance()->post('courseId/a'); 
-        $Student->email = input('post.email');      
+        $Student->email = input('post.email');   
+        $Student->username =  Request::instance()->post('num');  
         // /a表示获取的类型为数组
 		//新增数据并验证
 		if (!$Student->validate(true)->save()) {
@@ -114,6 +119,7 @@ class AdminStudentController extends AdminJudgeController
 		//更新学生
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
+        $Student->username =  Request::instance()->post('num');  
         $Student->sex = input('post.sex');
         $Student->email = input('post.email');
 		if(is_null($Student->validate(true)->save())){
@@ -192,6 +198,20 @@ class AdminStudentController extends AdminJudgeController
     public function deleteStudentReverance($studentId) {
         $this->deleteCourseStudent($studentId);
         $this->deleteClassDetail($studentId);
+        $this->deleteGrade($studentId);
+    }
+
+    /**
+     * 删除对应的课程学生关联
+     * @param $studentId 要被删除的学生id 
+     */
+    public function deleteGrade() {
+        $grades = Grade::where('student_id', '=', $studentId)->select();
+        foreach ($grades as $Grade) {
+            if(!$Grade->delete()) {
+                return $this->error('删除课程学生关联失败');
+            }
+        }
     }
 
     /**
@@ -199,7 +219,6 @@ class AdminStudentController extends AdminJudgeController
      * @param $studentId 要被删除的学生id
      */
     public function deleteCourseStudent($studentId) {
-
         $courseStudents = CourseStudent::where('student_id', '=', $studentId)->select();
         foreach ($courseStudents as $CourseStudent) {
             if(!$CourseStudent->delete()) {

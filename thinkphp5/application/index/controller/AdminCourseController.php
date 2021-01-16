@@ -164,9 +164,7 @@ class AdminCourseController extends AdminJudgeController {
      */
     public function deleteCourseRelevance($courseId) {
         $this->deleteCourseStudent($courseId);
-        $this->deleteClassDetail($courseId);
         $this->deleteGrade($courseId);
-        $this->deleteGradeaod($courseId);
     }
 
     /**

@@ -203,8 +203,6 @@ class ClassroomController extends AdminJudgeController
     public function seatMapChange() {
       // 获取教室id,并实例化教室对象
       $classroomId = input('param.id');
-      dump($classroomId);
-      die();
       $Classroom = Classroom::get($classroomId);
 
       // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板

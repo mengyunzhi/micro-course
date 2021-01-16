@@ -37,7 +37,13 @@
         </div>
         <div class="form-group">
             {volist name="Student->courses()->select()" id="course"}
-            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="Student->getIsChecked($course)" value="true" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
+            <?php $check = 0; ?>
+            {volist name="$courseStudents" id="CourseStudent"}
+            {if($CourseStudent->course_id === $course->id)}
+            <?php $check = 1; ?>
+            {/if}
+            {/volist}
+            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="check" value="1" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
             {/volist}
         </div>
         <button type="submit"  class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>

@@ -76,9 +76,9 @@ class TermController extends AdminJudgeController
 
         // 设置默认值
         $Term->id = 0;
-        $Term->name = '';
-        $Term->ptime = '';
-        $Term->ftime = '';
+        $Term->name = input('name');
+        $Term->ptime = input('ptime');
+        $Term->ftime = input('ftime');
         $this->assign('Term', $Term);
 
         // 调用edit模板
@@ -192,7 +192,8 @@ class TermController extends AdminJudgeController
             //删除与本学期相关的课程信息和课程学生关联表信息
             $courses = Course::where('term_id', '=', $id)->select();
             foreach ($courses as $Course ) {
-                AdminCourse::deleteCourseStudent($Course->id);
+                $AdminCourse = new AdminCourseController;
+                $AdminCourse->deleteCourseStudent($Course->id);
                 if(!$Course->delete()) {
                     return $this->error('删除本学期课程失败');
                 }
@@ -215,6 +216,17 @@ class TermController extends AdminJudgeController
         // 进行跳转 
         return $this->success('删除成功', $Request->header('referer')); 
     }
+
+    /**
+     * 判断学期的起始时间和结束时间是否符合标准
+     */
+    public function timeJudging($ptime, $ftime) {
+        if(strtotime($ptime) > strtotime($ftime)) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 对数据进行保存或更新
      * @param    Term                  &$Term 教师
@@ -228,6 +240,19 @@ class TermController extends AdminJudgeController
         $Term->name = input('post.name');
         $Term->ptime = input('post.ptime');
         $Term->ftime = input('post.ftime');
+        $url = $_SERVER["HTTP_REFERER"];
+        if(is_null(input('post.ptime'))) {
+            return $this->error('起始时间不能为空', url('add?name=' . $Term->name . '&ftime=' . $Term->ftime . '&ptime=' . $Term->ptime));
+        }
+        if(is_null(input('post.ftime'))) {
+            return $this->error('结束时间不能为空', url('add?name=' . $Term->name . '&ftime=' . $Term->ftime . '&ptime=' . $Term->ptime));
+        }
+
+        //判断输入的起始时间和终止时间是否符合标准
+        if(!$this->timeJudging($Term->ptime, $Term->ftime)) {
+            return $this->error('终止时间不能小于起始时间', url('add?name=' . $Term->name = input('post.name')));
+        }
+
         $Term1 = Term::where('state', '=', 1)->select();
         if(empty($Term1)) {
             $Term->state = 1;
