@@ -31,8 +31,8 @@
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
         <td>{$_course->getData('usmix')}%</td>
-        <td><a class="btn btn-default" href="{:url('coursegrade?courseId=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
-        <td><a class="btn btn-default" href="{:url('Gradelook/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
+        <td><a class="btn btn-info" href="{:url('coursegrade?courseId=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
+        <td><a class="btn btn-success" href="{:url('Gradelook/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
     </tr>
     {/volist}
 </table>

@@ -131,15 +131,9 @@ class GradeLookController extends IndexController {
      */
     private function saveGrade(Grade &$Grade, Course &$Course, $isUpdate = false) {
         // 写入要更新的数据
-        $Grade->resigternum = Request::instance()->post('resigternum');
-        if($Grade->resigternum > $Course->resigternum) {
-            $Grade->resigternum = $Course->resigternum;
-        }
-        $Grade->usgrade = $Course->resigternum === 0 ? 0 : $Grade->resigternum / $Course->resigternum * 100;
         $Grade->coursegrade = Request::instance()->post('coursegrade');
-        $Grade->allgrade = $Grade->usgrade * $Grade->Course->usmix / 100 + $Grade->coursegrade * (100 - $Grade->Course->usmix) / 100;
-        // 更新或保存
-        return $Grade->validate(true)->save();
+        // 更新并保存
+        $Grade->getAllgrade();
     }
 
     /**

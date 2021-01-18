@@ -183,7 +183,6 @@ class CourseController extends IndexController {
      * 上传文件
      */
     public function fileUpload() {
-
         // 接收课程信息，并进行保存
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
