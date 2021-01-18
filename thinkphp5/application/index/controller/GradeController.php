@@ -92,7 +92,7 @@ class GradeController extends IndexController {
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('index'));
+        return $this->success('成绩占比修改成功', url('Gradelook/index?id=' . $Course->id));
     }
 
     /**
@@ -100,11 +100,29 @@ class GradeController extends IndexController {
      * @param $Course 将要修改的课程对象
      */
     private function saveCourse(Course &$Course) {
+        // 首先获取该课程对应的所有学生成绩
+        if (is_null($Course)) {
+            return $this->error('学生成绩传送失败', Request::instance()->header('referer'));
+        }
+        $grades = Grade::where('course_id', '=', $Course->id)->select();
+
+        // 获取上课表现成绩对应的初始成绩的初值之差
+        $subtract = Request::instance()->post('begincougrade') - $Course->begincougrade;
+
         // 将修改后的值赋值给Course对象
         $Course->usmix = Request::instance()->post('usmix');
         $Course->courseup = Request::instance()->post('courseup');
         $Course->begincougrade = Request::instance()->post('begincougrade');
-        $Course->resigternum = Request::instance()->post('resigternum');
+
+        // 对更改成绩后的成绩重新计算
+        $number = sizeof($grades);
+        for ($i = 0; $i < $number; $i ++) {
+            $grades[$i]->coursegrade = $grades[$i]->coursegrade + $subtract;
+            if ($grades[$i]->coursegrade > $Course->courseup) {
+                $grades[$i]->coursegrade = $Course->courseup;
+            }
+            $grades[$i]->getAllgrade();
+        }
 
         // 更新或保存
         return $Course->validate(true)->save();

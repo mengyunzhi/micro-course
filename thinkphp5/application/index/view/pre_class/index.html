@@ -15,7 +15,7 @@
     <?php echo $MenuViewTeacher->render(); ?>
     <form class="form-horizontal" action="{:url('InClass/index')}" method="post">
         <input type="hidden" name="beginTime" value="{:time()}">
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 50px;">
             <label class="col-sm-2 control-label" style="font-size: 20px;">
                 课程选择:
             </label>
@@ -30,8 +30,8 @@
             </div> 
         </div>
          <div class="form-group">
-            <div style="margin-left: 200px;margin-top: 20px;">
-                <button type="submit" onclick="开始上课" class="btn btn-default">
+            <div style="margin-left: 500px;margin-top: 20px;">
+                <button type="submit" onclick="alert('开始上课，签到开始。温馨提示：如果当前时间未处于正常上课时间，签到截止时间将按照正常上课时间加上签到时长进行计算；如果晚于上课时间，将按照上课开始时间进行计算')" class="btn btn-default">
                     开始上课
                 </button>
             </div>

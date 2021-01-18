@@ -28,6 +28,13 @@ class CourseController extends IndexController {
         $Teacher = Teacher::get($id);
         $Term = Term::get(['state' => 1]);
 
+        // 增加判断是否当前处于学期激活中
+        if ($Term === null) {
+            $termId = 0;
+        } else {
+            $termId = $Term->id;
+        }
+
         // 调用父类构造函数(必须)
         parent::__construct();
         //验证用户是否登录
@@ -38,16 +45,21 @@ class CourseController extends IndexController {
         //每页显示2条数据
         $pageSize = 2;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $Term->id)->paginate($pageSize);
+        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate($pageSize);
 
         // 通过name获取查询信息
         if (!empty($name)) {
             $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(5);
         }
 
+        // 获取所有的学期信息
+        $terms = Term::all();   
+
         //向V层传数据
         $this->assign('courses', $courses);
         $this->assign('Teacher', $Teacher);
+        $this->assign('Term', $Term);
+        $this->assign('terms', $terms);
         //取回打包后的数据
         $htmls=$this->fetch();
         //将数据返回给用户
@@ -179,11 +191,10 @@ class CourseController extends IndexController {
         $Course->term_id = Request::instance()->post('term_id');
         $Course->student_num = 0;
         $Course->resigternum = 0;
-        $Course->usmix = Request::instance()->param('usmix');
-        $Course->courseup = Request::instance()->param('courseup');
-        $Course->begincougrade = Request::instance()->param('begincougrade');
+        $Course->usmix = 50;
+        $Course->courseup = 100;
+        $Course->begincougrade = 0;
 
-       
         if (!$Course->validate(true)->save()) {
             return $this->error('课程保存失败：' . $Course->getError());
         }
@@ -209,17 +220,29 @@ class CourseController extends IndexController {
             return $this->error('文件上传失败');
         }
 
-        return $this->success('新增课程和学生成功', url('index'));
-    }
+        //$href 文件存储路径
+        $href = $uploaddir . $name;
+        $unImportNumber = 0;
+        if(!$this->excel($href, $Course, $unImportNumber)) {
+            return $this->error('文件上传失败');
+        }
+
+        // 成功新增课程，但是要返回未导入人数
+        if ($unImportNumber === 0) {
+            return $this->success('新增课程和学生成功', url('index'));
+        } else {
+            return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
+        }
+  }
 
    /**
     * 文件导入部分
     * 将Excel存入数据库
     * @param href 文件存储路径
     * @param Course 保存的课程对象
+    * @param unImportNumber 未导入的学生人数
     */
-
-  public function excel($href, $Course) {
+    public function excel($href, $Course, &$unImportNumber) {
         /** Include path **/
         require_once dirname(__FILE__) . '/../PHPExcel/IOFactory.php';
 
@@ -229,61 +252,71 @@ class CourseController extends IndexController {
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
         // 将学生表中的数据存入数据库
+        if (sizeof($sheetData[1]) !== 5) {
+            $Course->delete();
+            return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
+        }
         if($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号"  || $sheetData[1]["D"] != "性别" || $sheetData[1]["E"] != "邮件" ) {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
+
         foreach ($sheetData as $sheetDataTemp) {
-
-                // 定制查询信息
-                $que = array(
-                    'name' => $sheetDataTemp['B'],
-                    'num' => $sheetDataTemp['C']
-                );
-                $StudentTmp = Student::get($que);
-
-                // 如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
-                if (is_null($StudentTmp)) {
-                    $Student = new Student();
-                    if($sheetDataTemp["D"] === '男') {
-                        $sheetDataTemp["D"] = 0;
-                    } else {
-                        $sheetDataTemp["D"] = 1;
+            $flag = 0;
+            if ($sheetDataTemp['B'] !== '姓名') {
+                if ($this->checkStudet($sheetDataTemp) === true) {
+                    if($count !== 0) {
+                        // 定制查询信息
+                        $que = array(
+                            'name' => $sheetDataTemp['B'],
+                            'num' => $sheetDataTemp['C']
+                        );
+                        $StudentTmp = Student::get($que);
+                        // 如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
+                        // 新增中间表并保存,同时新增成绩 
+                        $CourseStudent = new CourseStudent();
+                        if (is_null($StudentTmp)) {
+                            $Student = new Student();
+                            $Student->name = $sheetDataTemp["B"];
+                            $Student->num = $sheetDataTemp["C"];
+                            $Student->sex = $sex = $sheetDataTemp["D"] === '男'?'0':'1';
+                            $Student->email = $sheetDataTemp["E"];
+                            // 初始用户名设置就是学号，密码为6个0
+                            $Student->username = $sheetDataTemp["C"];
+                            $Student->password = $Student->encryptPassword('000000');
+                            if ($Student->validate()->save()) {
+                                $CourseStudent->student_id = $Student->id;
+                                $flag = $Student->id;
+                                // 新增成绩保存
+                                if (!$this->saveGrade($Student, $Course)) {
+                                    return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
+                                }
+                            }
+                        } else {
+                            $CourseStudent->student_id = $StudentTmp->id;
+                            $flag = $StudentTmp->id;
+                            // 新增成绩保存
+                            if (!$this->saveGrade($StudentTmp, $Course)) {
+                                return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
+                            }
+                        }
+                        if ($flag !== 0) {
+                            $CourseStudent->course_id = $Course->id;
+                            if (!$CourseStudent->save()) {
+                                return $this->error('课程-学生信息保存失败', url('Course/add'));
+                            }
+                        } else {
+                            $unImportNumber++;
+                        }
                     }
-                    $Student->name = $sheetDataTemp["B"];
-                    $Student->num = $sheetDataTemp["C"];
-                    $Student->sex = $sheetDataTemp["D"];
-                    $Student->email = $sheetDataTemp["E"];
-                    // 初始用户名设置就是学号，密码为6个0
-                    $Student->username = $sheetDataTemp["C"];
-                    $Student->password = $Student->encryptPassword('000000');
-                    $Student->save(); 
+                    // 课程对应学生数量加一
+                    $Course->student_num++;
                 }
-                // 新增中间表并保存,同时新增成绩 
-                $CourseStudent = new CourseStudent;
-                if (is_null($StudentTmp)) {
-                    $CourseStudent->student_id = $Student->id;
-                    // 新增成绩保存
-                    if (!$this->saveGrade($Student, $Course)) {
-                        return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
-                    }
-                } else {
-                    $CourseStudent->student_id = $StudentTmp->id;
-                    // 新增成绩保存
-                    if (!$this->saveGrade($StudentTmp, $Course)) {
-                        return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
-                    }
-                }
-                $CourseStudent->course_id = $Course->id;
-                if (!$CourseStudent->save()) {
-                    return $this->error('课程-学生信息保存失败', url('Course/add'));
-                }
-            // 课程对应学生数量加一
-            $Course->student_num++;
+            }
         }
 
         if (!$Course->save()) {
-            return $this->success('操作失败', url('Course/add'));
+            return $this->success('学生人数更新失败', url('Course/add'));
         } 
         return true;
     }
@@ -358,5 +391,24 @@ class CourseController extends IndexController {
         $Grade->resigternum = 0;
         $Grade->allgrade = $Grade->usgrade * $Course->usmix / 100 + $Grade->coursegrade * (1 - $Course->usmix / 100);
         return $Grade->save();
+    }
+
+    /**
+     * 文件内容导入判断
+     * @param array 待判断的数组
+     */
+    public function checkStudet($array) {
+        $count = 0;
+        $arrayCheck = array('string', 'double', 'string', 'string');
+        for ($i = 1; $i < 5; $i ++) {
+            if ($arrayCheck[$i-1] === gettype($array[strtoupper(dechex($i+10))])) {
+                $count ++;
+            }
+        }
+        // 判断count是不是等于4判断格式是否正确
+        if ($count === 4) {
+            return true;
+        }
+        return false;
     }
 }

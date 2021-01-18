@@ -142,8 +142,7 @@ class StudentController extends IndexController
     /**
      * 新增add对应的保存
      */
-     public function save()
-    {
+    public function save() {
         // 存课程信息
         $Student = new Student();
         $courseId = Request::instance()->post('courseid/d');

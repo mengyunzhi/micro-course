@@ -84,7 +84,6 @@ class SeatController extends controller {
             $SeatFirst->studentId = null;
             $SeatFirst->is_seated = 0;
             // 获取对应的上课详情对象
-            
             $que = array(
                 'student_id' => $studentId,
                 'class_course_id' => $classCourse->id
@@ -108,7 +107,7 @@ class SeatController extends controller {
                 return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Student/afterSign?studentId=' . $studentId));
             }
             // 增加判断是否在签到截止时间内
-            if ($Classroom->sign_deadline_time >= time()) {
+            if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
                 // 该成绩签到次数加并重新计算签到成绩和总成绩
                 $Grade->resigternum ++;
                 $Grade->getUsgrade();
@@ -120,11 +119,11 @@ class SeatController extends controller {
         if (!$this->saveClassDetail($classCourse, $studentId, $seatId, $classDetail, $isUpdate)) {
             return $this->error('签到信息保存失败', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         }
- 
+
         // 将教室座位student_id进行赋值
         $Seat->student_id = $studentId;
         $Seat->is_seated = 1;
-
+        // dump($Seat->student_id);die();
         // 将修改后的座位对象保存
         if (!$Seat->save()) {
             return $this->error('座位信息更新失败，请重新扫码', url('sign?studentId=' . $studentId));

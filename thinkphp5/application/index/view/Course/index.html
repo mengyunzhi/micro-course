@@ -20,11 +20,11 @@
     <hr>
 </div>
 <table class="table table-hover table-bordered">
+    <tr><label style="font-size: 15px;">当前学期:{:$Term->name}</label></tr>
     <tr class="info">
         <th>序号</th>
         <th>课程名称</th>
         <th>学生人数</th>
-        <th>学期</th>
         <th>学生列表</th>
         <th>操作</th>
     </tr>
@@ -33,7 +33,6 @@
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
-        <td>{$_course->Term->name}</td>
         <td><a class="btn btn-default" href="{:url('student/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-user"></i>&nbsp;点击查看</a>&nbsp;</td>
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('course/courseedit?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>&nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href="{:url('course/delete?id=' . $_course->id)}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a></td>
