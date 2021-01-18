@@ -49,7 +49,7 @@ class CourseController extends IndexController {
 
         // 通过name获取查询信息
         if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(2);
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(5);
         }
 
         // 获取所有的学期信息
@@ -179,10 +179,11 @@ class CourseController extends IndexController {
     }
 
     /**
-     * 文件导入部分
+     * save课程 + 文件导入部分
      * 上传文件
      */
     public function fileUpload() {
+
         // 接收课程信息，并进行保存
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
@@ -194,25 +195,30 @@ class CourseController extends IndexController {
         $Course->courseup = 100;
         $Course->begincougrade = 0;
 
-        // 新增数据并验证。验证类
+       
         if (!$Course->validate(true)->save()) {
             return $this->error('课程保存失败：' . $Course->getError());
         }
-
         // Excel表的导入
         $uploaddir = 'data/';
         // $uploaddir = "";
         $name = time() . $_FILES["userfile"]["name"];
         // dump($name);
         $uploadfile = $uploaddir . $name;
-        // dump($uploadfile);
-        // echo '<pre>';
-        // print_r($_FILES);
-        // dump($_FILES['userfile']['tmp_name']);
-        if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-            
-        } else {
-            return $this->error('新增课程成功', url('index'));
+         /*dump($uploadfile);
+         echo '<pre>';
+         print_r($_FILES);
+         dump($_FILES['userfile']['tmp_name']);*/
+        if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+            $Course->delete();
+            return $this->error('新增课程失败', url('index'));
+        }
+          // 新增数据并验证。验证类
+        //$href 文件存储路径
+       $href = $uploaddir . $name;
+        if(!$this->excel($href, $Course)) {
+            $Course->delete();
+            return $this->error('文件上传失败');
         }
 
     //$href 文件存储路径
@@ -256,8 +262,8 @@ class CourseController extends IndexController {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
-        $count = 0;
-        
+
+        $count = 0; 
         foreach ($sheetData as $sheetDataTemp) {
             $flag = 0;
             if ($sheetDataTemp['B'] !== '姓名') {
@@ -316,7 +322,7 @@ class CourseController extends IndexController {
         if (!$Course->save()) {
             return $this->success('学生人数更新失败', url('Course/add'));
         } 
-        return 1;
+        return true;
     }
 
     /**

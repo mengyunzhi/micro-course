@@ -141,31 +141,32 @@ class ClassroomController extends AdminJudgeController
      * 座位图修改：若只是修改部分是否为过道/座位
      * 则直接调用seatmap_change方法修改，否则修改对应模板号，若修改模板号则需要将之前教室对应的座位删除掉
      */
-     public function edit() {
+    public function edit() {
 
       // 获取教室相关信息，并将教室id实例化
       $classroomId = Request::instance()->param('classroomId/d');
       $Classroom = Classroom::get($classroomId);
       $seatMapId = Request::instance()->param('seatMapId');
+      if(SeatMapController::judgeClassroom($seatMapId)) {
+          //如果存在上级路由（模板选择一级）传过来的值，则赋值
+        if(!is_null($seatMapId)) {
+          $Classroom->seat_map_id = $seatMapId;
+        }
 
-      //如果存在上级路由（模板选择一级）传过来的值，则赋值
-      if(!is_null($seatMapId)) {
-        $Classroom->seat_map_id = $seatMapId;
+        //座位实例化
+        $seatMaps = SeatMap::all();
+        $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+
+        //向V层传值
+        $this->assign('seats', $seats);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('seatMaps', $seatMaps);
+
+        //返回v层渲染
+        return $this->fetch();
       }
-
-      //座位实例化
-      $seatMaps = SeatMap::all();
-      $seats = Seat::where('classroom_id', '=', $classroomId)->select();
-
-      //向V层传值
-      $this->assign('seats', $seats);
-      $this->assign('Classroom', $Classroom);
-      $this->assign('seatMaps', $seatMaps);
-
-      //返回v层渲染
-      return $this->fetch();
     }
-    
+      
     /**
      * 更新教室座位图
      */
@@ -268,12 +269,13 @@ class ClassroomController extends AdminJudgeController
       $classroomId = input('param.id');
       $this->deleteSeat($classroomId);
       $Classroom = Classroom::get($classroomId);
-
-      // 删除教室
-      if(!$Classroom->delete()) {
-        return $this->error('教室未被正确删除');
+      if(SeatMapController::judgeClassroom($Classroom->seat_map_id)) {
+        // 删除教室
+        if(!$Classroom->delete()) {
+          return $this->error('教室未被正确删除');
+        }
+        return $this->success('删除成功', url('index'));
       }
-      return $this->success('删除成功', url('index'));
     }
 
     /**

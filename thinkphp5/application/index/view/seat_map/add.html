@@ -17,6 +17,7 @@
 <div class="container">
     <form action="{:url('save')}" method="post">
         <input type="hidden" name="id" value="{$SeatMap->id}">
+        <input type="hidden" name="isFirst" value="{$SeatMap->is_first}">
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 20px;">输入模板名称:</label>
             <input name="name" id="name" class="form-control" value="{$SeatMap->name}"/>

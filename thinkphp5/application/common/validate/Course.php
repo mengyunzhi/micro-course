@@ -4,12 +4,12 @@ use think\Validate;
 class Course extends Validate
 {
 	 protected $rule = [
-        'name'=>'require|length:2,25',
-        'usmix' => 'require'
+        'name'=>'require|max:25',
     ];
 
-    protected $message = [
-    	'name.require' => '要求姓名长度在2位到25位之间',
-    	'usmix' => '签到占比不能为空'
+    protected $message  =   [
+        'name.require' => '课程名不能为空',
+        'name.max'     => '课程名最多不能超过25个字符',
     ];
+    
 }

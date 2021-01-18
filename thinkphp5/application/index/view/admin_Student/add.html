@@ -35,15 +35,7 @@
             <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
             <input type="email" name="email" id="email" class="form-control" />
         </div>
-        <div class="form-group">
-            <label style="font-size: 20px;margin-top: 20px">对应课程</label>
-            <br>
-            <?php use app\common\model\Teacher; ?>
-                {volist name="Student->courses()->select()" id="course"}
-                <input type="checkbox" name="courseId[]" id="courseId_{$course->id}" value="{$course->id}" /> <label for="courseId_{$course->id}">{$course->name}<?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
-                {/volist}
-           
-        </div> 
+       
         <button type="submit" class="btn btn-primary glyphicon glyphicon-ok">
             提交
         </button>
