@@ -23,6 +23,11 @@ class CoursegradeController extends IndexController {
             $Classroom = Classroom::get($classroomId);
             $Student = Student::get($studentId);
 
+            // 接收状态id，判断该按钮是座位还是过道
+            $isSeat = Request::instance()->param('isSeat/d');
+            if ($isSeat === 1) {
+                return $this->error('当前位置为过道', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }
             // 增加判断点击按钮是否存在学生
             if (is_null($studentId) || $studentId === 0) {
                 return $this->error('该座位不存在学生', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));

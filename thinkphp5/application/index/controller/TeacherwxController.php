@@ -64,6 +64,7 @@ class TeacherwxController extends IndexController {
         $Teacher = Teacher::get($teacherId);
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
+
         // 判断是否处于上课状态：两种情况
         if (is_null($Classroom)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));

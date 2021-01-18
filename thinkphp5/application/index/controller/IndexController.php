@@ -31,6 +31,5 @@ class IndexController extends Controller {
             header("Location: $url");
             exit();
         $this->assign('menuView', new menuView());
-    }
-   
+    }   
 }

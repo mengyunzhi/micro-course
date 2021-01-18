@@ -192,7 +192,8 @@ class TermController extends AdminJudgeController
             //删除与本学期相关的课程信息和课程学生关联表信息
             $courses = Course::where('term_id', '=', $id)->select();
             foreach ($courses as $Course ) {
-                AdminCourse::deleteCourseStudent($Course->id);
+                $AdminCourseController = new AdminCourseController;
+                $AdminCourseController->deleteCourseStudent($Course->id);
                 if(!$Course->delete()) {
                     return $this->error('删除本学期课程失败');
                 }

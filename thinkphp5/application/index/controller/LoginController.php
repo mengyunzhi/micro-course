@@ -56,8 +56,8 @@ class LoginController extends Controller {
         $name = Request::instance()->post('name');
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
-        $classroomId = Request::instance()->param('classroomId');
-        if (is_null($classroomId)) {
+        $classroomId = Request::instance()->param('classroomId/d');
+        if (is_null($classroomId) || $classroomId === 0) {
             return $this->error('教室信息传递失败，请从新扫码', Request::instance()->header('referer'));
         }
 
@@ -147,25 +147,25 @@ class LoginController extends Controller {
         // 接收post信息,并获取学生id
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
-        $seatId = Request::instance()->param('seatId');
+        $seatId = Request::instance()->param('seatId/d');
 
         // 获取学生id，判断session是否过期
         $studentId = session('studentId');
         // 第一种session已经过期，输入用户名密码登陆
         if (is_null($studentId)) {
             if (is_null($username) || is_null($password)) {
-                return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password));
+                return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             } else {
                 if (Student::Login($username, $password)) {
                     // 登陆成功
                     $Student = Student::get($studentId = session('studentId'));
                     // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
-                    if (is_null($seatId)) {
-                        return $this->error('登陆成功', url('Student/aftersign?studentId' . $St));
+                    if (is_null($seatId) || $seatId === 0) {
+                        return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
                     }
                     return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
                 } else {
-                    return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password));
+                    return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
                 }
             }
 
@@ -173,8 +173,8 @@ class LoginController extends Controller {
         } else {
             $Student = Student::get($studentId);
             // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
-            if (is_null($seatId)) {
-                return $this->error('登陆成功', url('Student/aftersign?studentId' . $Student->id));
+            if (is_null($seatId) || $seatId === 0) {
+                return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
             }
             return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
@@ -188,6 +188,9 @@ class LoginController extends Controller {
         // 判断是否存在classroom_id字段为该教室的教师对象，如果存在删除上一个教师的信息
         $Teacher = Teacher::get(['classroom_id' => $classroomId]);
         $Classroom = Classroom::get($classroomId);
+        if (is_null($Classroom)) {
+            $this->error('当前教室信息为空，请重新扫码', Request::instance()->header('referer'));
+        }
         $teacherId = session('teacherId');
 
         // 判断是否为同一老师在上课时间再次登录，如果不是则清除教室信息和教师绑定
@@ -211,7 +214,7 @@ class LoginController extends Controller {
     * 清除教室中保留的上节课信息
     * @param $Classroom 被清除教室对象
     */
-    protected function clearClassroom(Classroom &$Classroom) {
+    protected function clearClassroom(&$Classroom) {
         // 实例化请求
         $Request = Request::instance();
 

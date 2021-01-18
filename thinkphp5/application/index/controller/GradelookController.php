@@ -25,7 +25,7 @@ class GradeLookController extends IndexController {
             //实例化课程,并增加判断是否为当前教师
             if (is_null($Course = Course::get($courseId))) {
                 return $this->error('课程信息不存在', Request::instance()->header('referer'));
-            }
+            }dump(session('teacherId'));dump($Course->teacher_id);die();
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
@@ -83,6 +83,12 @@ class GradeLookController extends IndexController {
 
             // 实例化课程
             $Course = Course::get($courseId);
+            if (is_null($Course)) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            } 
+            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
+                return $this->error('无此操作', Request::instance()->header('referer'));
+            }
             $pageSize = 2; // 每页显示5条数据
 
             // 通过课程获取学生对象数组
@@ -135,6 +141,12 @@ class GradeLookController extends IndexController {
             
             // 实例化课程
             $Course = Course::get($courseId);
+            if (is_null($Course)) {
+                return $this->error('课程信息不存在', Request::instance()->header('referer'));
+            } 
+            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
+                return $this->error('无此操作', Request::instance()->header('referer'));
+            }
             $pageSize = 2; // 每页显示5条数据
 
             // 根据课程获取该班对应的学生对象数组
@@ -183,7 +195,11 @@ class GradeLookController extends IndexController {
         $gradeId = Request::instance()->param('id/d');
         // 判断是否存在为此id的记录
         if(is_null($Grade = Grade::get($gradeId))) {
-            return $this->error('未找到ID为' . $gradeId . '的记录');
+            return $this->error('该成绩不存在');
+        } else {
+            if($Grade->Course->Teacher->id !== $teacherId = session('teacherId')) {
+                return $this->error('无此权限', Request::instance()->header('referer'));
+            }
         }
 
         // 向V层传值
@@ -228,7 +244,7 @@ class GradeLookController extends IndexController {
         if($Grade->resigternum > $Course->resigternum) {
             $Grade->resigternum = $Course->resigternum;
         }
-        $Grade->usgrade = $Grade->resigternum / $Course->resigternum * 100;
+        $Grade->usgrade = $Course->resigternum === 0 ? 0 : $Grade->resigternum / $Course->resigternum * 100;
         $Grade->coursegrade = Request::instance()->post('coursegrade');
         $Grade->allgrade = $Grade->usgrade * $Grade->Course->usmix / 100 + $Grade->coursegrade * (100 - $Grade->Course->usmix) / 100;
         // 更新或保存

@@ -52,9 +52,14 @@ class CourseController extends IndexController {
             $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(2);
         }
 
+        // 获取所有的学期信息
+        $terms = Term::all();   
+
         //向V层传数据
         $this->assign('courses', $courses);
         $this->assign('Teacher', $Teacher);
+        $this->assign('Term', $Term);
+        $this->assign('terms', $terms);
         //取回打包后的数据
         $htmls=$this->fetch();
         //将数据返回给用户
@@ -185,9 +190,9 @@ class CourseController extends IndexController {
         $Course->term_id = Request::instance()->post('term_id');
         $Course->student_num = 0;
         $Course->resigternum = 0;
-        $Course->usmix = Request::instance()->param('usmix');
-        $Course->courseup = Request::instance()->param('courseup');
-        $Course->begincougrade = Request::instance()->param('begincougrade');
+        $Course->usmix = 50;
+        $Course->courseup = 100;
+        $Course->begincougrade = 0;
 
         // 新增数据并验证。验证类
         if (!$Course->validate(true)->save()) {
@@ -236,6 +241,10 @@ class CourseController extends IndexController {
 
         // 将学生表中的数据存入数据库
         $count = 1;
+        if (sizeof($sheetData[1]) !== 5) {
+            $Course->delete();
+            return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
+        }
         if($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号"  || $sheetData[1]["D"] != "性别" || $sheetData[1]["E"] != "邮件" ) {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
@@ -259,7 +268,7 @@ class CourseController extends IndexController {
                     // 初始用户名设置就是学号，密码为6个0
                     $Student->username = $sheetDataTemp["C"];
                     $Student->password = $Student->encryptPassword('000000');
-                    $Student->save(); 
+                    $Student->validate()->save(); 
                 }
                 // 新增中间表并保存,同时新增成绩 
                 $CourseStudent = new CourseStudent();

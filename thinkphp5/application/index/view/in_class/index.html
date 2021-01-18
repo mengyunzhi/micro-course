@@ -121,7 +121,15 @@
         .then(res => res.json())
         .then(data => app.$data.students = data);
     </script>
-    <div class="col-md-4 text-right" style="float: left;">
+    <div style="float: left;margin-left: 60px;">
+        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-default"><i class="glyphicon glyphicon-zoom-in"></i>&nbsp;查看上课情况</a>
+    </div>
+    <div class="col-md-4 text-right" style="float: right;">
+        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-off"></i>&nbsp;下课</button></a>
+    </div>
+
+    <div class="row" style="margin-top: 120px;">
+        <div class="col-md-4 text-right" style="float: right;">
         <button style="width: 100px;" class="btn btn-success">
             <i class="glyphicon glyphicon-tag"></i>&nbsp;已有学生
         </button>
@@ -132,13 +140,6 @@
             <i class="glyphicon glyphicon-tag"></i>&nbsp;过道
         </button>
     </div>
-    <div style="float: left;margin-left: 60px;">
-        <a href="{:url('looksign?classroomId=' . $Classroom->id . '&courseId=' . $Classroom->course_id)}" class="btn btn-default"><i class="glyphicon glyphicon-zoom-in"></i>&nbsp;查看上课情况</a>
-    </div>
-    <div class="col-md-4 text-right" style="float: right;">
-        <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-off"></i>&nbsp;下课</button></a>
-    </div>
-    <div class="row" style="margin-top: 25px;">
         <hr>
         <div class="container" >
             <table style="margin: auto;">
@@ -150,18 +151,18 @@
                 <tr>
                     <?php for($j = 0; $j < $SeatTemplate->y_map; $j++): ?>
                     <th>
-                        <a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id)}">
                             {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
                             {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
-                            <button class="btn btn-info" style="width:80px;">
-                                <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<button class="btn btn-success" style="width:80px;">
-                                <?php echo($seats[$i][$j]->student->name); ?></button>
+                            <button class="btn btn-info" style="width:80px;cursor: default;">
+                                <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id . '&isSeat=' . $seats[$i][$j]->is_seat)}">
+                                <button class="btn btn-success" style="width:80px;" title="要显示的文字" onmouseover="nihao" id="">
+                                <?php echo($seats[$i][$j]->student->name); ?></button></a>
                                 {/eq}
                             {else /}
-                            <button class="btn btn-default" style="width:80px;height: 30.98px">
+                            <button class="btn btn-default" style="width:80px;height: 30.98px;cursor: default;">
                                 </button>
                             {/eq}
-                        </a>
+                        
                     </th>
                     <?php endfor; ?>
                     <?php if ($y !== 0 ) $x++; ?>

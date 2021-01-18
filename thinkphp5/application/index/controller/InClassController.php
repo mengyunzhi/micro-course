@@ -37,7 +37,7 @@ class InClassController  extends IndexController {
         $classroomId = $Teacher->classroom_id;
         if (is_null($Classroom = Classroom::get($classroomId))) {
             return $this->error('教室信息获取失败，请重新上课', url('Course/index'));
-        }
+        } 
 
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
         $seats = Seat::where('classroom_id', '=', $classroomId)->select();
@@ -99,6 +99,18 @@ class InClassController  extends IndexController {
     public function getStudents() {
         $classroomId = Request::instance()->param('classroomId');
         return json($this->classStudents($classroomId));
+    }
+
+    /**
+     * V层获取学生姓名
+     */
+    public function getStudentName() {
+        // 接受学生id并对学生进行实例化
+        $studentId = Request::instance()->param('studentId');
+        $Student = Student::get($studentId);
+        if (is_null($Student)) {
+            return json($Student->name);
+        }
     }
 
     /**
@@ -228,6 +240,7 @@ class InClassController  extends IndexController {
         // 获取上课缓存数组，进而获得已签名单和签到时间
         $ClassCourse = ClassCourse::get(['classroom_id' => $classroomId, 'begin_time' => $Classroom->begin_time]);
         $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select(); 
+        $signNumber = sizeof($ClassDetails);
         // 将Students，CourseStudents,Seats传入求未签到学生的函数
         $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
 
@@ -241,6 +254,7 @@ class InClassController  extends IndexController {
         $this->assign('course', $Course);
         $this->assign('Classroom', $Classroom);
         $this->assign('ClassCourse', $ClassCourse);
+        $this->assign('signNumber', $signNumber);
 
         // 返回渲染后的学生信息
         return $this->fetch();
@@ -465,6 +479,11 @@ class InClassController  extends IndexController {
         $signTime = Request::instance()->param('signTime');
         $classroomId = Request::instance()->param('classroomId');
 
+        // 增加判断是否签到时长小于0
+        if ($signTime <= 0) {
+            return $this->error('请填写正确的签到时长', url('InClass/index?classroomId=' . $classroomId . '&reclass=' . 1));
+        }
+
         // 实例化教室对象
         $Classroom = Classroom::get($classroomId);
 
@@ -529,19 +548,39 @@ class InClassController  extends IndexController {
 
         // 将获取到的下课截止时间赋值给Classroom对象
         if($outTime === 1) {
-            $Classroom->out_time = $secondTime;
+            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+                $Classroom->out_time = $secondTime;
+            } else {
+                return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }
         }
         if($outTime === 2) {
-            $Classroom->out_time = $fourthTime;
+            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+                $Classroom->out_time = $fourthTime;
+            } else {
+            return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }
         }
         if($outTime === 3) {
-            $Classroom->out_time = $sixthTime;
+            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+                $Classroom->out_time = $sixthTime;
+            } else {
+            return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }
         }
         if($outTime === 4) {
-            $Classroom->out_time = $eighthTime;
+            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+                $Classroom->out_time = $eighthTime;
+            } else {
+            return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }
         }
         if($outTime === 5) {
-            $Classroom->out_time = $tenthTime;
+            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+                $Classroom->out_time = $tenthTime;
+            } else {
+            return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+            }    
         }
 
         // 将修改后的教室对象保存,并判断是否保存成功
