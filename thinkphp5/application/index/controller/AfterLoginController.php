@@ -58,15 +58,8 @@ class AfterLoginController extends IndexController {
             return $this->error('密码长度应为6到25之间', url('passwordModification'));
         }
 
-        $Teacher->password = $password;
-        dump($Teacher);
-        if(!$Teacher->validate()) {
-            return $this->error('密码长度应为6到25之间', url('passwordModification'));
-        }
-        dump($Teacher);
         $Teacher->password = $Teacher->encryptPassword($password);
-
-        if(!$Teacher->save()) {
+        if(!$Teacher->validate()->save()) {
             return $this->error('密码更新失败', url('passwordModification'));
         }
         $username = $Teacher->username;
