@@ -40,7 +40,8 @@
             <br>
             <?php use app\common\model\Teacher; ?>
                 {volist name="Student->courses()->select()" id="course"}
-                <input type="checkbox" name="courseId[]" id="courseId_{$course->id}" value="{$course->id}" {eq name="$course->id" value="$courseId"} checked="checked" {/eq} /> <label for="courseId_{$course->id}">{$course->name}<?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
+                <input type="checkbox" name="courseId[]" id="courseId_{$course->id}" value="{$course->id}" {eq name="$course->id" value="$courseId"} checked="checked" {/eq} />
+                 <label for="courseId_{$course->id}">{$course->name}<?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
                 {/volist}
            
         </div> 

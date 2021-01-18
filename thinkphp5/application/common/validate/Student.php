@@ -3,7 +3,7 @@ namespace app\common\validate;
 use think\Validate;
 class Student extends Validate
 {
- 	protected $rule = [
+ 	/*protected $rule = [
         	'name'=>'require|max:25',
         	'num'=>'require|unique:student|length:6',
         	'email'=>'require|email',
@@ -17,5 +17,5 @@ class Student extends Validate
         'num.unique'  => '学号已存在',
         'email.require'=>'邮箱不能为空',
         'email.email'        => '邮箱格式错误',    
-    ];
+    ];*/
 }

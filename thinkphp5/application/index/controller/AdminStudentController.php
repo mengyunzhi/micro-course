@@ -23,7 +23,11 @@ class AdminStudentController extends AdminJudgeController
 
             // 实例化Student
             $Student = new Student; 
-            $coursestudent = new CourseStudent;
+            $coursestudents = new CourseStudent;
+            $match = 0;
+            if (preg_match("/course/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
+            $match = 1;
+        }
 
             // 定制查询信息
             if(!empty($courseId)) {
@@ -36,14 +40,19 @@ class AdminStudentController extends AdminJudgeController
                     $coursestudents = $coursestudents->
                     join('student s','a.student_id = s.id')->where('s.num', '=', $num);
                 }
+            }
+                $students = Student::all();
+                if(!empty($num)) {
+                    $students = Student::where('num', '=', $num)->paginate(5);
+                }
 
                 // 按条件查询数据并调用分页
                 $coursestudents = $coursestudents->paginate(5);
                 $page = $coursestudents->render();
-            }
-           
 
             // 向V层传数据
+            $this->assign('match', $match);
+            $this->assign('students', $students);
             $this->assign('courseId', $courseId);
             $this->assign('coursestudents', $coursestudents);
 
@@ -87,7 +96,6 @@ class AdminStudentController extends AdminJudgeController
 		$Student = new Student();
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
-        $courseIds = Request::instance()->post('courseId/a'); 
         $Student->email = input('post.email');   
         $Student->username =  Request::instance()->post('num');  
         // /a表示获取的类型为数组
@@ -97,7 +105,7 @@ class AdminStudentController extends AdminJudgeController
 		}
 		// -------------------------- 新增班级课程信息 -------------------------- 
         // 接course_id这个数组
-
+        $courseIds = Request::instance()->post('courseId/a'); 
 
         // 利用klass_id这个数组，拼接为包括klass_id和course_id的二维数组。
         if (!is_null($courseIds)) {
@@ -105,9 +113,31 @@ class AdminStudentController extends AdminJudgeController
                 return $this->error('课程-班级信息保存错误：' . $Student->courses()->getError());
             }
         }
+        var_dump($Student->id);
+        if(!$this->addStudentGrade($Student->id)) {
+            return $this->error('对应学生成绩未添加' . $Student->getError());
+        }
+
         // -------------------------- 新增班级课程信息(end) -------------------------- 
 		return $this->success('操作成功',$_POST['httpref']);
 	}
+
+     /**
+     * 增加学生成绩
+     * @param $studentId 学生的id
+     */
+    public function addStudentGrade($studentId) {
+        $courseStudents = CourseStudent::where('student_id', '=', $studentId)->select();
+        foreach ($courseStudents as $CourseStudents) {
+            $Grade = new Grade;
+            $Grade->student_id = $studentId;
+            $Grade->course_id = $CourseStudents->course_id;
+            if(!$Grade->save()) {
+                return false;
+            }
+            return true;
+        }
+    }
 
 	public function update()
 	{
@@ -140,18 +170,6 @@ class AdminStudentController extends AdminJudgeController
 		}
 		return $this->success('更新成功',$_POST['httpref']);
 	}
-
-	private function saveStudent(Student &$Student)
-    {
-        //写入要传入的数据
-        $Student->name = Request::instance()->post('name');
-        $Student->num = Request::instance()->post('num/d');
-        $Student->sex = input('post.sex');
-        $Student->email = input('post.email');
-
-        //更新并保存数据
-        return $Student->validate(true)->save();
-    }
 
     public function delete()
     {

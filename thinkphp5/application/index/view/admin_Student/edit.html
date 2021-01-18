@@ -27,15 +27,16 @@
         <div class="form-group">
             <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
             <select name="sex" class="form-control">
-                <option value="0" >男</option>
-                <option value="1" {eq name="Student->sex" value="1"} selected="selected" {/eq} >女 </option> 
-            </select> 
-        </div> 
+                <option value="0">男</option>
+                <option value="1" {eq name="Student->sex" value="1" } selected="selected" {/eq}>女 </option>
+            </select>
+        </div>
         <div class="form-group">
             <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
             <input type="email" name="email" id="email" class="form-control" value="{$Student->email}" />
         </div>
         <div class="form-group">
+            <?php use app\common\model\Teacher; ?>
             {volist name="Student->courses()->select()" id="course"}
             <?php $check = 0; ?>
             {volist name="$courseStudents" id="CourseStudent"}
@@ -43,10 +44,11 @@
             <?php $check = 1; ?>
             {/if}
             {/volist}
-            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="check" value="1" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}</label>
+            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="check" value="1" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}
+            <?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
             {/volist}
         </div>
-        <button type="submit"  class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
+        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
     </form>
 </div>
 {/block}
