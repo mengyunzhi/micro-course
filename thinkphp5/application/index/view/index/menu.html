@@ -10,10 +10,26 @@
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
                         <div class="navbar-header">
-                            <a class="navbar-brand" href="http://www.mengyunzhi.com">梦云智</a>
+                            <a class="navbar-brand" href="http://www.mengyunzhi.com" target="_blank">梦云智</a>
                         </div>
                         {volist name="menus" id="_menu"}
-                        <li class="{$_menu->getClass()}"><a href="{:$_menu->getHref()}">{$_menu->title}</a></li>
+                        {eq name="$_menu->title" value="用户管理"}
+                        <ul class="nav nav-tabs navbar-nav navbar-right">
+                            <li role="presentation" class="dropdown {$_menu->getClass()}">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    用户管理 <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{:url('AdminTeacher/index')}">教师管理</a></li>
+                                    <li><a href="{:url('AdminStudent/index')}">学生管理</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        {else/}
+                        <li class="{$_menu->getClass()}">
+                            <a href="{:$_menu->getHref()}">{$_menu->title}</a>
+                        </li>
+                        {/eq}
                         {/volist}
                     </ul>
                     <ul class="nav nav-tabs navbar-nav navbar-right">

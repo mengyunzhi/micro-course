@@ -42,7 +42,7 @@ class CourseController extends IndexController {
 
         // 通过name获取查询信息
         if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(2);
+            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(5);
         }
 
         //向V层传数据
@@ -167,10 +167,11 @@ class CourseController extends IndexController {
     }
 
     /**
-     * 文件导入部分
+     * save课程 + 文件导入部分
      * 上传文件
      */
     public function fileUpload() {
+
         // 接收课程信息，并进行保存
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
@@ -182,34 +183,34 @@ class CourseController extends IndexController {
         $Course->courseup = Request::instance()->param('courseup');
         $Course->begincougrade = Request::instance()->param('begincougrade');
 
-        // 新增数据并验证。验证类
+       
         if (!$Course->validate(true)->save()) {
             return $this->error('课程保存失败：' . $Course->getError());
         }
-
         // Excel表的导入
         $uploaddir = 'data/';
         // $uploaddir = "";
         $name = time() . $_FILES["userfile"]["name"];
         // dump($name);
         $uploadfile = $uploaddir . $name;
-        // dump($uploadfile);
-        // echo '<pre>';
-        // print_r($_FILES);
-        // dump($_FILES['userfile']['tmp_name']);
-        if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-            
-        } else {
-            return $this->error('新增课程成功', url('index'));
+         /*dump($uploadfile);
+         echo '<pre>';
+         print_r($_FILES);
+         dump($_FILES['userfile']['tmp_name']);*/
+        if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+            $Course->delete();
+            return $this->error('新增课程失败', url('index'));
+        }
+          // 新增数据并验证。验证类
+        //$href 文件存储路径
+       $href = $uploaddir . $name;
+        if(!$this->excel($href, $Course)) {
+            $Course->delete();
+            return $this->error('文件上传失败');
         }
 
-    //$href 文件存储路径
-   $href = $uploaddir . $name;
-    if(!$this->excel($href, $Course)) {
-        return $this->error('文件上传失败');
+        return $this->success('新增课程和学生成功', url('index'));
     }
-    return $this->success('新增课程和学生成功', url('index'));
-  }
 
    /**
     * 文件导入部分
@@ -228,23 +229,27 @@ class CourseController extends IndexController {
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
         // 将学生表中的数据存入数据库
-        $count = 1;
         if($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号"  || $sheetData[1]["D"] != "性别" || $sheetData[1]["E"] != "邮件" ) {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
-        $count = 0;
         foreach ($sheetData as $sheetDataTemp) {
-            if($count !== 0) {
+
                 // 定制查询信息
                 $que = array(
                     'name' => $sheetDataTemp['B'],
                     'num' => $sheetDataTemp['C']
                 );
                 $StudentTmp = Student::get($que);
+
                 // 如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
                 if (is_null($StudentTmp)) {
                     $Student = new Student();
+                    if($sheetDataTemp["D"] === '男') {
+                        $sheetDataTemp["D"] = 0;
+                    } else {
+                        $sheetDataTemp["D"] = 1;
+                    }
                     $Student->name = $sheetDataTemp["B"];
                     $Student->num = $sheetDataTemp["C"];
                     $Student->sex = $sheetDataTemp["D"];
@@ -255,7 +260,7 @@ class CourseController extends IndexController {
                     $Student->save(); 
                 }
                 // 新增中间表并保存,同时新增成绩 
-                $CourseStudent = new CourseStudent();
+                $CourseStudent = new CourseStudent;
                 if (is_null($StudentTmp)) {
                     $CourseStudent->student_id = $Student->id;
                     // 新增成绩保存
@@ -273,8 +278,6 @@ class CourseController extends IndexController {
                 if (!$CourseStudent->save()) {
                     return $this->error('课程-学生信息保存失败', url('Course/add'));
                 }
-            }
-            $count++;
             // 课程对应学生数量加一
             $Course->student_num++;
         }
@@ -282,7 +285,7 @@ class CourseController extends IndexController {
         if (!$Course->save()) {
             return $this->success('操作失败', url('Course/add'));
         } 
-        return 1;
+        return true;
     }
 
     /**

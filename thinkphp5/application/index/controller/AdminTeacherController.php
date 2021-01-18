@@ -101,7 +101,7 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
         $Teacher->num = input('post.num');
-        $Teacher->num = input('post.password');
+        $Teacher->password = '123456';
 
 
         // 更新或保存
@@ -135,7 +135,8 @@ class AdminTeacherController extends AdminJudgeController
              //删除与本教师相关的课程信息和课程学生关联表信息
             $courses = Course::where('teacher_id', '=', $id)->select();
             foreach ($courses as $Course ) {
-                AdminCourse::deleteCourseStudent($Course->id);
+                $AdminCourse = new AdminCourseController;
+                $AdminCourse->deleteCourseStudent($Course->id);
                 if(!$Course->delete()) {
                     return $this->error('删除本学期课程失败');
                 }
