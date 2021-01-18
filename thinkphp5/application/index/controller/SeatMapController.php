@@ -106,8 +106,10 @@ class SeatMapController extends Controller {
 		$id = input('id');
 		$SeatMap = new SeatMap;
 		$SeatMap->id = 0;
+		$SeatMap->is_first = 0;
 		if(!is_null($id)) {
-		$SeatMap->id = $id;
+			$SeatMap->id = $id;
+			$SeatMap->is_first = input('isFirst');
 		}
 		$SeatMap->name = '';
 		$SeatMap->x_map = '';
@@ -154,7 +156,7 @@ class SeatMapController extends Controller {
 				$ClassroomController->saveSeat($seatMapId, $Classroom->id);
 			}
 		}
-		return $this->success('模板编辑成功', url('index'));
+		return $this->success('操作成功', url('index'));
 	}
 
 	/**
@@ -168,6 +170,8 @@ class SeatMapController extends Controller {
 				$SeatMap = new SeatMap;
 				$SeatMap->id = input('id');
 			}
+			$SeatMap->is_first = input('isFirst');
+
 			$this->deleteSeatAisle(input('id'));
 		} else 	{
 					$SeatMap = new SeatMap;
@@ -206,13 +210,10 @@ class SeatMapController extends Controller {
 	public function seatMapReset() {
 
 		$SeatMapPre = SeatMap::get(['id' => input('id')]);
-		//如果是模板编辑
-		if(!empty($SeatMapPre)) {
-			$idPre = $SeatMapPre->id;
-			$this->deleteSeatAisle($idPre);
-			$SeatMapPre->delete();
-		}
-		return $this->success('请重新填写模板信息', url('add?id=' . input('id')));
+		$isFirst = $SeatMapPre->is_first;
+		$this->deleteSeatAisle(input('id'));
+		$SeatMapPre->delete();
+		return $this->success('请重新填写模板信息', url('add?id=' . input('id') . '&isFirst=' . $isFirst));
 
 	}
 
@@ -360,9 +361,11 @@ class SeatMapController extends Controller {
 		foreach ($teachers as $Teacher) {
 			if($Teacher->classroom_id != 0) {
 				$Classroom = Classroom::get($Teacher->classroom_id);
-				if($Classroom->seat_map_id === $seatMapId) {
-					if($Classroom->out_time < time()) {
-						return $this->error('当前有与此模板对应的教室正在上课，请稍后删除', url('index'));
+				if(!is_null($Classroom)) {
+					if($Classroom->seat_map_id === $seatMapId) {
+						if($Classroom->out_time < time()) {
+							return $this->error('当前有与此模板对应的教室正在上课，请稍后删除', url('index'));
+						}
 					}
 				}
 			}
