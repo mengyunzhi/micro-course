@@ -11,8 +11,4 @@ class Classroom extends validate {
         'name.require' => '教室编号不能为空',
         'name.max'     => '教室编号最多不能超过25个字符',
     ];
-
-    protected $message = [
-    	'name.require' => '名字长度不得小于2',
-    ];
 }

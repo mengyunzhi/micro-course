@@ -195,7 +195,6 @@ class CourseController extends IndexController {
         $Course->courseup = 100;
         $Course->begincougrade = 0;
 
-       
         if (!$Course->validate(true)->save()) {
             return $this->error('课程保存失败：' . $Course->getError());
         }
@@ -221,19 +220,19 @@ class CourseController extends IndexController {
             return $this->error('文件上传失败');
         }
 
-    //$href 文件存储路径
-    $href = $uploaddir . $name;
-    $unImportNumber = 0;
-    if(!$this->excel($href, $Course, $unImportNumber)) {
-        return $this->error('文件上传失败');
-    }
+        //$href 文件存储路径
+        $href = $uploaddir . $name;
+        $unImportNumber = 0;
+        if(!$this->excel($href, $Course, $unImportNumber)) {
+            return $this->error('文件上传失败');
+        }
 
-    // 成功新增课程，但是要返回未导入人数
-    if ($unImportNumber === 0) {
-        return $this->success('新增课程和学生成功', url('index'));
-    } else {
-        return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
-    }
+        // 成功新增课程，但是要返回未导入人数
+        if ($unImportNumber === 0) {
+            return $this->success('新增课程和学生成功', url('index'));
+        } else {
+            return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
+        }
   }
 
    /**
@@ -253,7 +252,6 @@ class CourseController extends IndexController {
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
 
         // 将学生表中的数据存入数据库
-        $count = 1;
         if (sizeof($sheetData[1]) !== 5) {
             $Course->delete();
             return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
@@ -263,7 +261,6 @@ class CourseController extends IndexController {
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
 
-        $count = 0; 
         foreach ($sheetData as $sheetDataTemp) {
             $flag = 0;
             if ($sheetDataTemp['B'] !== '姓名') {
@@ -282,7 +279,7 @@ class CourseController extends IndexController {
                             $Student = new Student();
                             $Student->name = $sheetDataTemp["B"];
                             $Student->num = $sheetDataTemp["C"];
-                            $Student->sex = $sheetDataTemp["D"];
+                            $Student->sex = $sex = $sheetDataTemp["D"] === '男'?'0':'1';
                             $Student->email = $sheetDataTemp["E"];
                             // 初始用户名设置就是学号，密码为6个0
                             $Student->username = $sheetDataTemp["C"];
@@ -312,7 +309,6 @@ class CourseController extends IndexController {
                             $unImportNumber++;
                         }
                     }
-                    $count++;
                     // 课程对应学生数量加一
                     $Course->student_num++;
                 }
@@ -403,7 +399,7 @@ class CourseController extends IndexController {
      */
     public function checkStudet($array) {
         $count = 0;
-        $arrayCheck = array('string', 'double', 'double', 'string');
+        $arrayCheck = array('string', 'double', 'string', 'string');
         for ($i = 1; $i < 5; $i ++) {
             if ($arrayCheck[$i-1] === gettype($array[strtoupper(dechex($i+10))])) {
                 $count ++;
