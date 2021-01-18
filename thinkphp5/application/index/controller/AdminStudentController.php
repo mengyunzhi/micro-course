@@ -113,11 +113,11 @@ class AdminStudentController extends AdminJudgeController
                 return $this->error('课程-班级信息保存错误：' . $Student->courses()->getError());
             }
         }
-        var_dump($Student->id);
+       /* var_dump($Student->id);
         if(!$this->addStudentGrade($Student->id)) {
             return $this->error('对应学生成绩未添加' . $Student->getError());
         }
-
+*/
         // -------------------------- 新增班级课程信息(end) -------------------------- 
 		return $this->success('操作成功',$_POST['httpref']);
 	}
@@ -223,7 +223,7 @@ class AdminStudentController extends AdminJudgeController
      * 删除对应的课程学生关联
      * @param $studentId 要被删除的学生id 
      */
-    public function deleteGrade() {
+    public function deleteGrade($studentId) {
         $grades = Grade::where('student_id', '=', $studentId)->select();
         foreach ($grades as $Grade) {
             if(!$Grade->delete()) {
