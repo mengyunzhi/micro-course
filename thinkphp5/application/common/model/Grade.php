@@ -28,7 +28,7 @@ class Grade extends Model {
         if ($this->Course->resigternum === 0) {
             $this->usgrade = 0;
         } else {
-            $this->usgrade = $this->resigternum / $this->Course->resigternum * 100;
+            $this->usgrade = ceil($this->resigternum / $this->Course->resigternum * 100);
         }
         
         // 将更改后的记录保存并返回
@@ -40,7 +40,7 @@ class Grade extends Model {
      * 对总成绩进行重新计算，并返回总成绩
      */
     public function getAllgrade() {
-        $this->allgrade = $this->getUsgrade() * $this->Course->usmix / 100 + $this->coursegrade * (100-$this->Course->usmix) / 100;
+        $this->allgrade = ceil($this->getUsgrade() * $this->Course->usmix / 100 + $this->coursegrade * (100-$this->Course->usmix) / 100);
         $this->save();
         return $this->allgrade;
     }

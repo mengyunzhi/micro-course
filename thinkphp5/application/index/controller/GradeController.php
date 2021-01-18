@@ -92,17 +92,7 @@ class GradeController extends IndexController {
         }
     
         // 成功跳转至index触发器
-        return $this->success('操作成功', url('Gradelook/index?courseId=' . $Course->id));
-    }
-
-    /**
-     * 更新更改后的成绩
-     * @param Course 更新对应的班级
-     */
-    public function updateGrade($Course) {
-        
-
-        // 对学生成绩赋值
+        return $this->success('成绩占比修改成功', url('Gradelook/index?id=' . $Course->id));
     }
 
     /**
@@ -128,7 +118,7 @@ class GradeController extends IndexController {
         $number = sizeof($grades);
         for ($i = 0; $i < $number; $i ++) {
             $grades[$i]->coursegrade = $grades[$i]->coursegrade + $subtract;
-            if ($grades[$i] > $Course->courseup) {
+            if ($grades[$i]->coursegrade > $Course->courseup) {
                 $grades[$i]->coursegrade = $Course->courseup;
             }
             $grades[$i]->getAllgrade();

@@ -25,14 +25,20 @@ class GradeLookController extends IndexController {
             //实例化课程,并增加判断是否为当前教师
             if (is_null($Course = Course::get($courseId))) {
                 return $this->error('课程信息不存在', Request::instance()->header('referer'));
-            }dump(session('teacherId'));dump($Course->teacher_id);die();
+            }
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
             $pageSize = 2; // 每页显示2条数据
             $Students = $Course->Students;
 
-            $Grades = Grade::where('course_id', '=',  $courseId . '%')->paginate($pageSize);
+            // 接收升序展示还是降序展示的标志adsNum
+            $adsNum = Request::instance()->param('adsNum/d');
+            if ($adsNum === 1) {
+                $Grades = Grade::order('allgrade desc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+            } else {
+                $Grades = Grade::order('allgrade asc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+            }
 
             // 获取查询信息，并实现查找对应学生的成绩
             $num = Request::instance()->param('name/d');
@@ -61,121 +67,6 @@ class GradeLookController extends IndexController {
                 // 将数据返回给用户
                 return $htmls;
             }
-
-        // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
-        } catch (\think\Exception\HttpResponseException $e) {
-            throw $e;
-
-        // 获取到正常的异常时，输出异常
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        } 
-    }
-
-    /**
-     * 正序输出成绩
-     */
-    public function listindex() {
-        try {
-            // 获取课程信息,同时如果有查询信息，获取对应学生的学号
-            $courseId = Request::instance()->param('id/d');
-            $num = Request::instance()->param('name');
-
-            // 实例化课程
-            $Course = Course::get($courseId);
-            if (is_null($Course)) {
-                return $this->error('课程信息不存在', Request::instance()->header('referer'));
-            } 
-            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
-                return $this->error('无此操作', Request::instance()->header('referer'));
-            }
-            $pageSize = 2; // 每页显示5条数据
-
-            // 通过课程获取学生对象数组
-            $Students = $Course->Students;
-
-            // 按照总成绩递减的方式查找成绩对象数组，并通过降序的方式展示
-            $Grades = Grade::order('allgrade desc')->where('course_id', '=', $courseId)->paginate($pageSize);
-            
-            // 获取查询信息，并实现查找对应学生的成绩
-            if(!empty($num)) {
-                $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
-                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
-                // 直接向V层传数据
-                $this->assign('grades', $Grades);
-                $this->assign('students', $Students);
-                $this->assign('course', $Course);
-                return $this->fetch();
-            }
-
-            // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('grades', $Grades);
-            $this->assign('course', $Course);
-
-            // 取回打包后的数据
-            $htmls = $this->fetch();
-
-            // 将数据返回给用户
-            return $htmls;
-
-        // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
-        } catch (\think\Exception\HttpResponseException $e) {
-            throw $e;
-
-        // 获取到正常的异常时，输出异常
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        } 
-    }
-
-    /**
-     * 通过倒序的方式展示总成绩
-     */
-    public function upindex() {
-        try {
-            // 获取课程信息,同时如果有查询信息，获取对应学生的学号
-            $courseId = Request::instance()->param('id');
-            $num = Request::instance()->param('name');
-            
-            // 实例化课程
-            $Course = Course::get($courseId);
-            if (is_null($Course)) {
-                return $this->error('课程信息不存在', Request::instance()->header('referer'));
-            } 
-            if ($teacherId = session('teacherId') !== $Course->teacher_id) {
-                return $this->error('无此操作', Request::instance()->header('referer'));
-            }
-            $pageSize = 2; // 每页显示5条数据
-
-            // 根据课程获取该班对应的学生对象数组
-            $Students = $Course->Students;
-
-            $Grades = Grade::order('allgrade asc')->where('course_id', '=', $courseId)->paginate($pageSize);
-
-            // 获取查询信息，并实现查找对应学生的成绩
-            if(!empty($num)) {
-                $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
-                $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
-                // 直接向V层传数据
-                $this->assign('grades', $Grades);
-                $this->assign('students', $Students);
-                $this->assign('course', $Course);
-                return $this->fetch();
-            }
-
-            // 向V层传数据
-            $this->assign('students', $Students);
-            $this->assign('grades', $Grades);
-            $this->assign('course', $Course);
-
-            // 取回打包后的数据
-            $htmls = $this->fetch();
-
-            // 将数据返回给用户
-            return $htmls;
 
         // 获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         } catch (\think\Exception\HttpResponseException $e) {

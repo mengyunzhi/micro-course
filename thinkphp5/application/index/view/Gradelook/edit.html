@@ -20,9 +20,9 @@
                     <!--Collect the nav links,forms,and other contend for toggling-->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
-                            <li><a href="{:url('')}">上课管理</a></li>
-                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
+                            <li><a href="{:url('Course/index')}">课程管理</a></li>
+                            <li><a href="{:url('PreClass/index')}">上课管理</a></li>
+                            <li  class="active"><a href="{:url('grade/index')}">成绩管理</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="{:url('Login/logout')}">注销</a></li>
@@ -39,35 +39,12 @@
             {php}$action=request()->action()==='add'?'save':'update';{/php}
             <form   class="form-horizontal" action="{:url($action)}" method="post">
                 <div class="form-group">
-                <label  class="col-sm-2 control-label" style="font-size: 20px;">姓名:</label>
-                <div class="col-sm-10">
-                <input class="form-control" type="text" value="{$Grade->Student->name}" />
-                <input class="form-control" type="hidden" name="id" value="{$Grade->id}" />
-                </div>
-                </div>
-                <div class="form-group">
-                <label   class="col-sm-2 control-label" style="font-size: 20px;">学号:</label>
-                <div class="col-sm-10">
-                <input class="form-control" type="text" value="{$Grade->Student->num}" />
-                </div>
-                </div>
-                <div class="form-group">
-                <label  class="col-sm-2 control-label" style="font-size: 20px;">性别:</label>
-                <div class="col-sm-10">
-                    <input class="form-control" type="text" value="{eq name="$Grade->Student->sex" value='0'}男{else /}女{/eq}" />
-                    </div>
-                </div>
-                <div class="form-group">
                 <label   class="col-sm-2 control-label" style="font-size: 20px;">上课成绩:</label>
                 <div class="col-sm-10">
                 <input  class="form-control" type="text" name="coursegrade" value="{$Grade->coursegrade}" />
                 </div>
                 </div>
                 <div class="form-group">
-                <label   class="col-sm-2 control-label" style="font-size: 20px;">签到次数:</label>
-                <div class="col-sm-10">
-                <input  class="form-control"  type="text" name="resigternum" value="{$Grade->resigternum}" />
-                </div>
                 </div>
                 <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
