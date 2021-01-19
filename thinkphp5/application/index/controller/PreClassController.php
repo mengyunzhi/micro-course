@@ -11,7 +11,6 @@ use app\common\model\InClass;
 use app\common\model\Seat;
 use app\common\model\Term;
 
-
 /**
  * 课前管理部分，负责统计课前签到时间设置及签到课程选择
  */
@@ -31,6 +30,12 @@ class PreClassController extends IndexController
         $classroomId = $Teacher->classroom_id;
         if (is_null($classroomId) || $classroomId === 0) {
             return $this->error('请首先用微信扫描教室讲桌二维码', url('Course/index'));
+        }
+
+        // 获取当前学期id
+        $Term = Term::get(['state' => 1]);
+        if (is_null($Term)) {
+            return $this->error('当前学期为空', Request::instance()->header('referer'));
         }
  
         // 实例化Classroom对象
