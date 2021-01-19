@@ -42,10 +42,8 @@ class CourseController extends IndexController {
             return $this->error('plz login first',url('Login/index'));
         }
 
-        //每页显示2条数据
-        $pageSize = 2;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate($pageSize);
+        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate();
 
         // 通过name获取查询信息
         if (!empty($name)) {
@@ -208,10 +206,9 @@ class CourseController extends IndexController {
          print_r($_FILES);
          dump($_FILES['userfile']['tmp_name']);*/
         if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-            $Course->delete();
-            return $this->error('新增课程失败', url('index'));
+            return $this->success('新增课程成功', url('index'));
         }
-          // 新增数据并验证。验证类
+         
         //$href 文件存储路径
        $href = $uploaddir . $name;
         if(!$this->excel($href, $Course)) {

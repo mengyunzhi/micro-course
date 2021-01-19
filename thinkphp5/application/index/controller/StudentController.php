@@ -26,19 +26,17 @@ class StudentController extends IndexController
             if (is_null($course = Course::get($id))) {
                 return $this->error('课程信息不存在', Request::instance()->header('referer'));
             }
-            if($course->teacher->id != session('teacherId')){
-                $this->error('无此权限');
-            }
-            // 每页显示5条数据
-            $pageSize = 2; 
+
+            // 调用checkPower方法判断权限
+            $this->checkPower($id);
 
             // 定制查询信息
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$id);
                     $courseStudents = $courseStudents->
-                    join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                    join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate();
                 } else {
-                    $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate($pageSize);
+                    $courseStudents = CourseStudent::where('course_id', '=', $id)->paginate();
                 }
               
             $count=0;
@@ -96,21 +94,25 @@ class StudentController extends IndexController
 	public function edit() {
         // 接收学生id和当前所在页数和课程id   
         $page = Request::instance()->param('page');
-        $course_id=Request::instance()->param('course_id/d');
+        $courseId=Request::instance()->param('course_id/d');
         $id = Request::instance()->param('id');
 
         // 对课程和学生进行实例化
-        $Course =Course::get($course_id);
-        $courses = new Course();
+        if (is_null($Course =Course::get($courseId))) {
+            return $this->error('课程不存在', Request::instance()->header('referer'));
+        }
+
 		//判断是否存在为此id的记录
 		if(is_null($Student = Student::get($id))) {
 			return $this->error('未找到ID为'.id.'的记录');
 		}
 
+        // 获取教师id，并增加权限处理
+        $this->checkPower($courseId);
+
 		//取出班级列表
 		$this->assign('Student',$Student);
         $this->assign('page',$page);
-        $this->assign('course',$courses);
         $this->assign('Course',$Course);
 		return $this->fetch();
 	}
@@ -127,15 +129,25 @@ class StudentController extends IndexController
             return $this->error('不存在ID为' . $studentId . '的记录');
         }
 
+        // 获取课程信息，并判断是否有权限
+        $this->checkPower($courseId);
+
+        // 中间表信息在更新之前要删除
+        $CourseStudent = CourseStudent::get(['student_id' => $studentId, 'course_id' => $courseId]);
+        // 获取成绩信息,更新成绩
+        $Grade = Grade::get(['student_id' => $studentId, 'course_id' => $courseId]);
+
         // 增加判断是否当前页数合规
         if($page === 0) {
             $page = 1;
         }
 
         // 学生信息更新并保存
-        if (!$this->saveStudent($Student, true)) {
+        if (!$this->saveStudent($Student, true, $CourseStudent, $Grade)) {
             return $this->error('操作失败' . $Student->getError());
         }
+
+        // 成绩更新
         $this->success('操作成功', url('Student/index?id=' . $courseId) . '?page=' . $page);
     }
 
@@ -177,18 +189,21 @@ class StudentController extends IndexController
      * @param Student 将要被保存的学生对象
      * @param isUpdate 判断是否是数据更新
      */
-	private function saveStudent(Student &$Student, $isUpdate = false) {
+	private function saveStudent(Student &$Student, $isUpdate = false, &$CourseStudent = null, &$Grade = null) {
         //写入要传入的数据
         $name = Request::instance()->post('name');
         $num = Request::instance()->post('num/d');
         $sex = Request::instance()->post('sex/d');
         $email = Request::instance()->post('email');
         $courseId = Request::instance()->post('courseid');
- 
+        
+        // 根据姓名和学号判断是否已存在该学生信息
+        $StudentTest = Student::get(['name' => $name, 'num' => $num]);
+        $newStudent = new Student();
+
         // 判断是更新还是新增,如果是新增则新增中间表对象
         if ($isUpdate === false) {
-            // 根据姓名和学号判断是否已存在该学生信息
-            $StudentTest = Student::get(['name' => $name, 'num' => $num]);
+            // 判断数据库是否存在该学生，存在则不用新增
             if (is_null($StudentTest)) {
                 $Student->name = Request::instance()->post('name');
                 $Student->num = Request::instance()->post('num/d');
@@ -200,17 +215,44 @@ class StudentController extends IndexController
                 // 更新并保存数据
                 return $Student->validate(true)->save();  
             }
-        } else {
-            // 更新操作只更新学生对象信息
-            $Student->name = Request::instance()->post('name');
-            $Student->num = Request::instance()->post('num/d');
-            $Student->sex = Request::instance()->post('sex/d');
-            $Student->email = Request::instance()->post('email');
-            //更新并保存数据
-            return $Student->validate(true)->save();  
+        } else { 
+            // 更新操作
+            if (is_null($StudentTest)) {
+                // 更新操作只更新学生对象信息
+                $newStudent->name = Request::instance()->post('name');
+                $newStudent->num = Request::instance()->post('num/d');
+                $newStudent->sex = Request::instance()->post('sex/d');
+                $newStudent->email = Request::instance()->post('email');
+                // 学生的用户名默认就是学号
+                $newStudent->username = $newStudent->num;
+                $newStudent->password = $newStudent->encryptPassword('000000');
+                // 更新并保存数据
+                if (!$newStudent->validate(true)->save()) {
+                    return $this->error('学生信息保存失败', Request::instance()->header('referer'));
+                }
+                // 第二种存在该学生的,直接将StudentTest赋给Student
+            } else {
+                $newStudent = $StudentTest;
+                $newStudent->sex = Request::instance()->post('sex/d');
+                $newStudent->email = Request::instance()->post('email');
+                // 更新并保存数据
+                if (!$newStudent->validate(true)->save()) {
+                    return $this->error('学生信息保存失败', Request::instance()->header('referer'));
+                }
+            }
+            // 修改中间表信息
+            $CourseStudent->student_id = $newStudent->id;
+            // 修改成绩信息
+            $Grade->student_id = $newStudent->id;
+            if (!$CourseStudent->validate(true)->save()) {
+                return $this->error('中间表信息修改失败', Request::instance()->header('referer'));
+            }
+            if (!$Grade->validate(true)->save()) {
+                return $this->error('成绩信息修改失败', Request::instance()->header('referer'));
+            }
         } 
 
-        // 第三种情况:数据库中存在该学生信息
+        // 第三种情况：新增:数据库中存在该学生信息
         $Student = $StudentTest;
         return 1;
     }
@@ -265,9 +307,11 @@ class StudentController extends IndexController
             $Request = Request::instance();
             $id = Request::instance()->param('id/d');
             $course_id = Request::instance()->param('course_id/d');
-            
             // 实例化课程
             $Course = Course::get($course_id);
+            // 调用checkPower方法判断权限
+            $this->checkPower($course_id);
+
             //该课程学生总数减一
             $Course->student_num--;
 
@@ -323,8 +367,7 @@ class StudentController extends IndexController
         $que = array(
             'student_id' => $studentId,
         );
-        $pageSize = 5;
-        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate($pageSize);
+        $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate();
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
@@ -404,5 +447,22 @@ class StudentController extends IndexController
 
         // 跳转到登陆界面
         return $this->success('注销成功', url('Login/studentWx'));
+    }
+
+    /**
+     * 权限判断
+     * @param courseId 待判断的课程id
+     */
+    public function checkPower($courseId) {
+        // 实例化课程对象，并判断是否为空
+        if (is_null($Course = Course::get($courseId))) {
+            return $this->error('课程信息不存在', Request::instance()->header('referer'));
+        }
+
+        // 获取教师id，并增加权限判断
+        $teacherId = session('teacherId');
+        if ($teacherId !== $Course->teacher_id) {
+            return $this->error('无此权限', Request::instance()->header('referer'));
+        }
     }
 }
