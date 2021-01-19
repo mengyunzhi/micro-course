@@ -11,13 +11,20 @@ use app\common\view\MenuView;
 class IndexController extends Controller { 
     public function __construct()
     {
-        //调用父类构造函数
+        // 调用父类构造函数
         parent::__construct();
-        //验证用户是否登录
+        // 验证用户是否登录
         if(!Teacher::isLogin()) {
-            $url = url('index/login/index');
-            header("Location: $url");
-            exit();
+            if (request->controller() === 'teacherwx') {
+                $url = url('index/login/teacherindex');
+                header("Location: $url");
+                exit();
+            } else {
+                $url = url('index/login/index');
+                header("Location: $url");
+                exit();
+            }
+            
         }
         
         $this->assign('menuView', new menuView());
@@ -27,9 +34,8 @@ class IndexController extends Controller {
      * 负责跳转到登陆界面
      */
     public function index() {
-            $url = url('index/login/index');
-            header("Location: $url");
-            exit();
-        $this->assign('menuView', new menuView());
+        $url = url('index/login/index');
+        header("Location: $url");
+        exit();
     }   
 }

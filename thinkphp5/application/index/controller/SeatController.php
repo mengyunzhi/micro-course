@@ -63,7 +63,7 @@ class SeatController extends controller {
      * 上课签到、将上课座位属性student_id变为其id
      */
     public function sign() {
-        // 首先根据微信端的Cookie值判断是否该该学生信息，并获取该学生的id信息
+        // 首先根据微信端的Cookie值判断是否该该学生信息，并获取该学生的id信息 
         $studentId = Request::instance()->param('studentId/d');
 
         // 获取学生id和教室座位id,并实例化教室座位对象
@@ -104,7 +104,7 @@ class SeatController extends controller {
             );
             $Grade = Grade::get($que);
             if (is_null($Grade)) {
-                return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Student/afterSign?studentId=' . $studentId));
+                return $this->error('您不在当前上课名单中,请检查上课地点是否正确', url('Student/afterSign?studentId=' . $studentId));
             }
             // 增加判断是否在签到截止时间内
             if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
