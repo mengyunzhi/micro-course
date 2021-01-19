@@ -161,6 +161,9 @@ class StudentController extends IndexController
         $page = Request::instance()->param('page'); 
         $grade = new  Grade();
         $Course = Course::get($courseId);
+        if (is_null($Course)) {
+            return $this->error('课程信息不存在', Request::instance()->header('referer'));
+        }
 
         // 调用saveStudent方法用于保存新增数据，执行添加操作。
         if (!$this->saveStudent($Student)) {
@@ -176,6 +179,14 @@ class StudentController extends IndexController
         //新增成绩，并判断是否生成
         if(!$this->saveGrade($grade, $Student)) {
             return $this->error('新增成绩失败' . $grade->getError());
+        }
+
+        // 课程对应学生人数也加一，并保存
+        $Course->resigternum ++;
+        if (!$Course->validate(true)->save()) {
+            $CourseStudent->delete();
+            $Grade->delete();
+            return $this->error('课程人数保存失败,请重新添加', Request::instance()->header('referer'));
         }
 
         //-----新增班级信息结束
