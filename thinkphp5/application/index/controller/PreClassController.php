@@ -9,6 +9,8 @@ use app\common\model\Classroom;
 use app\common\model\Teacher;
 use app\common\model\InClass;
 use app\common\model\Seat;
+use app\common\model\Term;
+
 
 /**
  * 课前管理部分，负责统计课前签到时间设置及签到课程选择
@@ -16,10 +18,9 @@ use app\common\model\Seat;
 class PreClassController extends IndexController
 {
      public function index() {
-        // 获取老师对应的ID,实例化教师对象
+    // 获取老师对应的ID,实例化教师对象
         $id = session('teacherId');
         $Teacher = Teacher::get($id);
-
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
         $classroomId = $Teacher->classroom_id;
@@ -35,17 +36,29 @@ class PreClassController extends IndexController
 
         // 获取当前时间
         $thisTime = time();
-
-        // 实例化老师	
-        $Teacher = Teacher::get($id);
-
-        // 获取该老师对应的课程信息
-        $Courses = Course::where('teacher_id', '=' , $id)->select();
-
-        $this->assign('courses', $Courses);
+        $this->assign('courses', $this->getCourse($id));
+        dump($this->getCourse());
+        die();
         $this->assign('Teacher', $Teacher);
 
         return $this->fetch();
+    }
+
+    /**
+     * 获取当前教师当前学期的课程
+     * @param $id 老师的id
+     */
+    static public function getCourse($id) {
+         $Term = Term::get(['state' => 1]);
+        if(is_null($Term)) {
+            return $this->error('当前无学期开放，暂时无法上课', url('Course/index'));
+        }
+       
+        $courses = Courses::where('term_id', '=', '$Term->id');
+
+        // 获取该老师对应的课程信息
+        return $courses->where('teacher_id', '=' , $id)->select();
+
     }
 
     /**

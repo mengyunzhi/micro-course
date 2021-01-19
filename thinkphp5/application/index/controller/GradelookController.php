@@ -29,24 +29,23 @@ class GradeLookController extends IndexController {
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
-            $pageSize = 2; // 每页显示2条数据
             $Students = $Course->Students;
 
             // 接收升序展示还是降序展示的标志adsNum
             $adsNum = Request::instance()->param('adsNum/d');
             if ($adsNum === 1) {
-                $Grades = Grade::order('allgrade desc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+                $Grades = Grade::order('allgrade desc')->where('course_id', '=',  $courseId)->paginate();
             } else {
-                $Grades = Grade::order('allgrade asc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+                $Grades = Grade::order('allgrade asc')->where('course_id', '=',  $courseId)->paginate();
             }
 
             // 获取查询信息，并实现查找对应学生的成绩
             $num = Request::instance()->param('name/d');
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate();
                 if (sizeof($courseStudents) !== 0) {
-                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate();
                     // 直接向V层传数据
                     $this->assign('grades', $Grades);
                     $this->assign('students', $Students);
@@ -105,18 +104,14 @@ class GradeLookController extends IndexController {
      */
     public function update() {
         // 接收数据，取要更新的关键字信息
-        $gradeId = Request::instance()->post('id/d');
+        $gradeId = Request::instance()->post('gradeId/d');
 
         // 获取成绩对象,并根据成绩获取对应的课程对象
         $Grade = Grade::get($gradeId);
         $Course = $Grade->Course;
-        dump($Course);
-        die();
 
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade, $Course, true)) {
-                return $this->error('操作失败' . $Grade->getError());
-            }
+            $this->saveGrade($Grade, true);
         } else {
             return $this->error('当前操作的记录不存在');
         }
@@ -131,17 +126,11 @@ class GradeLookController extends IndexController {
      * @param $Course 该成绩对应的课程
      * @param $isUpdate 判断是否是更新数据
      */
-    private function saveGrade(Grade &$Grade, Course &$Course, $isUpdate = false) {
+    private function saveGrade(Grade &$Grade, $isUpdate = false) {
         // 写入要更新的数据
-        $Grade->resigternum = Request::instance()->post('resigternum');
-        if($Grade->resigternum > $Course->resigternum) {
-            $Grade->resigternum = $Course->resigternum;
-        }
-        $Grade->usgrade = $Course->resigternum === 0 ? 0 : $Grade->resigternum / $Course->resigternum * 100;
         $Grade->coursegrade = Request::instance()->post('coursegrade');
-        $Grade->allgrade = $Grade->usgrade * $Grade->Course->usmix / 100 + $Grade->coursegrade * (100 - $Grade->Course->usmix) / 100;
-        // 更新或保存
-        return $Grade->validate(true)->save();
+        // 更新并保存
+        $Grade->getAllgrade();
     }
 
     /**
