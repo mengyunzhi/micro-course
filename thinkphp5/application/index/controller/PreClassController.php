@@ -17,6 +17,10 @@ use app\common\model\Term;
 class PreClassController extends IndexController
 {
      public function index() {
+        $Term = Term::get(['state' => 1]);
+        if(is_null($Term)) {
+            return $this->error('当前无学期开放，暂时无法上课', url('Course/index'));
+        }
         // 获取老师对应的ID,实例化教师对象
         $id = session('teacherId');
         $Teacher = Teacher::get($id);
@@ -43,16 +47,11 @@ class PreClassController extends IndexController
         // 获取当前时间
         $thisTime = time();
 
-        // 实例化老师	
-        $Teacher = Teacher::get($id);
-
-        // 获取该老师对应的本学期课程信息
-        $que = [
-            'teacher_id' => $id,
-            'term_id' => $Term->id
-        ];
-        $Courses = Course::where($que)->select();
-
+        //获取当前学期课程
+        $name = input('name');
+        $Grade = new GradeController;
+        $Courses = $Grade->getCourses($Term->id, $id, $name)->select();
+        
         $this->assign('courses', $Courses);
         $this->assign('Teacher', $Teacher);
 

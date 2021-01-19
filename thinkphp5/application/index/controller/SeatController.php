@@ -10,6 +10,8 @@ use app\common\model\Classroom;
 use app\common\model\Grade;
 use app\common\model\ClassCourse;
 use app\common\model\ClassDetail;
+use app\common\model\Student;
+
 
 /**
  * 座位管理，负责座位的信息更新和信息重置等
@@ -65,6 +67,8 @@ class SeatController extends controller {
     public function sign() {
         // 首先根据微信端的Cookie值判断是否该该学生信息，并获取该学生的id信息 
         $studentId = Request::instance()->param('studentId/d');
+        dump(Student::get($studentId));
+        die();
 
         // 获取学生id和教室座位id,并实例化教室座位对象
         $seatId = Request::instance()->param('seatId');
