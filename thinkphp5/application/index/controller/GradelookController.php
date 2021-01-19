@@ -104,16 +104,14 @@ class GradeLookController extends IndexController {
      */
     public function update() {
         // 接收数据，取要更新的关键字信息
-        $gradeId = Request::instance()->post('id/d');
+        $gradeId = Request::instance()->post('gradeId/d');
 
         // 获取成绩对象,并根据成绩获取对应的课程对象
         $Grade = Grade::get($gradeId);
         $Course = $Grade->Course;
 
         if (!is_null($Grade)) {
-            if (!$this->saveGrade($Grade, $Course, true)) {
-                return $this->error('操作失败' . $Grade->getError());
-            }
+            $this->saveGrade($Grade, true);
         } else {
             return $this->error('当前操作的记录不存在');
         }
@@ -125,12 +123,14 @@ class GradeLookController extends IndexController {
     /**
      * 保存修改的成绩
      * @param $Grade 将要被修改的成绩对象
-     * @param $Course 该成绩对应的课程
      * @param $isUpdate 判断是否是更新数据
      */
-    private function saveGrade(Grade &$Grade, Course &$Course, $isUpdate = false) {
+    private function saveGrade(Grade &$Grade, $isUpdate = false) {
         // 写入要更新的数据
         $Grade->coursegrade = Request::instance()->post('coursegrade');
+        if ($Grade->coursegrade > $Grade->Course->courseup) {
+            $Grade->coursegrade = $Grade->Course->courseup;
+        }
         // 更新并保存
         $Grade->getAllgrade();
     }
