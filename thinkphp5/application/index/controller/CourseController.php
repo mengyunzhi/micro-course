@@ -43,7 +43,7 @@ class CourseController extends IndexController {
         }
 
         //每页显示2条数据
-        $pageSize = 2;
+        $pageSize = 5;
         //按条件查询数据并调用分页
         $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate($pageSize);
 
