@@ -123,12 +123,14 @@ class GradeLookController extends IndexController {
     /**
      * 保存修改的成绩
      * @param $Grade 将要被修改的成绩对象
-     * @param $Course 该成绩对应的课程
      * @param $isUpdate 判断是否是更新数据
      */
     private function saveGrade(Grade &$Grade, $isUpdate = false) {
         // 写入要更新的数据
         $Grade->coursegrade = Request::instance()->post('coursegrade');
+        if ($Grade->coursegrade > $Grade->Course->courseup) {
+            $Grade->coursegrade = $Grade->Course->courseup;
+        }
         // 更新并保存
         $Grade->getAllgrade();
     }

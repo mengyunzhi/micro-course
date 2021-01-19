@@ -4,12 +4,10 @@
 {/block}
 {block name="search"}{/block}
 {block name="search1"}
-
 {/block}
 {block name="Add"}
 {/block}
 {block name="content"}
-
 <?php $time = date('Y-m-d'); ?>
 <br>
 <table class="table table-hover table-bordered" style="200px;">
@@ -39,6 +37,7 @@
     </tr>
     {/volist}
 </table>
+{:$classDetails->render()}
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$Course->name}:未签到学生:{:sizeof($unSigns)}人</td>
 </table>
@@ -61,6 +60,5 @@
     </tr>
     {/volist}
 </table>
-{:$classDetails->render()}
 {/block}
 {/block}
