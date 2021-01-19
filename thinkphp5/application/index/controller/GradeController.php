@@ -29,7 +29,7 @@ class GradeController extends IndexController {
 
             // 通过name获取查询信息
             if (!empty($name)) {
-                $Courses = Course::where('teacher_id', 'like', '%' . $id . '%');
+                $Courses = Course::where('teacher_id', 'like', '%' . $id . '%')->select();
                 $Courses = $Courses->where('name', 'like', '%' . $name . '%')->paginate(5);
             }
 

@@ -48,7 +48,7 @@ class PreClassController extends IndexController
      * 获取当前教师当前学期的课程
      * @param $id 老师的id
      */
-    static public function getCourse($id) {
+    public function getCourse($id) {
          $Term = Term::get(['state' => 1]);
         if(is_null($Term)) {
             return $this->error('当前无学期开放，暂时无法上课', url('Course/index'));
@@ -58,7 +58,6 @@ class PreClassController extends IndexController
 
         // 获取该老师对应的课程信息
         return $courses->where('teacher_id', '=' , $id)->select();
-
     }
 
     /**
