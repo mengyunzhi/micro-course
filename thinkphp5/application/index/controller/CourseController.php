@@ -232,7 +232,7 @@ class CourseController extends IndexController {
     * @param Course 保存的课程对象
     * @param unImportNumber 未导入的学生人数
     */
-    public function excel($href, $Course, $unImportNumber) {
+    public function excel($href, $Course, &$unImportNumber) {
         /** Include path **/
         require_once dirname(__FILE__) . '/../PHPExcel/IOFactory.php';
 
