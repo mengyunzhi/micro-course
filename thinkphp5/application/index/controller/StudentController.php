@@ -68,6 +68,9 @@ class StudentController extends Controller
 	public function add() {
         //获取正确课程对应的ID
         $courseId = Request::instance()->param('id');
+        if (is_null($courseId)) {
+            return $this->error('未获取到正确的课程信息', Request::instance()->header('referer'));
+        }
         $page = Request::instance()->param('page');
         $grade = new Grade();
         $grade->course_id = $courseId;
@@ -102,10 +105,9 @@ class StudentController extends Controller
         if (is_null($Course =Course::get($courseId))) {
             return $this->error('课程不存在', Request::instance()->header('referer'));
         }
-
 		//判断是否存在为此id的记录
 		if(is_null($Student = Student::get($id))) {
-			return $this->error('未找到ID为'.id.'的记录');
+			return $this->error('未找到ID为' . $id . '的记录');
 		}
 
         // 获取教师id，并增加权限处理

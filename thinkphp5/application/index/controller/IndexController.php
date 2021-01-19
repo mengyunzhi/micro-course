@@ -15,7 +15,7 @@ class IndexController extends Controller {
         parent::__construct();
         // 验证用户是否登录
         if(!Teacher::isLogin()) {
-            if (request->controller() === 'teacherwx') {
+            if (request()->controller() === 'teacherwx') {
                 $url = url('index/login/teacherindex');
                 header("Location: $url");
                 exit();
