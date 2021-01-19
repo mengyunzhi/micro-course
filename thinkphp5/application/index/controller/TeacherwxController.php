@@ -40,15 +40,14 @@ class TeacherwxController extends IndexController {
             $termId = $Term->id;
         }
 
-        $pageSize = 2;
         $courses = Course::where('teacher_id', '=', $teacherId)->where('term_id', '=', $termId);
 
         if (!empty($name)) {
-            $courses = $courses->where('name', '=', $name)->paginate($pageSize);
+            $courses = $courses->where('name', '=', $name)->paginate();
             $this->assign('courses', $courses);
             return $this->fetch();
         } else {
-            $courses = Course::where('teacher_id', '=', $teacherId)->paginate($pageSize);
+            $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
             // 将课程对象数组传入V层进行渲染
             $this->assign('courses', $courses);
 
@@ -80,7 +79,6 @@ class TeacherwxController extends IndexController {
 
         // 通过教室获取当前正在上课的学生名单(因为学生扫码有判断是否为本班学生，故不必判断)
         // 定义每页两项数据
-        $pageSize = 2;
         $que = array(
             'classroom_id' => $classroomId,
              'is_seated' => '1'
@@ -93,12 +91,12 @@ class TeacherwxController extends IndexController {
             $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
             $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->select();
             if (!empty($courseStudents)) {
-                $seats = $seats->where('student_id', '=', $courseStudents[0]->student_id)->paginate($pageSize);
+                $seats = $seats->where('student_id', '=', $courseStudents[0]->student_id)->paginate();
             } else {
                 return $this->error('查找不存在', Request::instance()->header('referer'));
             }
         } else {
-            $seats = Seat::where($que)->paginate($pageSize);
+            $seats = Seat::where($que)->paginate();
         }
 
         $this->assign('seats', $seats);
@@ -223,7 +221,6 @@ class TeacherwxController extends IndexController {
 
         // 根据上课课程对象获取上课详情对象数组classDetails，外键为class_course_id
         // 每页显示两项数据
-        $pageSize = 2;
         $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
 
         // 获取本班的所有学生
@@ -232,7 +229,7 @@ class TeacherwxController extends IndexController {
         // 获取未签到的学生
         $unSigns = [];
         $this->unSignStudents($classDetails, $courseStudents, $unSigns);
-        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate($pageSize);
+        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate();
 
         // 将上课详情对象数组传入V层
         $this->assign('classDetails', $classDetails);
