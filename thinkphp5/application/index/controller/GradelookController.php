@@ -110,6 +110,8 @@ class GradeLookController extends IndexController {
         // 获取成绩对象,并根据成绩获取对应的课程对象
         $Grade = Grade::get($gradeId);
         $Course = $Grade->Course;
+        dump($Course);
+        die();
 
         if (!is_null($Grade)) {
             if (!$this->saveGrade($Grade, $Course, true)) {
