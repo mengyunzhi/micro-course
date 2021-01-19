@@ -155,8 +155,8 @@
                             {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
                             <button class="btn btn-info" style="width:80px;cursor: default;">
                                 <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id . '&isSeat=' . $seats[$i][$j]->is_seat)}">
-                                <button class="btn btn-success" style="width:80px;" title="要显示的文字" onmouseover="nihao" id="">
-                                <?php echo($seats[$i][$j]->student->name); ?></button></a>
+                                <button class="btn btn-success" style="width:80px;" title="要显示的文字" @onmouseover="nihao" id="">
+                                <?php echo($seats[$i][$j]->student->name); ++$y; ?></button></a>
                                 {/eq}
                             {else /}
                             <button class="btn btn-default" style="width:80px;height: 30.98px;cursor: default;">

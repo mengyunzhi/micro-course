@@ -63,7 +63,7 @@ class SeatController extends controller {
      * 上课签到、将上课座位属性student_id变为其id
      */
     public function sign() {
-        // 首先根据微信端的Cookie值判断是否该该学生信息，并获取该学生的id信息
+        // 首先根据微信端的Cookie值判断是否该该学生信息，并获取该学生的id信息 
         $studentId = Request::instance()->param('studentId/d');
 
         // 获取学生id和教室座位id,并实例化教室座位对象
@@ -79,10 +79,13 @@ class SeatController extends controller {
         $classCourse = ClassCourse::get(['classroom_id' => $Seat->classroom_id, 'begin_time' => $Classroom->begin_time]);
 
         // 增加判断是否为已经扫码，更改座位情况
-        $SeatFirst = Seat::get(['student_id' => $studentId]);
+        $SeatFirst = Seat::get(['student_id' => $studentId, 'classroom_id' => $Seat->classroom_id]);
         if (!is_null($SeatFirst)) {
-            $SeatFirst->studentId = null;
+            $SeatFirst->student_id = null;
             $SeatFirst->is_seated = 0;
+            if (!$SeatFirst->save()) {
+                return $this->error('座位信息更新失败', Request::instance()->header('referer'));
+            }dump($SeatFirst);
             // 获取对应的上课详情对象
             $que = array(
                 'student_id' => $studentId,
@@ -94,7 +97,7 @@ class SeatController extends controller {
         }
 
         // 通过座位id获取教室id，进而判断本教室是否处于上课状态
-        if ($Classroom->course_id === 0) {
+        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
             return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
             // 获取此学生和此课程对应的成绩
@@ -104,7 +107,7 @@ class SeatController extends controller {
             );
             $Grade = Grade::get($que);
             if (is_null($Grade)) {
-                return $this->error('您不在当前上课名单中,请检查上课课程是否正确', url('Student/afterSign?studentId=' . $studentId));
+                return $this->error('您不在当前上课名单中,请检查上课地点是否正确', url('Student/afterSign?studentId=' . $studentId));
             }
             // 增加判断是否在签到截止时间内
             if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
@@ -120,13 +123,14 @@ class SeatController extends controller {
             return $this->error('签到信息保存失败', url('sign?studentId=' . $studentId . '&seatId=' . $seatId));
         }
 
+        $Seat = Seat::get($seatId);
         // 将教室座位student_id进行赋值
         $Seat->student_id = $studentId;
         $Seat->is_seated = 1;
         // dump($Seat->student_id);die();
         // 将修改后的座位对象保存
         if (!$Seat->save()) {
-            return $this->error('座位信息更新失败，请重新扫码', url('sign?studentId=' . $studentId));
+            return $this->error('座位信息更新失败，请重新扫码', url('Student/aftersign?studentId=' . $studentId));
         }
         return $this->success('扫码签到成功，开始上课', url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
     }
@@ -144,16 +148,6 @@ class SeatController extends controller {
             $ClassDetail->class_course_id = $ClassCourse->id;
             $ClassDetail->student_id = $studentId;
             $ClassDetail->aod_num = 0;
-        }
-
-        // 将之前座位信息删除并保存
-        $Seat = Seat::get(['student_id' => $studentId]);
-        if (!is_null($Seat)) {
-            $Seat->student_id = 0;
-            $Seat->is_seated = 0;
-            if (!$Seat->save()) {
-                return $this->error('座位信息更改失败，重新发起请求', url(Request::instance()->header('referer')));
-            }
         }
 
         // 上课座位学生信息对象座位和更新时间字段进行修改

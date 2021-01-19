@@ -4,13 +4,14 @@ use app\common\model\Student;
 use app\common\model\Course;
 use think\Request;
 use app\index\controller\Login;
+use think\Controller;
 use app\common\model\Grade;
 use app\common\model\Seat;
 use app\common\model\Classroom;
 use app\common\model\ClassDetail;
 use app\common\model\ClassCourse;
 use app\common\model\CourseStudent;
-class StudentController extends IndexController
+class StudentController extends Controller
 {
     /**
      * 学生的首页展示方法，主要负责教师端展示所教课程对应的学生信息
@@ -67,6 +68,9 @@ class StudentController extends IndexController
 	public function add() {
         //获取正确课程对应的ID
         $courseId = Request::instance()->param('id');
+        if (is_null($courseId)) {
+            return $this->error('未获取到正确的课程信息', Request::instance()->header('referer'));
+        }
         $page = Request::instance()->param('page');
         $grade = new Grade();
         $grade->course_id = $courseId;
@@ -101,10 +105,9 @@ class StudentController extends IndexController
         if (is_null($Course =Course::get($courseId))) {
             return $this->error('课程不存在', Request::instance()->header('referer'));
         }
-
 		//判断是否存在为此id的记录
 		if(is_null($Student = Student::get($id))) {
-			return $this->error('未找到ID为'.id.'的记录');
+			return $this->error('未找到ID为' . $id . '的记录');
 		}
 
         // 获取教师id，并增加权限处理
@@ -472,6 +475,11 @@ class StudentController extends IndexController
 
         // 获取教师id，并增加权限判断
         $teacherId = session('teacherId');
+        if (is_null($teacherId)) {
+            $url = url('index/login/index');
+            header("Location: $url");
+            exit();
+        }
         if ($teacherId !== $Course->teacher_id) {
             return $this->error('无此权限', Request::instance()->header('referer'));
         }

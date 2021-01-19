@@ -128,7 +128,6 @@ class LoginController extends Controller {
         // 接收上次登陆失败返回的信息
         $username = Request::instance()->param('username');
         $password = '';
-
         // 获取从wxLogin传出的seatId
         $seatId = Request::instance()->param('seatId');
 
