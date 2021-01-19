@@ -21,7 +21,6 @@ class GradeController extends IndexController
             
             //实例化课程
             $teacher =Teacher::get($id);
-            $pageSize = 5; // 每页显示5条数据
 
             // 定制查询信息
             if (!empty($id)) {

@@ -29,24 +29,23 @@ class GradeLookController extends IndexController {
             if ($teacherId = session('teacherId') !== $Course->teacher_id) {
                 return $this->error('无此操作', Request::instance()->header('referer'));
             }
-            $pageSize = 2; // 每页显示2条数据
             $Students = $Course->Students;
 
             // 接收升序展示还是降序展示的标志adsNum
             $adsNum = Request::instance()->param('adsNum/d');
             if ($adsNum === 1) {
-                $Grades = Grade::order('allgrade desc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+                $Grades = Grade::order('allgrade desc')->where('course_id', '=',  $courseId)->paginate();
             } else {
-                $Grades = Grade::order('allgrade asc')->where('course_id', '=',  $courseId)->paginate($pageSize);
+                $Grades = Grade::order('allgrade asc')->where('course_id', '=',  $courseId)->paginate();
             }
 
             // 获取查询信息，并实现查找对应学生的成绩
             $num = Request::instance()->param('name/d');
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate();
                 if (sizeof($courseStudents) !== 0) {
-                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate();
                     // 直接向V层传数据
                     $this->assign('grades', $Grades);
                     $this->assign('students', $Students);
@@ -131,15 +130,9 @@ class GradeLookController extends IndexController {
      */
     private function saveGrade(Grade &$Grade, Course &$Course, $isUpdate = false) {
         // 写入要更新的数据
-        $Grade->resigternum = Request::instance()->post('resigternum');
-        if($Grade->resigternum > $Course->resigternum) {
-            $Grade->resigternum = $Course->resigternum;
-        }
-        $Grade->usgrade = $Course->resigternum === 0 ? 0 : $Grade->resigternum / $Course->resigternum * 100;
         $Grade->coursegrade = Request::instance()->post('coursegrade');
-        $Grade->allgrade = $Grade->usgrade * $Grade->Course->usmix / 100 + $Grade->coursegrade * (100 - $Grade->Course->usmix) / 100;
-        // 更新或保存
-        return $Grade->validate(true)->save();
+        // 更新并保存
+        $Grade->getAllgrade();
     }
 
     /**

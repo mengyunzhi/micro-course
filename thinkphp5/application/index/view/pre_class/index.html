@@ -15,27 +15,34 @@
     <?php echo $MenuViewTeacher->render(); ?>
     <form class="form-horizontal" action="{:url('InClass/index')}" method="post">
         <input type="hidden" name="beginTime" value="{:time()}">
-        <div class="form-group" style="margin-top: 50px;">
-            <label class="col-sm-2 control-label" style="font-size: 20px;">
-                课程选择:
-            </label>
-            <div class="col-sm-10">
-                <select class="form-control" name="courseId">
-                    {volist name="courses" id="course" }
-                        <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}>
-                            {$course->name} 
-                        </option> 
-                    {/volist}
-                </select> 
-            </div> 
-        </div>
-         <div class="form-group">
-            <div style="margin-left: 500px;margin-top: 20px;">
-                <button type="submit" onclick="alert('开始上课，签到开始。温馨提示：如果当前时间未处于正常上课时间，签到截止时间将按照正常上课时间加上签到时长进行计算；如果晚于上课时间，将按照上课开始时间进行计算')" class="btn btn-default">
-                    开始上课
-                </button>
-            </div>
-        </div>
+        <table class="table table-hover table-bordered">
+            <td>
+                <h3>温馨提示:</h3>
+                <h4>签到开始时间:<span class="label label-default"><?php echo(date('G:i', time()))?></span></h4>
+                <h4>默认签到时长 <span class="label label-default">20分</span></h4>
+            </td>
+            <td>
+                <div class="form-group" style="margin-top: 50px;">
+                    <label class="col-sm-2 control-label" style="font-size: 20px;">
+                        课程选择:
+                    </label>
+                    <div class="col-sm-10">
+                        <select class="form-control" name="courseId">
+                            {volist name="courses" id="course" }
+                            <option value="{$course->id}" {eq name="$course->id" value="$course->id" } selected="selected" {/eq}> {$course->name}
+                            </option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div style="margin-left: 500px;margin-top: 20px;">
+                        <button type="submit" onclick="alert('温馨提示：1.早于上课时间开始上课，签到截止时间为正常上课时间加上签到时长 2.晚于正常上课时间，签到截止时间为当前上课时间加上签到时长')" class="btn btn-default">
+                            开始上课
+                        </button>
+                    </div>
+                </div>
+            </td>
     </form>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->

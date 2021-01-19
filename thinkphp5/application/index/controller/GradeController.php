@@ -25,12 +25,12 @@ class GradeController extends IndexController {
             $pageSize = 5; // 每页显示5条数据
 
             //获取该teacher对应的课程
-            $Courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate(2);
+            $Courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate();
 
             // 通过name获取查询信息
             if (!empty($name)) {
                 $Courses = Course::where('teacher_id', 'like', '%' . $id . '%');
-                $Courses = $Courses->where('name', 'like', '%' . $name . '%')->paginate(2);
+                $Courses = $Courses->where('name', 'like', '%' . $name . '%')->paginate(5);
             }
 
             $this->assign('teacher', $teacher);
@@ -146,15 +146,14 @@ class GradeController extends IndexController {
             // 实例化课程对象
             $Course = Course::get($courseId);
             // 定义每页展示两个数据
-            $pageSize = 2;
 
             // 定制查询信息
             $num = Request::instance()->param('name/d');
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate($pageSize);
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate();
                 if (sizeof($courseStudents) !== 0) {
-                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate($pageSize);
+                    $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate();
                     // 直接向V层传数据
                     $this->assign('Grades', $Grades);
                     return $this->fetch();
@@ -164,7 +163,7 @@ class GradeController extends IndexController {
             }
 
             // 通过条件查询，获得该课程对应的上课成绩对象数组
-            $Grades = Grade::where('course_id', '=', $courseId)->paginate($pageSize);
+            $Grades = Grade::where('course_id', '=', $courseId)->paginate();
             
             // 向V层传数据
             $this->assign('Grades', $Grades);

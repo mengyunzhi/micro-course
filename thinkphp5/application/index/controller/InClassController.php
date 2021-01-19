@@ -213,9 +213,6 @@ class InClassController  extends IndexController {
         $courseId = Request::instance()->param('courseId');
         // $classroomId = 35;
 
-        // 定义分页变量
-        $pageSize = 2;
-
         // 实例化班级和课程
         $Classroom = Classroom::get($classroomId);
         $Course = Course::get($courseId);
@@ -244,7 +241,7 @@ class InClassController  extends IndexController {
         // 将Students，CourseStudents,Seats传入求未签到学生的函数
         $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
 
-        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate($pageSize); 
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate(); 
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);
@@ -548,35 +545,35 @@ class InClassController  extends IndexController {
 
         // 将获取到的下课截止时间赋值给Classroom对象
         if($outTime === 1) {
-            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+            if ($secondTime > time() && $Classroom->sign_deadline_time < $secondTime) {
                 $Classroom->out_time = $secondTime;
             } else {
                 return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
         }
         if($outTime === 2) {
-            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+            if ($fourthTime > time() && $Classroom->sign_deadline_time < $fourthTime) {
                 $Classroom->out_time = $fourthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
         }
         if($outTime === 3) {
-            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+            if ($$sixthTime > time() && $Classroom->sign_deadline_time < $$sixthTime) {
                 $Classroom->out_time = $sixthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
         }
         if($outTime === 4) {
-            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+            if ($eighthTime > time() && $Classroom->sign_deadline_time < $eighthTime) {
                 $Classroom->out_time = $eighthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
             }
         }
         if($outTime === 5) {
-            if ($outTime > time() && $Classroom->sign_deadline_time > $outTime) {
+            if ($tenthTime > time() && $Classroom->sign_deadline_time < $tenthTime) {
                 $Classroom->out_time = $tenthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
@@ -622,14 +619,11 @@ class InClassController  extends IndexController {
     * @param ClassDetails 接收本节课学生上课信息的数组
     */
     protected function aodHappened($courseId, $classCourseId, array &$ClassDetails) {
-        // 定义分页页数为2
-        $pageSize = 2;
-
         // 新建一个对象数组 
         $ClassDetailsTemplate = []; 
 
         // 根据上课课程和上课签到起始时间获取classDetail信息数组，并按加减分数进行降序排列
-        $ClassDetailsTemplate = ClassDetail::order('aod_num desc')->where('class_course_id', '=', $classCourseId)->paginate($pageSize);
+        $ClassDetailsTemplate = ClassDetail::order('aod_num desc')->where('class_course_id', '=', $classCourseId)->paginate();
         $ClassDetails = $ClassDetailsTemplate;
         // rsort($Classcaches);
     }
