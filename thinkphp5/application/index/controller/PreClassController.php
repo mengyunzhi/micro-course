@@ -18,9 +18,14 @@ use app\common\model\Term;
 class PreClassController extends IndexController
 {
      public function index() {
-    // 获取老师对应的ID,实例化教师对象
+        $Term = Term::get(['state' => 1]);
+        if(is_null($Term)) {
+            return $this->error('当前无学期开放，暂时无法上课', url('Course/index'));
+        }
+        // 获取老师对应的ID,实例化教师对象
         $id = session('teacherId');
         $Teacher = Teacher::get($id);
+
         // 暂时调整教室id为1
         // $classroomId = Request::instance()->param('classroomId');
         $classroomId = $Teacher->classroom_id;
@@ -36,28 +41,16 @@ class PreClassController extends IndexController
 
         // 获取当前时间
         $thisTime = time();
-        $this->assign('courses', $this->getCourse($id));
-        dump($this->getCourse());
-        die();
+
+        //获取当前学期课程
+        $name = input('name');
+        $Grade = new GradeController;
+        $Courses = $Grade->getCourses($Term->id, $id, $name)->select();
+        
+        $this->assign('courses', $Courses);
         $this->assign('Teacher', $Teacher);
 
         return $this->fetch();
-    }
-
-    /**
-     * 获取当前教师当前学期的课程
-     * @param $id 老师的id
-     */
-    public function getCourse($id) {
-         $Term = Term::get(['state' => 1]);
-        if(is_null($Term)) {
-            return $this->error('当前无学期开放，暂时无法上课', url('Course/index'));
-        }
-       
-        $courses = Courses::where('term_id', '=', '$Term->id');
-
-        // 获取该老师对应的课程信息
-        return $courses->where('teacher_id', '=' , $id)->select();
     }
 
     /**
