@@ -19,12 +19,24 @@
     <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
     <hr>
 </div>
-<table class="table table-hover table-bordered">
-    {eq name="$Term" value=""}
-    <tr><label style="font-size: 15px;">当前无学期开放，请联系管理员开放学期</label></tr>
-    {else /}
-    <tr><label style="font-size: 15px;">当前学期:{:$Term->name}</label></tr>
-    {/eq}
+<b style="font-size: 15px; float: left; padding-top: 3px">当前学期：</b>
+<div class="btn-group" style="margin-bottom: 10px">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; padding: 4px ">
+        <b>{eq name="$Term" value=""}
+        无学期
+        {else /}
+        {$Term->name}
+        {/eq}</b>
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" style="min-width: 100px">
+        {volist name="terms" id="Term"}
+        <li>
+            <a href="{:url('index?termId=' . $Term->id)}">{$Term->name}</a></li>
+        {/volist}
+    </ul>
+</div>
+<table class="table table-hover table-bordered" style="margin-top: 10px">
     <tr class="info">
         <th>序号</th>
         <th>课程名称</th>
