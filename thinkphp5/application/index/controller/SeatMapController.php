@@ -329,7 +329,8 @@ class SeatMapController extends Controller {
 		if(!empty($classrooms)) {
 			foreach ($classrooms as $Classroom) {
 				$ClassroomController = new ClassroomController;
-				if(!$ClassroomController->deleteSeat($Classroom->id) || !$Classroom->delete()) {
+				$Classroom->is_delete = 1;
+				if(!$ClassroomController->deleteSeat($Classroom->id) || !$Classroom->save()) {
 					return flase;
 				}
 			}
