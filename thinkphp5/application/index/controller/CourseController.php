@@ -31,26 +31,20 @@ class CourseController extends IndexController {
         $Term = Term::get(['state' => 1]);
 
         // 增加判断是否当前处于学期激活中
-        if ($Term === null) {
-            $termId = 0;
-        } else {
+        $termId = input('termId');
+        $Term = Term::get($termId);
+        if(is_null($termId)) {
+            $Term = Term::get(['state' => 1]);
+            if(is_null($Term)) {
+                $termId = "";
+            } else {
             $termId = $Term->id;
+            }
         }
 
-        // 调用父类构造函数(必须)
-        parent::__construct();
-        //验证用户是否登录
-        if(!Teacher::isLogin()) {
-            return $this->error('plz login first',url('Login/index'));
-        }
-
+        $Grade = new GradeController;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate();
-
-        // 通过name获取查询信息
-        if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(5);
-        }
+        $courses = $Grade->getCourses($termId, $id, $name)->paginate();
 
         // 获取所有的学期信息
         $terms = Term::all();   
@@ -248,15 +242,9 @@ class CourseController extends IndexController {
          
         //$href 文件存储路径
        $href = $uploaddir . $name;
-        if(!$this->excel($href, $Course)) {
-            $Course->delete();
-            return $this->error('文件上传失败');
-        }
-
-        //$href 文件存储路径
-        $href = $uploaddir . $name;
         $unImportNumber = 0;
         if(!$this->excel($href, $Course, $unImportNumber)) {
+            $Course->delete();
             return $this->error('文件上传失败');
         }
 
@@ -293,19 +281,21 @@ class CourseController extends IndexController {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
-
         foreach ($sheetData as $sheetDataTemp) {
             $flag = 0;
             if ($sheetDataTemp['B'] !== '姓名') {
+
+                //判断各列类型
                 if ($this->checkStudet($sheetDataTemp) === true) {
-                    if($count !== 0) {
+
                         // 定制查询信息
                         $que = array(
                             'name' => $sheetDataTemp['B'],
                             'num' => $sheetDataTemp['C']
                         );
                         $StudentTmp = Student::get($que);
-                        // 如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
+
+                        //如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
                         // 新增中间表并保存,同时新增成绩 
                         $CourseStudent = new CourseStudent();
                         if (is_null($StudentTmp)) {
@@ -314,12 +304,16 @@ class CourseController extends IndexController {
                             $Student->num = $sheetDataTemp["C"];
                             $Student->sex = $sex = $sheetDataTemp["D"] === '男'?'0':'1';
                             $Student->email = $sheetDataTemp["E"];
+
                             // 初始用户名设置就是学号，密码为6个0
                             $Student->username = $sheetDataTemp["C"];
+
+                            //学生初始密码为六个零
                             $Student->password = $Student->encryptPassword('000000');
                             if ($Student->validate()->save()) {
                                 $CourseStudent->student_id = $Student->id;
                                 $flag = $Student->id;
+                                
                                 // 新增成绩保存
                                 if (!$this->saveGrade($Student, $Course)) {
                                     return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
@@ -341,8 +335,7 @@ class CourseController extends IndexController {
                         } else {
                             $unImportNumber++;
                         }
-                    }
-                    // 课程对应学生数量加一
+                         // 课程对应学生数量加一
                     $Course->student_num++;
                 }
             }
@@ -434,6 +427,8 @@ class CourseController extends IndexController {
         $count = 0;
         $arrayCheck = array('string', 'double', 'string', 'string');
         for ($i = 1; $i < 5; $i ++) {
+
+            //判断yaodaorudeexcel表的类型是不是负荷情况
             if ($arrayCheck[$i-1] === gettype($array[strtoupper(dechex($i+10))])) {
                 $count ++;
             }

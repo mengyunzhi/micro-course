@@ -5,6 +5,8 @@
 .project
 .settings     
  ##filter databfile、sln file##
+*.idea
+*.iml
 *.mdb  
 *.ldb  
 *.sln   
@@ -38,3 +40,4 @@ ehthumbs.db
 Thumbs.db 
 # thinkphp5 runtime #
 /thinkphp5/runtime/
+/thinkphp5/public/data

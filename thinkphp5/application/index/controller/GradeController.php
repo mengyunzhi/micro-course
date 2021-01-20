@@ -7,7 +7,7 @@ use app\common\model\CourseStudent;
 use app\common\model\Student;
 use app\common\model\Grade;
 use app\common\model\Teacher;
-
+use app\common\model\Term;
 
 /**
  * 成绩管理，负责总成绩的展示和编辑部分
@@ -16,26 +16,27 @@ class GradeController extends IndexController {
      public function index() {
         try {
             // 获取查询信息
-            $id =session('teacherId');
-            $name = Request::instance()->param('name');
-            
-            //实例化课程
-            $teacher =Teacher::get($id);
-
-            $pageSize = 5; // 每页显示5条数据
-
-            //获取该teacher对应的课程
-            $Courses = Course::where('teacher_id', 'like', '%' . $id . '%')->paginate();
-
-            // 通过name获取查询信息
-            if (!empty($name)) {
-                $Courses = Course::where('teacher_id', 'like', '%' . $id . '%');
-                $Courses = $Courses->where('name', 'like', '%' . $name . '%')->paginate(5);
+            $teacherId =session('teacherId');
+            $termId = input('termId');
+            $Term = Term::get($termId);
+            if(is_null($termId)) {
+                $Term = Term::get(['state' => 1]);
+                if(is_null($Term)) {
+                    $termId = "";
+                } else {
+                $termId = $Term->id;
+                }
             }
+            $name = Request::instance()->param('name');
 
-            $this->assign('teacher', $teacher);
+            //获取一切符合条件的课程
+            $Courses = $this->getCourses($termId, $teacherId, $name)->paginate();
+
+            
+            $terms = Term::all();
+            $this->assign('terms', $terms);
+            $this->assign('Term', $Term);
             $this->assign('courses', $Courses);
-
             // 取回打包后的数据
             $htmls = $this->fetch();
 
@@ -51,6 +52,21 @@ class GradeController extends IndexController {
             return $e->getMessage();
         } 
     }
+
+    /**
+     * 获取相应学期的课程
+     * @param $termId 相应学期id
+     * @param $teacherId 相应教师id
+     * @param $name 查询时需要的名字
+     */
+    public function getCourses($termId, $teacherId, $name) {
+        $courses = Course::where('term_id', '=', $termId)->where('teacher_id', '=', $teacherId);
+        if(!is_null($name)) {
+            $courses = $courses->where('name', 'like', '%' . $name . '%');
+        }
+        return $courses;
+    }
+
 
     /**
      * 负责记录修改签到成绩占比和上课表现成绩占比和上课表现成绩初始值，以及上课表现上限

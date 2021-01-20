@@ -10,6 +10,8 @@ use app\common\model\Classroom;
 use app\common\model\Grade;
 use app\common\model\ClassCourse;
 use app\common\model\ClassDetail;
+use app\common\model\Student;
+
 
 /**
  * 座位管理，负责座位的信息更新和信息重置等
