@@ -76,10 +76,10 @@ class SeatController extends controller {
         $Classroom = Classroom::get($Seat->classroom_id);
         $classDetail = new ClassDetail();
 
-        // 判断当前座位是否有学生，并判断第二个扫码的人跟第一个人是否是一个人
-        if ($Seat->student_id !== $student_id) {
+        // // 判断当前座位是否有学生，并判断第二个扫码的人跟第一个人是否是一个人
+        // if ($Seat->student_id !== $student_id) {
 
-        }
+        // }
 
         // 为新建和更新上课详情做准备(获取上课课程对象)
         $isUpdate = false;
@@ -165,16 +165,16 @@ class SeatController extends controller {
         return $ClassDetail->save();
     }
 
-    /**
-     * 第二个人扫码同一个座位，显示已绑定
-     * @param studentId 第二个扫码的人的id
-     * @param Seat 扫码对应的座位对象
-     */
-    public function checkIsSeated($studentId, $Seat) {
-        // 实例化座位对象
-        if ($Seat->student_id !== $studentId && time() < $Seat->Classroom->sign_deadline_time) {
-            $Student = Student::get($Seat->student_id);
-        }    
-    }
+    // /**
+    //  * 第二个人扫码同一个座位，显示已绑定
+    //  * @param studentId 第二个扫码的人的id
+    //  * @param Seat 扫码对应的座位对象
+    //  */
+    // public function checkIsSeated($studentId, $Seat) {
+    //     // 实例化座位对象
+    //     if ($Seat->student_id !== $studentId && time() < $Seat->Classroom->sign_deadline_time) {
+    //         $Student = Student::get($Seat->student_id);
+    //     }    
+    // }
 
 }
