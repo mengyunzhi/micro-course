@@ -31,16 +31,16 @@ class CourseController extends IndexController {
         $Term = Term::get(['state' => 1]);
 
         // 增加判断是否当前处于学期激活中
-         $termId = input('termId');
-            $Term = Term::get($termId);
-            if(is_null($termId)) {
-                $Term = Term::get(['state' => 1]);
-                if(is_null($Term)) {
-                    $termId = "";
-                } else {
-                $termId = $Term->id;
-                }
+        $termId = input('termId');
+        $Term = Term::get($termId);
+        if(is_null($termId)) {
+            $Term = Term::get(['state' => 1]);
+            if(is_null($Term)) {
+                $termId = "";
+            } else {
+            $termId = $Term->id;
             }
+        }
 
         $Grade = new GradeController;
         //按条件查询数据并调用分页
