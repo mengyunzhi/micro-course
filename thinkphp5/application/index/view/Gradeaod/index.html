@@ -1,88 +1,43 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-
-<head>
-    <meta charset="UTF-8">
-    <title>加减分编辑</title>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" >
-</head>
-
-<body class="container">
-    <!--菜单导航-->
-    <div class="row">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">梦云智</a>
-                    </div>
-                    <!--Collect the nav links,forms,and other contend for toggling-->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
-                            <li><a href="{:url('PreClass/index')}">上课管理</a></li>
-                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{:url('Login/logout')}">注销</a></li>
-                        </ul>
-                    </div>
-                    <!--/.navbar-collapse-->
-                </div>
-                <!--/.container-fluid-->
-            </nav>
-        </div>
-    </div>
-    <div class="col-md-4 text-right" style="float: right;">
-                      <a href="{:url('Gradeaod/add?courseId=' . $Classroom->Course->id . '&classroomId=' . $Classroom->id . '&studentId=' . $Student->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增项</a>
-                    </div>
-                    <br>
-                    <br><br>
+{extend name="menu"/}
+{block name="title"}
+成绩编辑
+{/block}
+{block name="search"}{/block}
+{block name="search1"}{/block}
+{block name="content"}
     <div class="row">
         <div class="col-md-12">
             {php}$action=request()->action()==='add'?'update':'update';{/php}
             <form class="form-horizontal" action="{:url($action)}" method="post">
-                <div class="form-group">
-                    <label for="major" class="col-sm-2 control-label" style="font-size: 20px;">姓名:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text"  value="{$Student->name}" />
-                        <input class="form-control" type="hidden" name="gradeId"  value="{$Grade->id}" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
-                        学号:
-                    </label>
-                    <div class="col-sm-10">
-                    <input class="form-control" type="text"  value="{$Student->getData('num')}" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
-                        性别:
-                    </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" value="{eq name="$Student->getData('sex')" value='0'}男{else /}女{/eq}" />
+                <table class="table table-hover table-bordered">
+                    <td>
+                        <h2>基本信息:</h2>
+                        <h3>课程 <span class="label label-default">{:$Grade->Course->name}</span></h3>
+                        <h3>姓名 <span class="label label-default">{:$Grade->Student->name}</span></h3>
+                        <h3>学号 <span class="label label-default">{:$Grade->Student->num}</span></h3>
+                    </td>
+                    <td>
+                        <div class="col-md-4 text-right" style="float: right;margin-bottom: 30px;">
+                            <a href="{:url('Gradeaod/add?courseId=' . $Classroom->Course->id . '&classroomId=' . $Classroom->id . '&studentId=' . $Student->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增项</a>
                         </div>
-                </div>
-                <div class="form-group">
-                    <label  class="col-sm-2 control-label" style="font-size: 20px;">
-                        加减分选择:
-                    </label>
-                    <div class="col-sm-10">
-                    <select class="form-control"  name="aodNum" id="gradeaod">
-                        {volist name="Gradeaods" id="_gradeaod" }
-                        <option value="{$_gradeaod->aod_num}" {eq name="$_gradeaod->aod_num" value="$_gradeaod->aod_num" } selected="selected" {/eq}>{$_gradeaod->aod_name} </option> {/volist} </select> 
-                        <br>
                         <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10" style="margin-top: 25px;">
-                    <button type="submit" class="btn btn-default">保存</button>
-                </div>
-            </div>
-                            
+                            <label class="col-sm-3 control-label" style="font-size: 20px;margin-top: 60px;padding-left: 30px;">
+                                加减分项选择:
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" name="aodNum" id="gradeaod">
+                                    {volist name="Gradeaods" id="_gradeaod" }
+                                    <option value="{$_gradeaod->aod_num}" {eq name="$_gradeaod->aod_num" value="$_gradeaod->aod_num" } selected="selected" {/eq}>{$_gradeaod->aod_name} </option> {/volist} </select> <br>
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10" style="margin-top: 15px;">
+                                                <button type="submit" class="btn btn-default">保存</button>
+                                            </div>
+                                        </div>
+                            </div>
+                    </td>
             </form>
         </div>
     </div>
-</body>
-
-</html>
+{/block}
+{block name="page"}
+{/block}
