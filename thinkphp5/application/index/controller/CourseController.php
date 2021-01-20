@@ -176,8 +176,10 @@ class CourseController extends IndexController {
             foreach ($classCourses as $ClassCourse) {
                 if (!is_null($ClassCourse)) {
                     // 如果上课课程非空，删除对应的上课详情
-                    if (!$classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->delete()) {
-                        return $this->error('上课详情删除失败', Request::instance()->header('referer'));
+                    if (!is_null(ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select())) {
+                        if (ClassDetail::where('class_course_id', '=', $ClassCourse->id)->delete() === false) {
+                            return $this->error('上课详情删除失败', Request::instance()->header('referer'));
+                        }
                     }
                     $ClassCourse->delete();
                 }
