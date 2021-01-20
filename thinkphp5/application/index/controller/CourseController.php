@@ -170,8 +170,12 @@ class CourseController extends IndexController {
 
             // 获取该课程对应中间表和成绩并删除
             $que = array('course_id' => $Course->id);
-            $grades = Grade::where($que)->delete();
-            $courseStudents = CourseStudent::where($que)->delete();
+            if (Grade::where($que)->delete() === false) {
+                return $this->error('成绩信息删除失败', Request::instance()->header('referer'));
+            }
+            if (CourseStudent::where($que)->delete() === false) {
+                return $this->error('中间表信息删除失败', Request::instance()->header('referer'));
+            }
             $classCourses = ClassCourse::where($que)->select();
             foreach ($classCourses as $ClassCourse) {
                 if (!is_null($ClassCourse)) {
