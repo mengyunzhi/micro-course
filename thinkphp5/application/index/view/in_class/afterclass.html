@@ -26,6 +26,7 @@
         <th>学生性别</th>
         <th>加减分情况</th>
         <th>上课时间</th>
+        <th>签到结果</th>
     </tr>
     {volist name="classDetails" id="_classDetail" key="key"}
     <tr>
@@ -36,6 +37,9 @@
         <td>{$_classDetail->aod_num}分</td>
         <td>
             <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
+        </td>
+        <td>
+            {eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">未成功</span>{else /}成功{/gt}{/eq}
         </td>
     </tr>
     {/volist}

@@ -483,16 +483,27 @@ class InClassController  extends IndexController {
 
         // 实例化教室对象
         $Classroom = Classroom::get($classroomId);
+        // 根据教室id获取当前上课课程id
+        if (is_null($ClassCourse = ClassCourse::get(['begin_time' => $Classroom->begin_time]))) {
+            return $this->error('上课课程信息未找到', Request::instance()->header('referer'));
+        }
 
         // 将signTime(分钟)赋值给我教室的sign_time属性
         $Classroom->sign_time = $signTime;
 
         // 根据上课时间和修改后的签到时长，从新设置签到截止时长
         $Classroom->sign_deadline_time = $Classroom->sign_time * 60 + $Classroom->sign_begin_time;
+        // 将上课课程对象的签到截止时间修改
+        $ClassCourse->sign_deadline_time = $Classroom->sign_time * 60 + $Classroom->sign_begin_time;
 
         // 将修改后的教室对象保存,并判断是否保存成功
         if(!$Classroom->validate(true)->save()) {
             return $Classroom->getError('签到时长修改失败', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+        }
+
+        // 将修改后的上课课程信息保存
+        if (!$ClassCourse->save()) {
+            return $this->error('上课课程信息保存失败', Request::instance()->header('referer'));
         }
         return $this->success('修改签到时长成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
     }
@@ -510,6 +521,7 @@ class InClassController  extends IndexController {
         $ClassCourse->classroom_id = $Classroom->id;
         $Course = course::get($courseId);
         $ClassCourse->teacher_id = $Course->teacher_id;
+        $ClassCourse->begin_time = $Classroom->begin_time;
 
         // 将上课课程信息保存
        if (!$ClassCourse->save()) {
@@ -765,7 +777,8 @@ class InClassController  extends IndexController {
                     ->setCellValue('C1', '学号')
                     ->setCellValue('D1', '性别')
                     ->setCellValue('E1', '加减分情况')
-                    ->setCellValue('F1', '签到时间');
+                    ->setCellValue('F1', '上课时间')
+                    ->setCellValue('G1', '签到结果');
 
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
                     $classCourseId = Request::instance()->param('classCourseId');
@@ -778,13 +791,10 @@ class InClassController  extends IndexController {
                                     ->setCellValue('A' . $count, $count-1)
                                     ->setCellValue('B' . $count, $Student->name)
                                     ->setCellValue('C' . $count, $Student->num)
+                                    ->setCellValue('D' . $count, $Student->sex === 0 ? '男' : '女')
                                     ->setCellValue('E' . $count, $ClassDetail->aod_num)
-                                    ->setCellValue('F' . $count, date('Y/m/d G:i', $ClassDetail->update_time));
-                        if($Student->sex === 0) {
-                                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '男');
-                        } else {
-                            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $count, '女');
-                        }
+                                    ->setCellValue('F' . $count, date('Y/m/d G:i', $ClassDetail->update_time))
+                                    ->setCellValue('G' . $count, ($ClassDetail->create_time < $ClassCourse->sign_deadline_time || $ClassDetail->seat_id === 1) ? '成功' : '未成功');
                         $count++;
                     }
        
