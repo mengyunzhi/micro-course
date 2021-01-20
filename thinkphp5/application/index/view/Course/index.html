@@ -19,17 +19,17 @@
     <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
     <hr>
 </div>
-<b style="font-size: 15px; float: left;">当前学期：</b>
-<div class="btn-group">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {eq name="$Term" value=""}
+<b style="font-size: 15px; float: left; padding-top: 3px">当前学期：</b>
+<div class="btn-group" style="margin-bottom: 10px">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; padding: 4px ">
+        <b>{eq name="$Term" value=""}
         无学期
         {else /}
         {$Term->name}
-        {/eq}
+        {/eq}</b>
         <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu">
+    <ul class="dropdown-menu" style="min-width: 100px">
         {volist name="terms" id="Term"}
         <li>
             <a href="{:url('index?termId=' . $Term->id)}">{$Term->name}</a></li>
