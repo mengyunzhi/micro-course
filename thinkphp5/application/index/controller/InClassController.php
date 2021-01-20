@@ -509,7 +509,32 @@ class InClassController  extends IndexController {
         if (!$ClassCourse->save()) {
             return $this->error('上课课程信息保存失败', Request::instance()->header('referer'));
         }
+
+        // 调用签到成绩修改方法，修改签到成绩
+        $this->resetSignGrade($ClassCourse);
+
         return $this->success('修改签到时长成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
+    }
+
+    /**
+     * 签到成绩更新
+     * @param ClassCourse 上课课程对象
+     */
+    public function resetSignGrade($ClassCourse) {
+        // 根据上课课程id获取对应的上课详情信息
+        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
+
+        // 判断该上课详情创建时间是否处于新的签到时间内，重新计算
+        foreach ($classDetails as $ClassDetail) {
+            if ($ClassDetail->create_time >= $ClassCourse->sign_deadline_time && $ClassDetail->seat_id !== -1) {
+                $Grade = $ClassDetail->Student->Grade;
+                $Grade->resigternum --;
+                if ($Grade->resigternum < 0) {
+                    $Grade->resigternum = 0;
+                }
+                $Grade->getAllgrade();
+            }
+        }
     }
 
     /**
