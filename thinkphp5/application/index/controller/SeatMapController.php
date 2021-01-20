@@ -356,7 +356,7 @@ class SeatMapController extends Controller {
 	 * 判断对应当前模板的教室是否在上课
 	 * @param $seatMapId 对应模板ID 
 	 */
-	static public function judgeClassroom($seatMapId) {
+ 	public function judgeClassroom($seatMapId) {
 		$teachers = Teacher::all();
 		foreach ($teachers as $Teacher) {
 			if($Teacher->classroom_id != 0) {
