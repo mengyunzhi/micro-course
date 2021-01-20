@@ -41,15 +41,16 @@ class AdminStudentController extends AdminJudgeController
                     join('student s','a.student_id = s.id')->where('s.num', '=', $num);
                 }
             }
-                $students = Student::all();
+                $students = new Student;
                 if(!empty($num)) {
-                    $students = Student::where('num', '=', $num)->paginate(5);
+                    $students = Student::where('num', '=', $num);
                 }
 
                 // 按条件查询数据并调用分页
-                $coursestudents = $coursestudents->paginate(5);
+                $coursestudents = $coursestudents->paginate();
+                $students = $students->paginate();
+                $page = $students->render();
                 $page = $coursestudents->render();
-
             // 向V层传数据
             $this->assign('match', $match);
             $this->assign('students', $students);

@@ -150,8 +150,11 @@ class LoginController extends Controller {
 
         // 获取学生id，判断session是否过期
         $studentId = session('studentId');
+        $Student = Student::get($studentId);
+
         // 第一种session已经过期，输入用户名密码登陆
-        if (is_null($studentId)) {
+        if (is_null($Student)) {
+            return $this->error('登陆过期请重新登录', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             if (is_null($username) || is_null($password)) {
                 return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             } else {
@@ -170,8 +173,8 @@ class LoginController extends Controller {
 
             // 第二种session未过期，直接登陆
         } else {
-            $Student = Student::get($studentId);
-            // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
+
+         // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
             if (is_null($seatId) || $seatId === 0) {
                 return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
             }
