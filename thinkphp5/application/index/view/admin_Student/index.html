@@ -55,5 +55,9 @@
 </table>
 {/block}
 {block name="render"}
+{eq name="$match" value="1"}
 {$coursestudents->render()}
+{else/}
+{$students->render()}
+{/eq}
 {/block}
