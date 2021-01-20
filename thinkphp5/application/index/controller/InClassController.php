@@ -624,6 +624,10 @@ class InClassController  extends IndexController {
             }    
         }
 
+        // 增加判断:判断修改后的下课时间是否晚于签到截止时间
+        if ($Classroom->out_time <= $Classroom->sign_deadline_time) {
+            return $this->error('请保证下课时间晚于签到截止时间', Request::instance()->header('referer'));
+        }
         // 将修改后的教室对象保存,并判断是否保存成功
         if(!$Classroom->validate(true)->save()) {
             return $this->error('下课时间修改失败', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
