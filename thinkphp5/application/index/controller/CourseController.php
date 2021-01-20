@@ -29,26 +29,20 @@ class CourseController extends IndexController {
         $Term = Term::get(['state' => 1]);
 
         // 增加判断是否当前处于学期激活中
-        if ($Term === null) {
-            $termId = 0;
-        } else {
-            $termId = $Term->id;
-        }
+         $termId = input('termId');
+            $Term = Term::get($termId);
+            if(is_null($termId)) {
+                $Term = Term::get(['state' => 1]);
+                if(is_null($Term)) {
+                    $termId = "";
+                } else {
+                $termId = $Term->id;
+                }
+            }
 
-        // 调用父类构造函数(必须)
-        parent::__construct();
-        //验证用户是否登录
-        if(!Teacher::isLogin()) {
-            return $this->error('plz login first',url('Login/index'));
-        }
-
+        $Grade = new GradeController;
         //按条件查询数据并调用分页
-        $courses = Course::where('teacher_id', '=', $id)->where('term_id', '=', $termId)->paginate();
-
-        // 通过name获取查询信息
-        if (!empty($name)) {
-            $courses = Course::where('name', 'like', '%' . $name . '%')->paginate(5);
-        }
+        $courses = $Grade->getCourses($termId, $id, $name)->paginate();
 
         // 获取所有的学期信息
         $terms = Term::all();   
