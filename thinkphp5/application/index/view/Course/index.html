@@ -15,10 +15,12 @@
 </div>
 {/block}
 {block name="content"}
+{eq name="Term->state" value="1"}
 <div class="text-right">
     <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
     <hr>
 </div>
+{else /}<hr style="margin-top:55px;">{/eq}
 <b style="font-size: 15px; float: left; padding-top: 3px">当前学期：</b>
 <div class="btn-group" style="margin-bottom: 10px">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; padding: 4px ">

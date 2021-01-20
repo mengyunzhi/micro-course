@@ -57,7 +57,10 @@
                     分钟
                 </label>
                 <input type="hidden" name="classroomId" value="{:$Classroom->id}">
-                <button>保存</button> 
+                <button>保存</button> &nbsp;&nbsp;&nbsp;
+                <label style="font-size: 15px;">
+                    签到截止时间:{:date('G:i',$Classroom->sign_deadline_time);}
+                </label>
             </td>
         </form>
         <form action="{:url('changeOutTime')}" method="post">
@@ -66,14 +69,7 @@
                 <label style="font-size: 15px;">
                     下课时间:
                     <select name="outTime">
-                        <option value="1" {eq name="outTime" value="10/05" } selected="selected" {/eq}>10:05 </option> 
-                        <option value="2" {eq name="outTime" value="12/00" } selected="selected" {/eq}>12:00 </option> 
-                        <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35 </option> 
-                        <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30 </option> 
-                        <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15 </option> 
-                    </select>
-                </label> 
-                <button>保存</button>
+                        <option value="1" {eq name="outTime" value="10/05" } selected="selected" {/eq}>10:05 </option> <option value="2" {eq name="outTime" value="12/00" } selected="selected" {/eq}>12:00 </option> <option value="3" {eq name="outTime" value="15/35" } selected="selected" {/eq}>15:35 </option> <option value="4" {eq name="outTime" value="17/30" } selected="selected" {/eq}>17:30 </option> <option value="5" {eq name="outTime" value="20/15" } selected="selected" {/eq}>20:15 </option> </select> </label> <button>保存</button>
             </td>
         </form>
     </table>
@@ -127,21 +123,20 @@
     <div class="col-md-4 text-right" style="float: right;">
         <a href="{:url('afterClass?classroomId=' . $Classroom->id . '&courseId=' . $Course->id)}"><button class="btn btn-danger" onclick="alert('上课结束，即将展示上课情况')"><i class="glyphicon glyphicon-off"></i>&nbsp;下课</button></a>
     </div>
-
     <div class="row" style="margin-top: 120px;">
         <div class="col-md-4 text-right" style="float: right;">
-        <button style="width: 100px;cursor: default;" class="btn btn-success">
-            <i class="glyphicon glyphicon-tag"></i>&nbsp;已有学生
-        </button>
-        <button style="width: 100px;cursor: default;" class="btn btn-info">
-            <i class="glyphicon glyphicon-tag"></i>&nbsp;座位为空
-        </button>
-        <button style="width: 70px;cursor: default;"  class="btn btn-default" >
-            <i class="glyphicon glyphicon-tag"></i>&nbsp;过道
-        </button>
-    </div>
+            <button style="width: 100px;cursor: default;" class="btn btn-success">
+                <i class="glyphicon glyphicon-tag"></i>&nbsp;已有学生
+            </button>
+            <button style="width: 100px;cursor: default;" class="btn btn-info">
+                <i class="glyphicon glyphicon-tag"></i>&nbsp;座位为空
+            </button>
+            <button style="width: 70px;cursor: default;" class="btn btn-default">
+                <i class="glyphicon glyphicon-tag"></i>&nbsp;过道
+            </button>
+        </div>
         <hr>
-        <div class="container" >
+        <div class="container">
             <table style="margin: auto;">
                 <label class="container">
                     <h3 style="text-align: center;">讲台</h3>
@@ -151,18 +146,17 @@
                 <tr>
                     <?php for($j = 0; $j < $SeatTemplate->y_map; $j++): ?>
                     <th>
-                            {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
-                            {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
-                            <button class="btn btn-info" style="width:80px;cursor: default;">
-                                <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id . '&isSeat=' . $seats[$i][$j]->is_seat)}">
-                                <button class="btn btn-success" style="width:80px;" title="要显示的文字" @onmouseover="nihao" id="">
+                        {eq name='seats[$i][$j]->getData("is_seat")' value='0'}
+                        {eq name='seats[$i][$j]->getData("is_seated")' value='0'}
+                        <button class="btn btn-info" style="width:80px;cursor: default;">
+                            <?php echo($x);echo ("-"); echo(++$y); ?></button>{else /}<a href="{:url('coursegrade/index?studentId=' . $seats[$i][$j]->student_id . '&classroomId=' . $Classroom->id . '&isSeat=' . $seats[$i][$j]->is_seat)}">
+                            <button class="btn btn-success" style="width:80px;" title="要显示的文字" @onmouseover="nihao" id="">
                                 <?php echo($seats[$i][$j]->student->name); ++$y; ?></button></a>
-                                {/eq}
-                            {else /}
-                            <button class="btn btn-default" style="width:80px;height: 30.98px;cursor: default;">
-                                </button>
-                            {/eq}
-                        
+                        {/eq}
+                        {else /}
+                        <button class="btn btn-default" style="width:80px;height: 30.98px;cursor: default;">
+                        </button>
+                        {/eq}
                     </th>
                     <?php endfor; ?>
                     <?php if ($y !== 0 ) $x++; ?>
@@ -172,7 +166,6 @@
             </table>
         </div>
     </div>
-    
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
