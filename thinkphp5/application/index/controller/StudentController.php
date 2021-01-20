@@ -139,8 +139,14 @@ class StudentController extends Controller
         $CourseStudent = CourseStudent::get(['student_id' => $studentId, 'course_id' => $courseId]);
         // 获取成绩信息,更新成绩
         $Grade = Grade::get(['student_id' => $studentId, 'course_id' => $courseId]);
+        if (is_null($CourseStudent)) {
+            return $this->error('中间表信息不存在', Request::instance()->header('referer'));
+        }
+        if (is_null($Grade)) {
+            return $this->error('成绩信息不存在', Request::instance()->header('referer'));
+        }
 
-        // 增加判断是否当前页数合规
+        // 增加判断是否当前页数合规 
         if($page === 0) {
             $page = 1;
         }
@@ -210,12 +216,13 @@ class StudentController extends Controller
         $sex = Request::instance()->post('sex/d');
         $email = Request::instance()->post('email');
         $courseId = Request::instance()->post('courseid');
+        $page = Request::instance()->param('page');
         
         // 根据姓名和学号判断是否已存在该学生信息
         $StudentTest = Student::get(['name' => $name, 'num' => $num]);
         $newStudent = new Student();
 
-        // 判断是更新还是新增,如果是新增则新增中间表对象
+        // 判断是更新还是新增,如果是更新则更新中间表对象,新增在外边增加了中间表信息
         if ($isUpdate === false) {
             // 判断数据库是否存在该学生，存在则不用新增
             if (is_null($StudentTest)) {
@@ -234,25 +241,20 @@ class StudentController extends Controller
             if (is_null($StudentTest)) {
                 // 更新操作只更新学生对象信息
                 $newStudent->name = Request::instance()->post('name');
-                $newStudent->num = Request::instance()->post('num/d');
+                $newStudent->num = Request::instance()->post('num');
                 $newStudent->sex = Request::instance()->post('sex/d');
                 $newStudent->email = Request::instance()->post('email');
                 // 学生的用户名默认就是学号
                 $newStudent->username = $newStudent->num;
                 $newStudent->password = $newStudent->encryptPassword('000000');
-                // 更新并保存数据
+                // 更新并保存数据d
+                trace($newStudent,'debug');
                 if (!$newStudent->validate(true)->save()) {
-                    return $this->error('学生信息保存失败', Request::instance()->header('referer'));
+                    return $this->error('学生信息保存失败,请保证信息正确', Request::instance()->header('referer'));
                 }
                 // 第二种存在该学生的,直接将StudentTest赋给Student
             } else {
                 $newStudent = $StudentTest;
-                $newStudent->sex = Request::instance()->post('sex/d');
-                $newStudent->email = Request::instance()->post('email');
-                // 更新并保存数据
-                if (!$newStudent->validate(true)->save()) {
-                    return $this->error('学生信息保存失败', Request::instance()->header('referer'));
-                }
             }
             // 修改中间表信息
             $CourseStudent->student_id = $newStudent->id;
@@ -264,9 +266,19 @@ class StudentController extends Controller
             if (!$Grade->validate(true)->save()) {
                 return $this->error('成绩信息修改失败', Request::instance()->header('referer'));
             }
+            return $this->error('更新成功', url('index/Student/index?id=' . $CourseStudent->course_id .'&page=' . $page));
         } 
 
         // 第三种情况：新增:数据库中存在该学生信息
+        // 在这种情况应判断当前课程中是否已经存在该学生
+        $que = array(
+            'student_id' => $StudentTest->id,
+            'course_id' => $courseId
+        );
+        $CourseStudentTest = CourseStudent::get($que);
+        if (!is_null($CourseStudentTest)) {
+            return $this->error('该学生已存在', Request::instance()->header('referer'));
+        }
         $Student = $StudentTest;
         return 1;
     }
@@ -489,7 +501,7 @@ class StudentController extends Controller
             $url = url('index/login/index');
             header("Location: $url");
             exit();
-        }
+        } 
         if ($teacherId !== $Course->teacher_id) {
             return $this->error('无此权限', Request::instance()->header('referer'));
         }
