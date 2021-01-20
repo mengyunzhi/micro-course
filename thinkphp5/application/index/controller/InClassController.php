@@ -46,6 +46,10 @@ class InClassController  extends IndexController {
         // 将教室按照先x后y排序，并将排序结果保存
         $newSeats = $this->seatDisplay($seats, $SeatTemplate);
 
+        // 打印教室上课时间到控制台
+        trace(date('G/i', $Classroom->begin_time), 'debug');
+        trace(date('G/i', $Classroom->sign_deadline_time), 'debug');
+
         // 首先判断是不是已经设置上课时间等
         if ($reClass !== 1) {
             // 如果是已经上课，就不需要重新接收courseId

@@ -31,7 +31,7 @@ class Menu {
                     return '';
                 }
             }
-            if (request()->controller() === 'Coursegrade' || request()->controller() === 'InClass') {
+            if (request()->controller() === 'Coursegrade' || request()->controller() === 'InClass' || request()->controller() === 'Gradeaod') {
                 if ($this->controller === 'PreClass') {
                     return 'active';
                 } else {

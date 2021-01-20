@@ -9,7 +9,7 @@
 <?php $time = date('Y-m-d'); ?>
 <br>
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$Course->name}:已签学生名单：</td>
+    <td>{$Course->name}:上课学生名单：</td>
     <td>
         <form action="{:url('fileExportGrade?classCourseId=' . $ClassCourse->id)}">
             <button class="btn btn-warning"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;导出表单</button>
@@ -39,14 +39,14 @@
             <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
         </td>
         <td>
-            {eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">未成功</span>{else /}成功{/gt}{/eq}
+            {eq name="_classDetail->seat_id" value="-1"}成功{else/}{lt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">未成功</span>{else /}成功{/lt}{/eq}
         </td>
     </tr>
     {/volist}
 </table>
 {:$classDetails->render()}
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$Course->name}:未签到学生:{:sizeof($students)}人</td>
+    <td>{$Course->name}:未上课学生:{:sizeof($students)}人</td>
     <td>
         <form action="{:url('fileExportSign?courseId=' . $Course->id . '&classCourseId=' . $ClassCourse->id)}">
             <button class="btn btn-warning"><i class="glyphicon glyphicon-download-alt"></i>&nbsp;导出表单</button>
