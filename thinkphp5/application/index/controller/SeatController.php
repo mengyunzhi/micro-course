@@ -87,7 +87,7 @@ class SeatController extends controller {
             $SeatFirst->is_seated = 0;
             if (!$SeatFirst->save()) {
                 return $this->error('座位信息更新失败', Request::instance()->header('referer'));
-            }dump($SeatFirst);
+            }
             // 获取对应的上课详情对象
             $que = array(
                 'student_id' => $studentId,
