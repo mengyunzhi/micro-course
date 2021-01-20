@@ -8,6 +8,8 @@ use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Term;
 use app\common\model\Grade;
+use app\common\model\ClassCourse;
+use app\common\model\ClassDetail;
 use Env;
 use PHPExcel_IOFactory;
 use PHPExcel;
@@ -141,6 +143,9 @@ class CourseController extends IndexController {
         try {
             // 实例化请求类
             $Request = Request::instance();
+
+            // 获取教师id
+            $teacherId = session('teacherId');
             
             // 获取课程id
             $courseId = Request::instance()->param('id/d');
@@ -158,7 +163,33 @@ class CourseController extends IndexController {
                 throw new \Exception('不存在id为' . $courseId . '的课程，删除失败', 1);
             }
 
-            // 删除对象
+            // 增加权限判断
+            if ($Course->Teacher->id !== $teacherId) {
+                return $this->error('无此权限', Request::instance()->header('referer'));
+            }
+
+            // 获取该课程对应中间表和成绩并删除
+            $que = array('course_id' => $Course->id);
+            $grades = Grade::where($que)->delete();
+            $courseStudents = CourseStudent::where($que)->delete();
+            $classCourses = ClassCourse::where($que)->select();
+            foreach ($classCourses as $ClassCourse) {
+                if (!is_null($ClassCourse)) {
+                    // 如果上课课程非空，删除对应的上课详情
+                    if (!$classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->delete()) {
+                        return $this->error('上课详情删除失败', Request::instance()->header('referer'));
+                    }
+                    $ClassCourse->delete();
+                }
+            }
+            // if (!$grades->delete()) {
+            //     return $this->error('成绩信息删除失败', Request::instance()->header('referer'));
+            // }
+            // if (!$courseStudents->delete()) {
+            //     return $this->error('中间表信息删除失败', Request::instance()->header('referer'));
+            // }
+
+            // 删除课程对象对象
             if (!$Course->delete()) {
                 return $this->error('删除失败:' . $Course->getError());
             }
