@@ -479,6 +479,8 @@ class InClassController  extends IndexController {
         // 接收改变后的sigiTime和教室id：classroomId
         $signTime = Request::instance()->param('signTime');
         $classroomId = Request::instance()->param('classroomId');
+        $Classroom = Classroom::get($classroomId);
+
 
         // 增加判断是否签到时长小于0
         if ($signTime <= 0) {
@@ -486,7 +488,6 @@ class InClassController  extends IndexController {
         }
 
         // 实例化教室对象
-        $Classroom = Classroom::get($classroomId);
         // 根据教室id获取当前上课课程id
         if (is_null($ClassCourse = ClassCourse::get(['begin_time' => $Classroom->begin_time]))) {
             return $this->error('上课课程信息未找到', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
@@ -626,6 +627,10 @@ class InClassController  extends IndexController {
             }    
         }
 
+        // 增加判断:判断修改后的下课时间是否晚于签到截止时间
+        if ($Classroom->out_time <= $Classroom->sign_deadline_time) {
+            return $this->error('请保证下课时间晚于签到截止时间', Request::instance()->header('referer'));
+        }
         // 将修改后的教室对象保存,并判断是否保存成功
         if(!$Classroom->validate(true)->save()) {
             return $this->error('下课时间修改失败', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
