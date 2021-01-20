@@ -320,11 +320,11 @@ class StudentController extends Controller
             // 获取get数据
             $Request = Request::instance();
             $id = Request::instance()->param('id/d');
-            $course_id = Request::instance()->param('course_id/d');
+            $courseId = Request::instance()->param('course_id/d');
             // 实例化课程
-            $Course = Course::get($course_id);
+            $Course = Course::get($courseId);
             // 调用checkPower方法判断权限
-            $this->checkPower($course_id);
+            $this->checkPower($courseId);
 
             //该课程学生总数减一
             $Course->student_num--;
@@ -337,7 +337,7 @@ class StudentController extends Controller
             // 获取要删除的对象
             $Student = Student::get($id);
             $map = ['student_id'=>$id,
-                    'course_id'=>$course_id
+                    'course_id'=>$courseId
                     ];
 
             // 要删除的对象存在
@@ -352,7 +352,17 @@ class StudentController extends Controller
             if (false === $Grade->where($map)->delete()) {
             return $this->error('删除此学生该课程成绩关联信息发生错误' . $Grade->getError());
             }
-    }
+
+            // 获取上课课程并删除对应的上课详情信息
+            $classCourses = ClassCourse::where('course_id', '=', $courseId)->select();
+            foreach ($classCourses as $ClassCourse) {
+                if (!is_null($ClassCourse)) {
+                    if (ClassDetail::where('class_course_id', '=', $ClassCourse->id)->delete() === false) {
+                        return $this->error('上课详情信息删除失败', Request::instance()->header('referer'));
+                    }
+                }
+            }
+        }
             
         //  获取到ThinkPHP的内置异常时，直接向上抛出，交给ThinkPHP处理
         catch(\think\Exception\HttpResponseException $e){
