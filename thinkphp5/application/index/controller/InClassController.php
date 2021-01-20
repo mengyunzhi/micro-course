@@ -489,7 +489,7 @@ class InClassController  extends IndexController {
 
         // 根据教室id获取当前上课课程id
         if (is_null($ClassCourse = ClassCourse::get(['begin_time' => $Classroom->begin_time]))) {
-            return $this->error('上课课程信息未找到', Request::instance()->header('referer'));
+            return $this->error('上课课程信息未找到', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
         }
 
         // 将signTime(分钟)赋值给我教室的sign_time属性
@@ -498,7 +498,7 @@ class InClassController  extends IndexController {
         // 根据上课时间和修改后的签到时长，从新设置签到截止时长;同时判断不得晚于签到截止时间
         $Classroom->sign_deadline_time = $Classroom->sign_time * 60 + $Classroom->sign_begin_time;
         if ($Classroom->sign_deadline_time > $Classroom->out_time) {
-            return $this->error('请保证签到截止时间不得晚于下课时间', Request::instance()->header('referer'));
+            return $this->error('请保证签到截止时间不得晚于下课时间', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
         }
         // 将上课课程对象的签到截止时间修改
         $ClassCourse->sign_deadline_time = $Classroom->sign_time * 60 + $Classroom->sign_begin_time;
@@ -510,7 +510,7 @@ class InClassController  extends IndexController {
 
         // 将修改后的上课课程信息保存
         if (!$ClassCourse->save()) {
-            return $this->error('上课课程信息保存失败', Request::instance()->header('referer'));
+            return $this->error('上课课程信息保存失败', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
         }
 
         // 调用签到成绩修改方法，修改签到成绩

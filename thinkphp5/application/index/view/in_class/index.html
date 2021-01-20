@@ -59,7 +59,7 @@
                 <input type="hidden" name="classroomId" value="{:$Classroom->id}">
                 <button>保存</button> &nbsp;&nbsp;&nbsp;
                 <label style="font-size: 15px;">
-                    签到截止时间:{:date('G:i',$Classroom->sign_deadline_time);}
+                    签到截止时间:<span class="label label-warning">{:date('G:i',$Classroom->sign_deadline_time);}</span>
                 </label>
             </td>
         </form>
