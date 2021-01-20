@@ -734,7 +734,7 @@ class InClassController  extends IndexController {
      * @param $seats 要展示的座位数组
      * @param $SeatMap 对应的模板
      */
-    public function seatDisplay($seats, $SeatMap) {给i他
+    public function seatDisplay($seats, $SeatMap) {
       // 定义一个数组，将座位转换为二维数组按先x后y的方式排好序
       $newSeats = [];
       foreach ($seats as $seat)  {
