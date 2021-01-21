@@ -42,6 +42,7 @@ class InClassController  extends IndexController {
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
         $seats = Seat::where('classroom_id', '=', $classroomId)->select();
         $SeatTemplate = SeatMap::get($Classroom->seat_map_id);
+        
 
         // 将教室按照先x后y排序，并将排序结果保存
         $newSeats = $this->seatDisplay($seats, $SeatTemplate);
