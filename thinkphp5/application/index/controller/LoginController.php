@@ -17,6 +17,7 @@ use app\common\model\ClassCourse;
 class LoginController extends Controller {
     //用户登录表单
     public function index() {
+       
         // 接收登陆信息
         $username = Request::instance()->param('username');
         $password = '';

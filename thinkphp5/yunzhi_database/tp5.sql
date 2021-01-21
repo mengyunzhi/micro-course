@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : localhost_3306
  Source Server Type    : MySQL
  Source Server Version : 100113
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 100113
  File Encoding         : 65001
 
- Date: 21/01/2021 14:07:18
+ Date: 21/01/2021 14:28:42
 */
 
 SET NAMES utf8mb4;
@@ -35,6 +35,10 @@ CREATE TABLE `yunzhi_class_course`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 202 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
+-- Records of yunzhi_class_course
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for yunzhi_class_detail
 -- ----------------------------
 DROP TABLE IF EXISTS `yunzhi_class_detail`;
@@ -48,6 +52,10 @@ CREATE TABLE `yunzhi_class_detail`  (
   `seat_id` int(11) NULL DEFAULT NULL COMMENT '统计该堂课学生所做的座位',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 88 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yunzhi_class_detail
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_classroom
@@ -65,8 +73,13 @@ CREATE TABLE `yunzhi_classroom`  (
   `sign_deadline_time` int(11) NULL DEFAULT NULL,
   `sign_time` int(11) NOT NULL COMMENT '签到时长',
   `sign_begin_time` int(11) NULL DEFAULT NULL COMMENT '负责记录签到开始时间',
+  `is_delete` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 52 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of yunzhi_classroom
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_course
@@ -85,7 +98,11 @@ CREATE TABLE `yunzhi_course`  (
   `resigternum` int(11) NOT NULL COMMENT '该课程签到总次数',
   `term_id` int(11) NULL DEFAULT NULL COMMENT '对应的学期',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 186 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 186 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of yunzhi_course
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_course_student
@@ -98,7 +115,11 @@ CREATE TABLE `yunzhi_course_student`  (
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 220 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 220 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yunzhi_course_student
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_grade
@@ -115,7 +136,11 @@ CREATE TABLE `yunzhi_grade`  (
   `allgrade` int(11) NULL DEFAULT NULL COMMENT '总成绩',
   `resigternum` int(11) NULL DEFAULT NULL COMMENT '上课签到次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 361 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 361 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yunzhi_grade
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_gradeaod
@@ -130,7 +155,11 @@ CREATE TABLE `yunzhi_gradeaod`  (
   `course_id` int(11) NOT NULL COMMENT '通过不同的课程来统计不同的加减分项，便于老师下次可以直接选择加减分项',
   `aod_state` int(11) NULL DEFAULT NULL COMMENT '负责区分加分项还是减分项，如果是加分项即为1，如果是减分项，即为0',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of yunzhi_gradeaod
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_seat
@@ -147,7 +176,11 @@ CREATE TABLE `yunzhi_seat`  (
   `classroom_id` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '此座位对应的教室id\r\n',
   `student_id` int(11) NULL DEFAULT NULL COMMENT '此时座位上课学生id，如果为空则为null或0',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 244636 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = FIXED;
+) ENGINE = MyISAM AUTO_INCREMENT = 244636 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
+
+-- ----------------------------
+-- Records of yunzhi_seat
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_seat_aisle
@@ -162,7 +195,11 @@ CREATE TABLE `yunzhi_seat_aisle`  (
   `update_time` date NOT NULL DEFAULT '0000-00-00' COMMENT '更新时间',
   `state` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '区分座位或过道，如果为0则为座位，否则为过道',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 248230 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = FIXED;
+) ENGINE = MyISAM AUTO_INCREMENT = 248230 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
+
+-- ----------------------------
+-- Records of yunzhi_seat_aisle
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_seat_map
@@ -178,7 +215,11 @@ CREATE TABLE `yunzhi_seat_map`  (
   `is_first` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '判断当前是否为第一个',
   `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 131 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = FIXED;
+) ENGINE = MyISAM AUTO_INCREMENT = 131 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Fixed;
+
+-- ----------------------------
+-- Records of yunzhi_seat_map
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_student
@@ -195,7 +236,11 @@ CREATE TABLE `yunzhi_student`  (
   `username` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户名：用于登录（用户名不可相同）',
   `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码：用于登录',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 126 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 126 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of yunzhi_student
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for yunzhi_teacher
@@ -211,7 +256,12 @@ CREATE TABLE `yunzhi_teacher`  (
   `num` int(11) NULL DEFAULT NULL COMMENT '教室工号',
   `classroom_id` int(11) NULL DEFAULT NULL COMMENT '微信端扫码之后在下课之前绑定的教室对象id，桥接微信端和web端',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 35 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of yunzhi_teacher
+-- ----------------------------
+INSERT INTO `yunzhi_teacher` VALUES (1, 'admin', 'aad612c18bfcb55e90e6af7da79bd34ff8a807d0', 'admin', 0, 0, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for yunzhi_term
@@ -226,6 +276,10 @@ CREATE TABLE `yunzhi_term`  (
   `ftime` date NOT NULL COMMENT '学期截止时间',
   `state` tinyint(1) NOT NULL COMMENT '此学期的状态：是否被激活（默认只有一个激活状态）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 78691 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = MyISAM AUTO_INCREMENT = 78691 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of yunzhi_term
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;
