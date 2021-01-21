@@ -270,27 +270,24 @@ class LoginController extends Controller {
     }
 
     /**
-     * 老师微信端登陆方法
+     * 老师微信端登陆
      */
     public function teacherIndex() {
         // 首先获取教师id，判断session是否过期
         $teacherId = session('teacherId');
+
         $classroomId = Request::instance()->param('classroomId');
+        $Teacher = Teacher::get($teacherId);
 
         // 如果session还没有过期的情况下，直接登陆
-        if (!is_null($teacherId)) {
+        if (!is_null($Teacher)) {
             // 绑定教师信息和教室信息
-            $Teacher = Teacher::get($teacherId);
-            if (is_null($Teacher)) {
-                return $this->error('教师信息不存在', url('teacherIndex?class'));
-            } else {
-                $Teacher->classroom_id = $classroomId;
-                if (!$Teacher->save()) {
-                    return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
+            $Teacher->classroom_id = $classroomId;
+            if (!$Teacher->save()) {
+                return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
                 }
+                return $this->success('登陆成功', url('teacherwx/index'));
             }
-            return $this->success('登陆成功', url('teacherwx/index'));
-        }
 
         // 接收用户名和密码,避免二次登陆重新输入账号密码
         $username = Request::instance()->param('username');
