@@ -11,20 +11,17 @@
 </div> -->
 {/block}
 {block name="content"}
-<table class="table table-hover table-bordered">
+<b style="font-size: 15px; float: left; padding-top: 3px; margin-bottom: 20px">教师姓名：{$Teacher->name}</b>
+<table class="table table-hover table-bordered" >
     <tr class="info">
         <th>序号</th>
         <th>课程名称</th>
-        <th>教师姓名</th>
         <th>操作</th>
     </tr>
     {volist name="courses" id="course" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$course->getData('name')}</td>
-        <td>
-            {$course->Teacher->name}
-        </td>
         <td>
             <a class="btn btn-success btn-sm" href="{:url('AdminStudent/index?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-user"></i>&nbsp;对应学生名单</a>
             <!-- <a class="btn btn-sm btn-primary" href="{:url('edit?id=' . $course->getData('id'))}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>

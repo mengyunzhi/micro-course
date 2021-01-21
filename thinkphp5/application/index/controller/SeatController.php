@@ -77,8 +77,8 @@ class SeatController extends controller {
         $classDetail = new ClassDetail();
 
         // 判断当前座位是否有学生，并判断第二个扫码的人跟第一个人是否是一个人
-        if ($Seat->student_id !== $student_id && $Seat->student_id !==0 && !is_null($Seat->student_id)) {
-            return $this->error('当前已被' . $Seat->student->name . '绑定，请选择其他座位', url('Student/aftersign?studentId' . $studentId);
+        if ($Seat->student_id !== $studentId && $Seat->student_id !==0 && !is_null($Seat->student_id)) {
+            return $this->error('当前已被' . $Seat->student->name . '绑定，请选择其他座位', url('Student/aftersign?studentId' . $studentId));
         }
 
         // 为新建和更新上课详情做准备(获取上课课程对象)

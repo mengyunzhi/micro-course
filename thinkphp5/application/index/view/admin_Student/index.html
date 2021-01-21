@@ -15,6 +15,10 @@
 {/eq}
 {/block}
 {block name="content"}
+{eq name="$match" value="1"}
+<b style="font-size: 15px; float: left; padding-top: 3px; margin-bottom: 20px">课程名称：{$Course->name}</b>
+{else/}
+{/eq}
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>
