@@ -17,6 +17,7 @@ class AdminStudentController extends AdminJudgeController
         try {
             // 获取查询信息
             $courseId = Request::instance()->param('id');
+            $Course =  Course::get($courseId);
             $num = Request::instance()->get('num');
             $page = Request::instance()->get('page');
             $pageSize = 5; // 每页显示5条数据
@@ -52,6 +53,7 @@ class AdminStudentController extends AdminJudgeController
                 $page = $students->render();
                 $page = $coursestudents->render();
             // 向V层传数据
+            $this->assign('Course', $Course);
             $this->assign('match', $match);
             $this->assign('students', $students);
             $this->assign('courseId', $courseId);

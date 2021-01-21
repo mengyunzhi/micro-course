@@ -23,6 +23,7 @@ class AdminCourseController extends AdminJudgeController {
             $Term = new Term;
            
     		$teacher_id=Request::instance()->param('id/d');
+            $Teacher = Teacher::get($teacher_id);
     		$name = Request::instance()->get('name');
     		$courses = new Course;
     		$pageSize=5;
@@ -47,7 +48,7 @@ class AdminCourseController extends AdminJudgeController {
         
         $courses = $courses->order('id desc')->paginate($pageSize);
         $page = $courses->render(); 
-
+        $this->assign('Teacher', $Teacher);
         $this->assign('termId', $Term->id);
         $this->assign('courses',$courses);
         $this->assign('page',$page);
