@@ -250,7 +250,7 @@ class StudentController extends Controller
                 // 更新并保存数据d
                 trace($newStudent,'debug');
                 if (!$newStudent->validate(true)->save()) {
-                    return $this->error('学生信息保存失败,请保证信息正确', Request::instance()->header('referer'));
+                    return $this->error('学生信息保存失败,请联系管理员删除', Request::instance()->header('referer'));
                 }
                 // 第二种存在该学生的,直接将StudentTest赋给Student
             } else {

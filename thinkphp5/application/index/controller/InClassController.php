@@ -162,6 +162,14 @@ class InClassController  extends IndexController {
         $Classroom = Classroom::get($classroomId);
         $Course = Course::get($courseId);
         $beginTime = $Classroom->begin_time;
+        if (is_null($Course)) {
+            return $this->error('课程信息不存在', Request::instance()->header('referer'));
+        }
+
+        // 权限判定
+        if ($Course->teacher_id !== session('teacherId')) {
+            return $this->error('无此权限', Request::instance()->header('referer'));
+        }
 
         // 构造查询条件数组,根据教室id和是否被坐找出被坐座位
         $que = array(
@@ -212,14 +220,24 @@ class InClassController  extends IndexController {
     * 查看签到人数、具有返回按钮返回到上课签到界面
     */
     public function lookSign() {
-        // 接收传来的教室编号，获取该课程所对应的ID
-        $classroomId = Request::instance()->param('classroomId');
+        // 获取教师对象，并通过教师对象获取当前上课地点,获取该课程所对应的ID
+        $teacherId = session('teacherId');
+        $Teacher = Teacher::get($teacherId);
+        $Classroom = Classroom::get($Teacher->classroom_id);
+        if (is_null($Classroom)) {
+            return $this->error('教室信息不存在', Request::instance()->header('referer'));
+        }
+        $classroomId = $Teacher->classroom_id;
         $courseId = Request::instance()->param('courseId');
-        // $classroomId = 35;
+        if (is_null($Course = Course::get($courseId))) {
+            return $this->error('课程信息不存在', Request::instance()->header('referer'));
+        }
 
-        // 实例化班级和课程
-        $Classroom = Classroom::get($classroomId);
-        $Course = Course::get($courseId);
+        // 并增加权限处理
+        if ($Course->teacher_id !== session('teacherId')) {
+            return $this->error('无此权限', Request::instance()->header('referer'));
+        }
+        
         $beginTime = $Classroom->begin_time;
 
         // 构造查询条件数组,根据教室id和是否被坐
@@ -273,6 +291,21 @@ class InClassController  extends IndexController {
         $ClassCourse = ClassCourse::get($classCourseId);
         if (is_null($ClassCourse)) {
             return $this->error('上课课程接收失败，请重新更改', Request::instance()->header('referer'));
+        }
+
+        // 增加权限处理
+        if ($ClassCourse->Course->teacher_id !== session('teacherId')) {
+            return $this->error('无此权限', Request::instance()->header('referer'));
+        }
+
+        // 增加判断该学生是否已经改签,防止出现回跳上一级反复签到情况
+        $que = array(
+            'student_id' => $studentId,
+            'class_course_id' => $classCourseId
+        );
+        $ClassDetail = ClassDetail::get($que);
+        if (!is_null($ClassDetail)) {
+            return $this->error('该学生已经签到完成', Request::instance()->header('referer'));
         }
 
         // 新建上课详情对象，并进行赋值和保存
