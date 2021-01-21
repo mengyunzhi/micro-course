@@ -368,6 +368,7 @@ class SeatMapController extends Controller {
 							return $this->error('当前有与此模板对应的教室正在上课，请稍后删除', url('index'));
 						}
 					}
+					return $this->error('当前此教室正在上课，请稍后删除', url('classroom/index'));
 				}
 			}
 		}

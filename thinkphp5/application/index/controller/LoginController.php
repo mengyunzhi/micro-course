@@ -155,10 +155,9 @@ class LoginController extends Controller {
         /*dump($studentId);
         dump($Student);
         die();
-*/
+        */
         // 第一种session已经过期，输入用户名密码登陆
-        if (is_null($Student)) {
-            
+        if (is_null($Student) || is_null($studentId)) {
             if (is_null($username) || is_null($password)) {
                 return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             } else {
@@ -321,7 +320,7 @@ class LoginController extends Controller {
                 // 获取教师id
                 $teacherId = session('teacherId');
                 $Teacher = Teacher::get($teacherId);
-                if (is_null($Teacher)) {
+                if (is_null($Teacher || is_null($teacherId))) {
                     return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
                 } else {
                     // 绑定教师和教室信息
