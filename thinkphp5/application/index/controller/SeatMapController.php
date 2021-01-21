@@ -69,7 +69,7 @@ class SeatMapController extends Controller {
 		$seatAisles = new SeatAisle;
 		$seatAisles = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
 		if(empty($seatAisles)) {
-			return $this->error('当前模板座位图为空，请重新编辑或删除该模板', url('index'));
+			return $this->error('模板' . $SeatMap->name . '座位图为空，请重新编辑或删除该模板', url('index'));
 		}
 
 		$this->assign('match', $match);
@@ -164,7 +164,7 @@ class SeatMapController extends Controller {
 	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
 	 */
 	public function save() {
-		if(input('id') != 0) {
+		if(input('id') != '0') {
 			$SeatMap = SeatMap::get(['id' => input('id')]);
 			if(is_null($SeatMap)) {
 				$SeatMap = new SeatMap;
@@ -190,7 +190,8 @@ class SeatMapController extends Controller {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
 		$id = $SeatMap->id;
-		if(input('id') === 0) {
+		
+		if(input('id') === '0') {
 			$seatMaps = SeatMap::all();
 			foreach ($seatMaps as $seatMap) {
 				if($seatMap->id != $id) {
@@ -199,7 +200,6 @@ class SeatMapController extends Controller {
 				}
 			}
 		}
-		
 		
 		$this->addseatAisle($id, url('edit?id=' . $id));
 	}
@@ -360,7 +360,7 @@ class SeatMapController extends Controller {
  	public function judgeClassroom($seatMapId) {
 		$teachers = Teacher::all();
 		foreach ($teachers as $Teacher) {
-			if($Teacher->classroom_id != 0) {
+			if($Teacher->classroom_id !== 0) {
 				$Classroom = Classroom::get($Teacher->classroom_id);
 				if(!is_null($Classroom)) {
 					if($Classroom->seat_map_id === $seatMapId) {

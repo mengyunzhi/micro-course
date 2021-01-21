@@ -269,11 +269,12 @@ class ClassroomController extends AdminJudgeController
     public function delete() {
       // 获取教室id，并进行实例化
       $classroomId = input('param.id');
-      $this->deleteSeat($classroomId);
       $Classroom = Classroom::get($classroomId);
       $SeatMapController = new SeatMapController;
       if($SeatMapController->judgeClassroom($Classroom->seat_map_id)) {
         $Classroom->is_delete = 1;
+        $this->deleteSeat($classroomId);
+
         // 删除教室
         if(!$Classroom->save()) {
           return $this->error('教室未被正确删除');
