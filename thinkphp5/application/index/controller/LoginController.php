@@ -280,7 +280,7 @@ class LoginController extends Controller {
         $Teacher = Teacher::get($teacherId);
 
         // 如果session还没有过期的情况下，直接登陆
-        if (!is_null($Teacher)) {
+        if (!is_null($Teacher) && !is_null($teacherId)) {
             // 绑定教师信息和教室信息
             $Teacher->classroom_id = $classroomId;
             if (!$Teacher->save()) {
