@@ -233,18 +233,18 @@ class CourseController extends IndexController {
         $name = time() . $_FILES["userfile"]["name"];
         // dump($name);
         $uploadfile = $uploaddir . $name;
-         /*dump($uploadfile);
+        /* dump($uploadfile);
          echo '<pre>';
          print_r($_FILES);*/
-         /*dump($_FILES['userfile']['tmp_name']);
-         die();
-        if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+         /*dump($_FILES['userfile']);
+         dump($_FILES['userfile']['size']);*/
+       /* if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
             return $this->success('新增课程成功', url('index'));
-        }
+        }*/
          
         //$href 文件存储路径
-       $href = $uploaddir . $name;*/
-       if(!is_null($_FILES['userfile']['tmp_name'])) {
+       $href = $uploaddir . $name;
+       if($_FILES['userfile']['size'] !== 0) {
         $unImportNumber = 0;
         if(!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
             $Course->delete();
@@ -258,7 +258,7 @@ class CourseController extends IndexController {
             return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
         }
     } else {
-        return $this->success('新增课程和学生成功', url('index'));
+        return $this->success('新增课程成功', url('index'));
     }
         
   }
