@@ -22,6 +22,7 @@ class ClassroomController extends AdminJudgeController
     	$pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
+      $Classroom->where('is_delete', '<>', 1);
 
       if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
@@ -147,7 +148,8 @@ class ClassroomController extends AdminJudgeController
       $classroomId = Request::instance()->param('classroomId/d');
       $Classroom = Classroom::get($classroomId);
       $seatMapId = Request::instance()->param('seatMapId');
-      if(SeatMapController::judgeClassroom($seatMapId)) {
+      $SeatMapController = new SeatMapController;
+      if($SeatMapController->judgeClassroom($seatMapId)) {
           //如果存在上级路由（模板选择一级）传过来的值，则赋值
         if(!is_null($seatMapId)) {
           $Classroom->seat_map_id = $seatMapId;
@@ -267,11 +269,14 @@ class ClassroomController extends AdminJudgeController
     public function delete() {
       // 获取教室id，并进行实例化
       $classroomId = input('param.id');
-      $this->deleteSeat($classroomId);
       $Classroom = Classroom::get($classroomId);
-      if(SeatMapController::judgeClassroom($Classroom->seat_map_id)) {
+      $SeatMapController = new SeatMapController;
+      if($SeatMapController->judgeClassroom($Classroom->seat_map_id)) {
+        $Classroom->is_delete = 1;
+        $this->deleteSeat($classroomId);
+
         // 删除教室
-        if(!$Classroom->delete()) {
+        if(!$Classroom->save()) {
           return $this->error('教室未被正确删除');
         }
         return $this->success('删除成功', url('index'));

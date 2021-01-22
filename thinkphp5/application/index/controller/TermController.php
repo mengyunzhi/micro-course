@@ -13,6 +13,7 @@ class TermController extends AdminJudgeController
 	public function index()
 	{
 		try {
+           
 			// 获取查询信息
             $name = Request::instance()->get('name');
 

@@ -9,26 +9,31 @@
             <div class="form-group">
                 <input name="name" type="text" class="form-control" placeholder="课程名称..." value="{:input('get.name')}">
             </div>
-            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
+            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search" ></i>&nbsp;查询</button>
         </form>
     </div>
 </div>
 {/block}
 {block name="content"}
-{eq name="Term->state" value="1"}
-<div class="text-right">
-    <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+<b>{eq name="$Term" value=""}
     <hr>
-</div>
-{else /}<hr style="margin-top:55px;">{/eq}
+    {else /}
+    {eq name="Term->state" value="1"}
+    <div class="text-right">
+        <a href="{:url('course/add?id=' . $Teacher->id)}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</a>
+        <hr>
+    </div>
+    {else /}
+    <hr style="margin-top:55px;">{/eq}
+    {/eq}</b>
 <b style="font-size: 15px; float: left; padding-top: 3px">当前学期：</b>
 <div class="btn-group" style="margin-bottom: 10px">
     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; padding: 4px ">
         <b>{eq name="$Term" value=""}
-        无学期
-        {else /}
-        {$Term->name}
-        {/eq}</b>
+            无学期
+            {else /}
+            {$Term->name}
+            {/eq}</b>
         <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" style="min-width: 100px">

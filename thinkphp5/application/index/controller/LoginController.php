@@ -17,6 +17,7 @@ use app\common\model\ClassCourse;
 class LoginController extends Controller {
     //用户登录表单
     public function index() {
+       
         // 接收登陆信息
         $username = Request::instance()->param('username');
         $password = '';
@@ -150,8 +151,13 @@ class LoginController extends Controller {
 
         // 获取学生id，判断session是否过期
         $studentId = session('studentId');
+        $Student = Student::get($studentId);
+        /*dump($studentId);
+        dump($Student);
+        die();
+        */
         // 第一种session已经过期，输入用户名密码登陆
-        if (is_null($studentId)) {
+        if (is_null($Student) || is_null($studentId)) {
             if (is_null($username) || is_null($password)) {
                 return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             } else {
@@ -170,8 +176,8 @@ class LoginController extends Controller {
 
             // 第二种session未过期，直接登陆
         } else {
-            $Student = Student::get($studentId);
-            // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
+
+         // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
             if (is_null($seatId) || $seatId === 0) {
                 return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
             }
@@ -264,27 +270,24 @@ class LoginController extends Controller {
     }
 
     /**
-     * 老师微信端登陆方法
+     * 老师微信端登陆
      */
     public function teacherIndex() {
         // 首先获取教师id，判断session是否过期
         $teacherId = session('teacherId');
+
         $classroomId = Request::instance()->param('classroomId');
+        $Teacher = Teacher::get($teacherId);
 
         // 如果session还没有过期的情况下，直接登陆
-        if (!is_null($teacherId)) {
+        if (!is_null($Teacher) && !is_null($teacherId)) {
             // 绑定教师信息和教室信息
-            $Teacher = Teacher::get($teacherId);
-            if (is_null($Teacher)) {
-                return $this->error('教师信息不存在', url('teacherIndex?class'));
-            } else {
-                $Teacher->classroom_id = $classroomId;
-                if (!$Teacher->save()) {
-                    return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
+            $Teacher->classroom_id = $classroomId;
+            if (!$Teacher->save()) {
+                return $this->error('教师-教室信息绑定失败', Request::instance()->header('referer'));
                 }
+                return $this->success('登陆成功', url('teacherwx/index'));
             }
-            return $this->success('登陆成功', url('teacherwx/index'));
-        }
 
         // 接收用户名和密码,避免二次登陆重新输入账号密码
         $username = Request::instance()->param('username');
@@ -317,7 +320,7 @@ class LoginController extends Controller {
                 // 获取教师id
                 $teacherId = session('teacherId');
                 $Teacher = Teacher::get($teacherId);
-                if (is_null($Teacher)) {
+                if (is_null($Teacher || is_null($teacherId))) {
                     return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
                 } else {
                     // 绑定教师和教室信息
