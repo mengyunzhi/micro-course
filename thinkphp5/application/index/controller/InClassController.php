@@ -265,8 +265,6 @@ class InClassController  extends IndexController {
         $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
 
         $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate(); 
-        trace($ClassDetails[0]->create_time, 'debug');
-        trace($Classroom->sign_deadline_time, 'debug');
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);

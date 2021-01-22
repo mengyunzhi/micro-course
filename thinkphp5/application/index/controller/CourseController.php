@@ -45,7 +45,7 @@ class CourseController extends IndexController {
         $Grade = new GradeController;
         //按条件查询数据并调用分页
         $courses = $Grade->getCourses($termId, $id, $name)->paginate();
-        
+
         // 获取所有的学期信息
         $terms = Term::all();   
 
@@ -224,6 +224,7 @@ class CourseController extends IndexController {
         $Course->begincougrade = 0;
 
         if (!$Course->validate(true)->save()) {
+
             return $this->error('课程保存失败：' . $Course->getError());
         }
         // Excel表的导入
@@ -234,16 +235,18 @@ class CourseController extends IndexController {
         $uploadfile = $uploaddir . $name;
          /*dump($uploadfile);
          echo '<pre>';
-         print_r($_FILES);
-         dump($_FILES['userfile']['tmp_name']);*/
+         print_r($_FILES);*/
+         /*dump($_FILES['userfile']['tmp_name']);
+         die();
         if (!move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
             return $this->success('新增课程成功', url('index'));
         }
          
         //$href 文件存储路径
-       $href = $uploaddir . $name;
+       $href = $uploaddir . $name;*/
+       if(!is_null($_FILES['userfile']['tmp_name'])) {
         $unImportNumber = 0;
-        if(!$this->excel($href, $Course, $unImportNumber)) {
+        if(!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
             $Course->delete();
             return $this->error('文件上传失败');
         }
@@ -254,6 +257,10 @@ class CourseController extends IndexController {
         } else {
             return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
         }
+    } else {
+        return $this->success('新增课程和学生成功', url('index'));
+    }
+        
   }
 
    /**
