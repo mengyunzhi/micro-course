@@ -52,7 +52,7 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->id = 0;
         $Teacher->name = '';
         $Teacher->username = '';
-        $Teacher->num = '';
+        $Teacher->num = 0;
         $Teacher->password = '';
         $this->assign('Teacher', $Teacher);
 
