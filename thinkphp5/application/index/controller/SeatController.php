@@ -120,7 +120,6 @@ class SeatController extends controller {
             if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
                 // 该成绩签到次数加并重新计算签到成绩和总成绩
                 $Grade->resigternum ++;
-                $Grade->getUsgrade();
                 $Grade->getAllgrade();
             }
         }

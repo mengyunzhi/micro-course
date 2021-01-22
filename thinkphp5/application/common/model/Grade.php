@@ -29,6 +29,9 @@ class Grade extends Model {
             $this->usgrade = 0;
         } else {
             $this->usgrade = ceil($this->resigternum / $this->Course->resigternum * 100);
+            if ($this->usgrade >= 100) {
+                $this->usgrade = 100;
+            }
         }
         
         // 将更改后的记录保存并返回

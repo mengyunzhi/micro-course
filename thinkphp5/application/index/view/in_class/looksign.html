@@ -3,12 +3,14 @@
 课程管理
 {/block}
 {block name="content"}
-
 <table class="table table-hover table-bordered" style="200px;">
     <td>{$course->name}:已上课学生：{:$signNumber}人</td>
-    <td><div >
-        <a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}"><i class="
-glyphicon glyphicon-arrow-up"></i>&nbsp;返回</a></td></div>
+    <td>
+        <div>
+            <a class="btn btn-sm btn-primary" href="{:url('PreClass/index?classroomId=' . $Classroom->id . '&course_id=' . $course->id)}"><i class="
+glyphicon glyphicon-arrow-up"></i>&nbsp;返回</a>
+    </td>
+    </div>
 </table>
 <table class="table table-hover table-bordered" style="">
     <tr class="info">
@@ -25,8 +27,10 @@ glyphicon glyphicon-arrow-up"></i>&nbsp;返回</a></td></div>
         <td>{$_ClassDetail->student->name}</td>
         <td>{$_ClassDetail->student->num}</td>
         <td>{eq name="_ClassDetail->student->sex" value='0'}男{else /}女{/eq}</td>
-        <td>{eq name="_ClassDetail->seat_id" value="-1"}成功{else/}{gt name="_ClassDetail->create_time" value='Classroom->sign_deadline_time'}<span class="label label-danger">迟到</span>{else /}成功{/gt}{/eq}</td>
-        <td><?php echo(date('Y/m/d G:i',$_ClassDetail->create_time)); ?></td>
+        <td>{eq name="_ClassDetail->seat_id" value="-1"}成功{else /}{gt name="_ClassDetail->create_time" value='$Classroom->sign_deadline_time'}<span class="label label-danger">迟到</span>{else /}成功{/gt}{/eq}</td>
+        <td>
+            <?php echo(date('Y/m/d G:i',$_ClassDetail->create_time)); ?>
+        </td>
     </tr>
     {/volist}
 </table>

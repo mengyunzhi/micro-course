@@ -87,7 +87,7 @@ class Student extends Model
     }
     public function Grade()
     {
-        return $this->belongsToMany('Course',config('database.prefix').'grade');
+        return $this->belongsToMany('course',config('database.prefix').'grade');
     }
     //获取是否存在相关信息
      public function getIsChecked(Course &$Course)

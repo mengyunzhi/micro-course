@@ -39,7 +39,7 @@
             <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
         </td>
         <td>
-            {eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">未成功</span>{else /}成功{/gt}{/eq}
+            {eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='$_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">失败</span>{else /}成功{/gt}{/eq}
         </td>
     </tr>
     {/volist}
