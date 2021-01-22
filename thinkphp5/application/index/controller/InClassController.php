@@ -265,6 +265,8 @@ class InClassController  extends IndexController {
         $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
 
         $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate(); 
+        trace($ClassDetails[0]->create_time, 'debug');
+        trace($Classroom->sign_deadline_time, 'debug');
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);
@@ -567,8 +569,8 @@ class InClassController  extends IndexController {
         // 判断该上课详情创建时间是否处于新的签到时间内，重新计算
         foreach ($classDetails as $ClassDetail) {
             if ($ClassDetail->create_time >= $ClassCourse->sign_deadline_time && $ClassDetail->seat_id !== -1) {
-                $Grade = $ClassDetail->Student->Grade;
-                $Grade->resigternum --;
+                $Grade = Grade::get(['course_id' => $ClassCourse->course_id, 'student_id' => $ClassDetail->Student->id]);
+                $Grade->resigternum++;
                 if ($Grade->resigternum < 0) {
                     $Grade->resigternum = 0;
                 }
