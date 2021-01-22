@@ -640,7 +640,7 @@ class InClassController  extends IndexController {
             }
         }
         if($outTime === 3) {
-            if ($$sixthTime > time() && $Classroom->sign_deadline_time < $$sixthTime) {
+            if ($sixthTime > time() && $Classroom->sign_deadline_time < $sixthTime) {
                 $Classroom->out_time = $sixthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));
