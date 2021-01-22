@@ -364,7 +364,7 @@ class SeatMapController extends Controller {
  	public function judgeClassroom($seatMapId) {
 		$teachers = Teacher::all();
 		foreach ($teachers as $Teacher) {
-			if($Teacher->classroom_id !== 0) {
+			if($Teacher->classroom_id !== 0 && !is_null($Teacher->classroom_id)) {
 				$Classroom = Classroom::get($Teacher->classroom_id);
 				if(!is_null($Classroom)) {
 					if($Classroom->seat_map_id === $seatMapId) {
