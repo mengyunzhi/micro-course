@@ -531,6 +531,7 @@ class InClassController  extends IndexController {
         $Classroom->sign_time = $signTime;
 
         // 根据上课时间和修改后的签到时长，从新设置签到截止时长
+        $oldTime = $Classroom->sign_deadline_time;
         $Classroom->sign_deadline_time = $Classroom->sign_time * 60 + $Classroom->sign_begin_time;
 
         if ($Classroom->sign_deadline_time > $Classroom->out_time) {
@@ -551,7 +552,7 @@ class InClassController  extends IndexController {
         }
 
         // 调用签到成绩修改方法，修改签到成绩
-        $this->resetSignGrade($ClassCourse);
+        $this->resetSignGrade($ClassCourse, $oldTime);
 
         return $this->success('修改签到时长成功', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
     }
@@ -559,16 +560,17 @@ class InClassController  extends IndexController {
     /**
      * 签到成绩更新
      * @param ClassCourse 上课课程对象
+     * @param oldTime 之前的上课签到截至时间
      */
-    public function resetSignGrade($ClassCourse) {
+    public function resetSignGrade($ClassCourse, $oldTime) {
         // 根据上课课程id获取对应的上课详情信息
         $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
 
         // 判断该上课详情创建时间是否处于新的签到时间内，重新计算
         foreach ($classDetails as $ClassDetail) {
-            if ($ClassDetail->create_time >= $ClassCourse->sign_deadline_time && $ClassDetail->seat_id !== -1) {
+            if ($oldTime > $ClassDetail->create_time && $ClassDetail->create_time >= $ClassCourse->sign_deadline_time && $ClassDetail->seat_id !== -1) {
                 $Grade = Grade::get(['course_id' => $ClassCourse->course_id, 'student_id' => $ClassDetail->Student->id]);
-                $Grade->resigternum++;
+                $Grade->resigternum--;
                 if ($Grade->resigternum < 0) {
                     $Grade->resigternum = 0;
                 }
@@ -855,6 +857,7 @@ class InClassController  extends IndexController {
 
                     // 利用foreach循环将数据库中的数据读出，下面仅仅是将学生表的数据读出
                     $classCourseId = Request::instance()->param('classCourseId');
+                    $ClassCourse = ClassCourse::get($classCourseId);
                     $classDetails = ClassDetail::where('class_course_id', '=', $classCourseId)->select();
                     $count = 2;
                     foreach ($classDetails as $ClassDetail) {
