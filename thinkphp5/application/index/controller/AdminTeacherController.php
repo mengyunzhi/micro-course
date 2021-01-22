@@ -100,7 +100,7 @@ class AdminTeacherController extends AdminJudgeController
         // 写入要更新的数据
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
-        $Teacher->num = input('post.num');
+        $Teacher->num = 0;
         $Teacher->password = '123456';
 
 

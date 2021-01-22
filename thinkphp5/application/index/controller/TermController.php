@@ -250,7 +250,7 @@ class TermController extends AdminJudgeController
 
         //判断输入的起始时间和终止时间是否符合标准
         if(!$this->timeJudging($Term->ptime, $Term->ftime)) {
-            return $this->error('终止时间不能小于起始时间', url('add?name=' . $Term->name = input('post.name')));
+            return $this->error('终止时间不能小于起始时间', url('add?name=' . $Term->name = input('post.name') . '&ftime=' . $Term->ftime . '&ptime=' . $Term->ptime));
         }
 
         $Term1 = Term::where('state', '=', 1)->select();
