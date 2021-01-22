@@ -593,6 +593,7 @@ class InClassController  extends IndexController {
         $Course = course::get($courseId);
         $ClassCourse->teacher_id = $Course->teacher_id;
         $ClassCourse->begin_time = $Classroom->begin_time;
+        $ClassCourse->sign_deadline_time = $Classroom->sign_deadline_time;
 
         // 将上课课程信息保存
        if (!$ClassCourse->save()) {
