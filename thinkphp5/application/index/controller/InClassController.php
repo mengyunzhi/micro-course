@@ -567,8 +567,8 @@ class InClassController  extends IndexController {
         // 判断该上课详情创建时间是否处于新的签到时间内，重新计算
         foreach ($classDetails as $ClassDetail) {
             if ($ClassDetail->create_time >= $ClassCourse->sign_deadline_time && $ClassDetail->seat_id !== -1) {
-                $Grade = $ClassDetail->Student->Grade;
-                $Grade->resigternum --;
+                $Grade = Grade::get(['course_id' => $ClassCourse->course_id, 'student_id' => $ClassDetail->Student->id]);
+                $Grade->resigternum++;
                 if ($Grade->resigternum < 0) {
                     $Grade->resigternum = 0;
                 }
@@ -640,7 +640,7 @@ class InClassController  extends IndexController {
             }
         }
         if($outTime === 3) {
-            if ($$sixthTime > time() && $Classroom->sign_deadline_time < $$sixthTime) {
+            if ($sixthTime > time() && $Classroom->sign_deadline_time < $sixthTime) {
                 $Classroom->out_time = $sixthTime;
             } else {
             return $this->error('修改失败，请保证下课时间晚于上课签到截止时间', url('index?classroomId=' . $Classroom->id . '&reclass=' . 1));

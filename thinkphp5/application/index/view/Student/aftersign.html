@@ -19,7 +19,7 @@
         <td>{$_classDetail->classCourse->course->getData('name')}</td>
         <td>{$_classDetail->classCourse->classroom->name}</td>
         <td><?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?></td>
-        <td>{eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">迟到</span>{else /}成功{/gt}{/eq}</td>
+        <td>{eq name="_classDetail->seat_id" value="-1"}成功{else/}{gt name="_classDetail->create_time" value='$_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">迟到</span>{else /}成功{/gt}{/eq}</td>
     </tr>
     {/volist}
 </table>
