@@ -275,7 +275,11 @@ class SeatMapController extends Controller {
 		if(!$SeatAisle->save()) {
 			$this->error('系统未找到ID为' . $id . '的记录');
 		}
-		return $this->success('设置成功', $Request->header('referer')); 
+
+		// 如果设置成功返回设置成功的
+		$url = url('index/SeatMap/edit?id=' . $SeatAisle->seat_map_id);
+        header("Location: $url");
+        exit();
 	}
 
 	/**

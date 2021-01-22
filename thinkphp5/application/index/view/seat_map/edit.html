@@ -14,12 +14,16 @@
 {/block}
 {block name="content"}
 <div class="container">
-    <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
-    <a class="btn btn-warning" href="{:url('seatMapReset?id=' . $SeatMap->id)}" style="float: right;">
+    <label style="font-size: 20px;margin-top: -15px;">请根据需要选择过道或者座位：</label>
+    
+    <hr>
+    <a class="btn btn-warning" href="{:url('seatMapReset?id=' . $SeatMap->id)}" style="float: left;margin-left: 120px;">
         <p style="text-align: center;margin: auto;">重设模板</p>
     </a>
-    <hr>
-    <table style="margin: auto;">
+    <div style="margin-right:130px;float: right;margin-top: -18px;">
+        <a href="{:url('editClassroom?seatMapId=' . $SeatMap->id)}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">提交</button></a>
+    </div>
+    <table style="margin: auto;margin-bottom: 50px;">
         <label class="container">
             <h3 style="text-align: center;">讲台</h3>
         </label>
@@ -45,8 +49,5 @@
         {/if}
         {/volist}
     </table>
-    <div style="margin-left: auto;margin-right: auto;">
-        <a href="{:url('editClassroom?seatMapId=' . $SeatMap->id)}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">提交</button></a>
-    </div>
 </div>
 {/block}
