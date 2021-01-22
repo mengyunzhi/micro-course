@@ -33,12 +33,7 @@
                     <label for="username" style="font-size: 20px;margin-top: 20px;">用户名:</label>
                     <input type="text" name="username" id="username" value="{$Teacher->username}" class="form-control" />
                 </div>
-                {eq name="$action" value="update"}
-                <div class="form-group">
-                    <label for="num" style="font-size: 20px;margin-top: 20px;">工号:</label>
-                    <input type="text" name="num" id="num" value="{$Teacher->num}" class="form-control" />
-                </div>
-                {/eq}
+                
                 <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
             </form>
         </div>
