@@ -395,7 +395,8 @@ class InClassController  extends IndexController {
     * @param $outTime 签到截止时间
     * @param Classroom 待修改的教室对象
     */
-    protected function timeJudge($beginTime, Classroom &$Classroom) {
+    public function timeJudge($beginTime, Classroom &$Classroom)
+    {
         // 定义课前对象
         $PreClass = new PreClass;
         $Request = Request::instance();

@@ -74,7 +74,7 @@ class PreClassController extends IndexController
             // 增加判断是否老师为当前签到时间对应的老师
             if (is_null($Classroom->Course)) {
                 $this->clearClassroom($Classroom);
-                return $this->error('当前课程已经不存在,请先添加上课', Request::instance()->header('referer'));
+                return $this->error('当前课程已经不存在,请先添加课程', Request::instance()->header('referer'));
             }
             if ($teacherId === $Classroom->Course->Teacher->id) {
                 $url = url('InClass/index?reclass=' . 1 . '&classroomId=' . $Classroom->id);

@@ -26,6 +26,7 @@ class Student extends Model
     {
         return date('Y-m-d', $value);
     }
+
     public function Courses()
     {
         return $this->belongsToMany('Course',config('database.prefix').'course_student');
@@ -34,26 +35,6 @@ class Student extends Model
     public function getNum()
     {
 
-    }
-
-    /**
-     * 增加登陆判断
-     */
-    static public function Login($username, $password) {
-        // 定制查询信息，判断是否存在username
-        $que = array(
-            'username' => $username,
-        );
-        $Student = Student::get($que);
-        if (!is_null($Student)) {
-            // 验证密码是否正确
-            if ($Student->checkPassword($password)) {
-                // 登录
-                session('studentId', $Student->getData('id'));
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -68,27 +49,16 @@ class Student extends Model
         }
     }
 
-    /**
-     * 设置学生登陆密码算法加密
-     */
-    static public function encryptPassword($password) {
-        // 增加判断传入密码是否为字符串
-        if(!is_string($password)) {
-            throw new \RuntimeException("传入变量类型非字符串，错误码2", 2);  
-        }
-        
-        // 如果密码合格直接加密
-        return sha1(md5($password) . 'mengyunzhi');
-    }
-
     public function Course()
     {
         return $this->belongsTo('course');
     }
+
     public function Grade()
     {
         return $this->belongsToMany('course',config('database.prefix').'grade');
     }
+
     //获取是否存在相关信息
      public function getIsChecked(Course &$Course)
     {
@@ -127,5 +97,42 @@ class Student extends Model
         return $this->name;
     }
 
-    
+    /**
+     * 增加登陆判断
+     * @param username 登录检验用到的用户名(学号)
+     * @param password 登录检验用的密码
+     * @param name 存在多个相同学号的额外判定条件
+     */
+    public static function login($username, $password, $name = null)
+    {
+        // 定制查询信息，判断是否存在username
+        $que = array(
+            'username' => $username,
+            'name' => $name
+        );
+        $Student = Student::get($que);
+        if (!is_null($Student)) {
+            // 验证密码是否正确
+            if ($Student->checkPassword($password)) {
+                // 登录
+                session('studentId', $Student->getData('id'));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 设置学生登陆密码算法加密
+     */
+    public static function encryptPassword($password)
+    {
+        // 增加判断传入密码是否为字符串
+        if (!is_string($password)) {
+            throw new \RuntimeException("传入变量类型非字符串，错误码2", 2);
+        }
+
+        // 如果密码合格直接加密
+        return sha1(md5($password) . 'mengyunzhi');
+    }
 }

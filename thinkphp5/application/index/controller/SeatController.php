@@ -78,7 +78,10 @@ class SeatController extends controller {
 
         // 判断当前座位是否有学生，并判断第二个扫码的人跟第一个人是否是一个人
         if ($Seat->student_id !== $studentId && $Seat->student_id !==0 && !is_null($Seat->student_id)) {
-            return $this->error('当前已被' . $Seat->student->name . '绑定，请选择其他座位', url('Student/aftersign?studentId' . $studentId));
+            return $this->error(
+                '当前已被' . $Seat->student->name . '绑定，请选择其他座位重新扫码',
+                url('Student/aftersign?studentId' . $studentId . '&courseId=' . $Classroom->course_id)
+            );
         }
 
         // 为新建和更新上课详情做准备(获取上课课程对象)
@@ -91,7 +94,7 @@ class SeatController extends controller {
             $SeatFirst->student_id = null;
             $SeatFirst->is_seated = 0;
             if (!$SeatFirst->save()) {
-                return $this->error('座位信息更新失败', Request::instance()->header('referer'));
+                return $this->error('座位信息更新失败', request()->header('referer'));
             }
             // 获取对应的上课详情对象
             $que = array(
@@ -107,20 +110,25 @@ class SeatController extends controller {
         if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
             return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
-            // 获取此学生和此课程对应的成绩
-            $que = array(
-                'student_id' => $studentId,
-                'course_id' => $Classroom->course_id
-            );
-            $Grade = Grade::get($que);
-            if (is_null($Grade)) {
-                return $this->error('您不在当前上课名单中,请检查上课地点是否正确', url('Student/afterSign?studentId=' . $studentId));
-            }
-            // 增加判断是否在签到截止时间内
-            if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
-                // 该成绩签到次数加并重新计算签到成绩和总成绩
-                $Grade->resigternum ++;
-                $Grade->getAllgrade();
+            // 判断学生是否在当前课程中
+            $Grades = Grade::where('course_id', '=', $Classroom->course_id);
+            if (!is_null($Grades)) {
+                // 获取此学生和此课程对应的成绩
+                $que = array(
+                    'student_id' => $studentId,
+                    'course_id' => $Classroom->course_id
+                );
+                $Grade = Grade::get($que);
+                if (is_null($Grade)) {
+                    return $this->error('您不在当前上课名单中,请检查上课地点是否正确', url('Student/afterSign?studentId=' . $studentId));
+                }
+
+                // 增加判断是否在签到截止时间内
+                if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
+                    // 该成绩签到次数加并重新计算签到成绩和总成绩
+                    $Grade->resigternum++;
+                    $Grade->getAllgrade();
+                }
             }
         }
 
@@ -136,9 +144,16 @@ class SeatController extends controller {
         // dump($Seat->student_id);die();
         // 将修改后的座位对象保存
         if (!$Seat->save()) {
-            return $this->error('座位信息更新失败，请重新扫码', url('Student/aftersign?studentId=' . $studentId));
+            return $this->error(
+                '座位信息更新失败，请重新扫码',
+                url('Student/aftersign?studentId=' . $studentId)
+            );
         }
-        return $this->success('扫码签到成功，开始上课', url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId));
+        $courseId = $Classroom->course_id;
+        return $this->success(
+            '扫码签到成功，开始上课',
+            url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId . '&courseId=' . $courseId)
+        );
     }
 
     /**

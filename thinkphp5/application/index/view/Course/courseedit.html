@@ -34,15 +34,22 @@
         </div>
     </div>
     {php}$action=request()->action()==='add'?'save':'update';{/php}
-    <form class="form-horizontal" action="{:url($action)}" method="post">
-        <table class="table table-hover table-bordered">
-            <td>
-                <h3>学期 <span class="label label-default">{:$Course->Term->name}</span></h3>
-                <h3>学生人数 <span class="label label-default">{:$Course->student_num}</span></h3>
-                <h3>上课次数 <span class="label label-default">{:$Course->resigternum}</span></h3>
-            </td>
-            <td>
-                <div class="form-group" style="margin-top: 50px;">
+    <table class="table table-hover table-bordered">
+        <td><a href="{:url('templateDownload')}"><button class="btn btn-warning"><i class="glyphicon glyphicon-download"></i>&nbsp;模板下载</button></a>
+            <br>
+            <h3>学期 <span class="label label-default">{:$Course->Term->name}</span></h3>
+            <h3>学生人数 <span class="label label-default">{:$Course->student_num}</span></h3>
+            <h3>上课次数 <span class="label label-default">{:$Course->resigternum}</span></h3>
+        </td>
+        <td>
+            <form class="form-horizontal" enctype="multipart/form-data" action="{:url($action)}" method="post">
+                <div style="margin-top: 5px;">
+                    <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">导入学生:</label>
+                    <!-- MAX_FILE_SIZE must precede the file input field -->
+                    <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+                    <!-- Name of input element determines name in $_FILES array -->
+                    <input name="userfile" type="file" /></div>
+                <div class="form-group" style="margin-top: 30px;">
                     <input type="hidden" name="courseId" value="{$Course->getData('id')}" />
                     <label class="col-sm-2 control-label" style="font-size: 20px;" for="name">
                         课程名称:
@@ -56,8 +63,8 @@
                         <button type="submit" class="btn btn-default">保存</button>
                     </div>
                 </div>
-            </td>
-    </form>
+            </form>
+        </td>
 </body>
 
 </html>

@@ -72,7 +72,6 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     protected $data = [];
     // 记录改变字段
     protected $change = [];
-
     // 保存自动完成列表
     protected $auto = [];
     // 新增自动完成列表
@@ -234,7 +233,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @return $this
      */
     public function data($data, $value = null)
-    {
+    {   
         if (is_string($data)) {
             $this->data[$data] = $value;
         } else {
@@ -263,7 +262,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @throws InvalidArgumentException
      */
     public function getData($name = null)
-    {
+    {   
         if (is_null($name)) {
             return $this->data;
         } elseif (array_key_exists($name, $this->data)) {
@@ -401,7 +400,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @throws InvalidArgumentException
      */
     public function getAttr($name)
-    {
+    {   
         try {
             $notFound = false;
             $value    = $this->getData($name);

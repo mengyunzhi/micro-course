@@ -45,15 +45,66 @@ class TeacherwxController extends IndexController {
         if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate();
             $this->assign('courses', $courses);
+            $this->assign('Teacher', $Teacher);
             return $this->fetch();
         } else {
             $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
             // 将课程对象数组传入V层进行渲染
             $this->assign('courses', $courses);
-
+            $this->assign('Teacher', $Teacher);
             return $this->fetch();
         }
     }
+
+    /**
+     * 微信端教师新增课程
+     */
+    public function add()
+    {
+        // 接收课程名称，防止新增失败
+        $name = Request::instance()->param('name');
+
+        // 新建课程对象，传入V层
+        $Course = new Course();
+
+        // 将数据传入V层，并返回渲染后的效果
+        $this->assign('Course', $Course);
+        return $this->fetch();
+    }
+
+    /**
+     * 接收新增上课对象方法传入的值，并进行保存
+     */
+    public function save()
+    {
+        // 首先获取当前学期和教师id
+        $teacherId = session('teacherId');
+        if (is_null($teacherId) || is_null($Teacher = Teacher::get($teacherId))) {
+            return $this->error('请检查是否登录', Request::instance()->header('referer'));
+        }
+        // 学期
+        $Term = Term::get(['state' => 1]);
+        if (is_null($Term)) {
+            return $this->error('当前学期为空，请联系管理员:111111', Request::instance()->header('referer'));
+        }
+
+        // 接收课程信息，并进行保存
+        $Course = new Course();
+        $Course->name = Request::instance()->post('name');
+        $Course->teacher_id = Request::instance()->post('id');
+        $Course->term_id = Request::instance()->post('term_id');
+        $Course->student_num = 0;
+        $Course->resigternum = 0;
+        $Course->usmix = 50;
+        $Course->courseup = 100;
+        $Course->begincougrade = 0;
+
+        // 将新增的课程保存
+        if (!$Course->validate()->save()) {
+            return $this->error('课程新增失败,请检查信息填写是否正确', Request::instance()->header('referer'));
+        }
+    }
+
     /**
      * 微信端扫码登陆后的跳转到上课表现成绩加减分部分
      */
@@ -201,6 +252,7 @@ class TeacherwxController extends IndexController {
         // 将教师数据库字段classroom_id 赋值给变量$classroomId，并对教室对象实例化
         $classroomId = $Teacher->classroom_id;
         $Classroom = Classroom::get($classroomId);
+
         // 判断是否处于上课状态：两种情况
         if (is_null($Classroom)) {
             return $this->error('请先开始上课', Request::instance()->header('referer'));
@@ -399,5 +451,57 @@ class TeacherwxController extends IndexController {
                 return $this->error('两次密码不相同，请确认新密码一致', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
             }
         }
+    }
+
+    /**
+     * 上课整理
+     */
+    public function inClass()
+    {
+        // 获取教师id
+        $teacherId = session('teacherId');
+        $Teacher = Teacher::get($teacherId);
+
+        // 获取上课教室id和上课课程id
+        $classroomId = Request::instance()->param('classroomId');
+        $courseId = Request::instance()->param('courseId/d');
+
+        if (is_null($classroomId) || is_null($courseId)) {
+            return $this->error('上课失败,请重新上课', url('index'));
+        }
+
+        // 实例化教室信息
+        $Classroom = Classroom::get($classroomId);
+
+        // 首先判断该教室当前是否在上课
+        $PreClass = new PreClassController();
+        $currentTime = time();
+        if (is_null($Classroom->out_time)) {
+            if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time) {
+                // 增加判断是否老师为当前签到时间对应的老师
+                if (is_null($Classroom->Course)) {
+                    $PreClass->clearClassroom($Classroom);
+                    return $this->error('当前课程已经不存在,请先添加课程', Request::instance()->header('referer'));
+                }
+                if ($teacherId === $Classroom->Course->Teacher->id) {
+                    $url = url('index/Teacherwx/signChange');
+                    header("Location: $url");
+                    exit();
+                }
+            }
+        }
+
+        // 如果没有上课,调用inClass的两个方法，分别保存上课信息
+        $InClass = new InClassController();
+        $InClass->saveCourse($Classroom, $courseId);
+        if (!$InClass->timeJudge(time(), $Classroom)) {
+            return $this->error('上课信息保存失败', Request::instance()->header('referer'));
+        }
+        $InClass->saveClassCourse($Classroom, $courseId);
+
+        // 上课完成直接重定向到签到情况查看页面
+        $url = url('index/Teacherwx/signChange');
+        header("Location: $url");
+        exit();
     }
 }

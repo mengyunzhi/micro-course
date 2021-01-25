@@ -92,5 +92,4 @@ class Teacher extends Model
 			return false;
 		}
 	}
-
 }

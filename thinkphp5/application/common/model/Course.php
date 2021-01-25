@@ -7,8 +7,6 @@ use think\Request;
  */
 class Course extends Model
 {
-    private $Teacher;
-
     /**
      * 获取对应的教师（辅导员）信息
      * @return Teacher 教师
@@ -16,7 +14,7 @@ class Course extends Model
      */
     public function Teacher()
     {
-        return $this->belongsTo('teacher');
+            return $this->belongsTo('teacher');
     }
     public function Students()
     {
@@ -51,4 +49,15 @@ class Course extends Model
         return $this->belongsTo('term');
     }
 
+    /**
+     * 构造函数：负责老师权限处理
+     */
+    public function checkTeacher()
+    {
+        // 获取session中存储的教师id
+        $teacherId = session('teacherId');
+        if ($this->Teacher->id !== $teacherId) {
+            return $this->error('无此权限', request()->header('referer'));
+        }
+    }
 }
