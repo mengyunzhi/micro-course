@@ -358,12 +358,14 @@ class LoginController extends Controller {
                     $Student = Student::get($studentId = session('studentId'));
                     // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
                     if (is_null($seatId) || $seatId === 0) {
-                        return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
+                        return $this->error('座位信息不存在，请重新扫码', 
+                            url('studentwx?username=' . $username . '&password=' . $password));
                     }
                     return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
                 } else {
                     if ($action !== 'studentAgain') {
-                        return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
+                        return $this->error('用户名或密码不正确', 
+                            url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
                     } else {
                         return $this->error('用户名或密码不正确', url('studentAgain?username=' . $username . '&name=' . $name . '&seatId=' . $seatId));
                     }
@@ -374,7 +376,8 @@ class LoginController extends Controller {
         } else {
          // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
             if (is_null($seatId) || $seatId === 0) {
-                return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
+                return $this->error('座位信息不存在，请重新扫码', 
+                    url('studentwx?username=' . $username . '&password=' . $password));
             }
             return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
@@ -521,14 +524,16 @@ class LoginController extends Controller {
                     // 绑定教师和教室信息
                     $Teacher->classroom_id = $classroomId;
                     if (!$Teacher->save()) {
-                        return $this->error('教室-老师信息绑定失败', Request::instance()->header('referer'));
+                        return $this->error('教室-老师信息绑定失败', 
+                            Request::instance()->header('referer'));
                     }
                 }
                 // 登陆成功后也保存成功教室信息
                 return $this->success('登陆成功', url('teacherwx/index'));
             } else {
                 // 登陆不成功状况
-                return $this->error('用户名或密码不正确', url('teacherIndex?username=' . $username . '&password=' . $password));
+                return $this->error('用户名或密码不正确', 
+                    url('teacherIndex?username=' . $username . '&password=' . $password));
             }
         } else {
             // 用户名密码输入不完整状况，重新输入
