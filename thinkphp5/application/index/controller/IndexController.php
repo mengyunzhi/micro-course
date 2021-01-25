@@ -27,7 +27,7 @@ class IndexController extends Controller {
                 exit();
             }
         // 如果已经登陆，跳转到相应的首页
-        }      
+        }
         $this->assign('menuView', new menuView());
     }
 

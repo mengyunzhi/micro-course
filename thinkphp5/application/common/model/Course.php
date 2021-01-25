@@ -13,8 +13,8 @@ class Course extends Model
      * @author <panjie@yunzhiclub.com> http://www.mengyunzhi.com
      */
     public function Teacher()
-    {   
-        return $this->belongsTo('teacher');
+    {
+            return $this->belongsTo('teacher');
     }
     public function Students()
     {
@@ -52,7 +52,8 @@ class Course extends Model
     /**
      * 构造函数：负责老师权限处理
      */
-    public function checkTeacher() {
+    public function checkTeacher()
+    {
         // 获取session中存储的教师id
         $teacherId = session('teacherId');
         if ($this->Teacher->id !== $teacherId) {

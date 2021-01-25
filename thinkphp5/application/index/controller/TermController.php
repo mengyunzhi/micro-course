@@ -23,7 +23,7 @@ class TermController extends AdminJudgeController
             // 实例化Term
             $Term = new Term; 
             if(!Teacher::isLogin()) {
-                return $this->error('请登录',url('Login/index'));
+                return $this->error('请登录', url('Login/index'));
             }
 
             // 定制查询信息

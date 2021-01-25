@@ -4,16 +4,16 @@ use think\Model;
 
 class CourseStudent extends Model
 {
-	public function student()
-	{
-		return $this->belongsTo('student');
-	}
+    public function student()
+    {
+        return $this->belongsTo('student');
+    }
 
-	/**
-	 * 获取对应的课程
-	 */
-	public function course()
-	{
-		return $this->belongsTo('course');
-	}
+    /**
+     * 获取对应的课程
+     */
+    public function course()
+    {
+        return $this->belongsTo('course');
+    }
 }

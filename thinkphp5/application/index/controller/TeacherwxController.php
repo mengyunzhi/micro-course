@@ -59,7 +59,8 @@ class TeacherwxController extends IndexController {
     /**
      * 微信端教师新增课程
      */
-    public function add() {
+    public function add()
+    {
         // 接收课程名称，防止新增失败
         $name = Request::instance()->param('name');
 
@@ -74,7 +75,8 @@ class TeacherwxController extends IndexController {
     /**
      * 接收新增上课对象方法传入的值，并进行保存
      */
-    public function save() {
+    public function save()
+    {
         // 首先获取当前学期和教师id
         $teacherId = session('teacherId');
         if (is_null($teacherId) || is_null($Teacher = Teacher::get($teacherId))) {
@@ -454,7 +456,8 @@ class TeacherwxController extends IndexController {
     /**
      * 上课整理
      */
-    public function inClass() {
+    public function inClass()
+    {
         // 获取教师id
         $teacherId = session('teacherId');
         $Teacher = Teacher::get($teacherId);
@@ -471,7 +474,7 @@ class TeacherwxController extends IndexController {
         $Classroom = Classroom::get($classroomId);
 
         // 首先判断该教室当前是否在上课
-        $PreClass = new PreClassController;
+        $PreClass = new PreClassController();
         $currentTime = time();
         if (is_null($Classroom->out_time)) {
             if ($Classroom->out_time > $currentTime && $currentTime > $Classroom->begin_time) {
@@ -484,12 +487,12 @@ class TeacherwxController extends IndexController {
                     $url = url('index/Teacherwx/signChange');
                     header("Location: $url");
                     exit();
-                } 
+                }
             }
-        }   
+        }
 
         // 如果没有上课,调用inClass的两个方法，分别保存上课信息
-        $InClass = new InClassController;
+        $InClass = new InClassController();
         $InClass->saveCourse($Classroom, $courseId);
         if (!$InClass->timeJudge(time(), $Classroom)) {
             return $this->error('上课信息保存失败', Request::instance()->header('referer'));

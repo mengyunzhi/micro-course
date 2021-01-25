@@ -119,7 +119,7 @@ class SeatController extends controller {
                 if (is_null($Grade)) {
                     return $this->error('您不在当前上课名单中,请检查上课地点是否正确', url('Student/afterSign?studentId=' . $studentId));
                 }
-                
+ 
                 // 增加判断是否在签到截止时间内
                 if ($Classroom->sign_deadline_time >= time() && $isUpdate === false) {
                     // 该成绩签到次数加并重新计算签到成绩和总成绩

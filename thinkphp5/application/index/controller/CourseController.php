@@ -131,20 +131,20 @@ class CourseController extends IndexController {
         // dump($name);
         $uploadfile = $uploaddir . $name;
         $href = $uploaddir . $name;
-        if($_FILES['userfile']['size'] !== 0) {
-        $unImportNumber = 0;
-        if(!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
-            return $this->error('文件上传失败');
-        }
-
-        // 成功新增课程，但是要返回未导入人数
-        if ($unImportNumber === 0) {
-            $this->computeGrades($courseId);
-            return $this->success('新增课程和学生成功', url('index'));
+        if ($_FILES['userfile']['size'] !== 0) {
+            $unImportNumber = 0;
+            if (!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
+                return $this->error('文件上传失败');
+            }
+            // 成功新增课程，但是要返回未导入人数
+            if ($unImportNumber === 0) {
+                $this->computeGrades($courseId);
+                return $this->success('新增课程和学生成功', url('index'));
+            } else {
+                $this->computeGrades($courseId);
+                return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
+            }
         } else {
-            $this->computeGrades($courseId);
-            return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
-        } } else {
             return $this->success('更新成功', url('index'));
         }
     }
@@ -153,7 +153,8 @@ class CourseController extends IndexController {
      * 负责编辑课程从而导入学生名单时，对学生成绩的计算
      * @param courseId 课程对应的id
      */
-    public function computeGrades($courseId) {
+    public function computeGrades($courseId)
+    {
         // 首先获取该课程对应的所有上课课程
         $classCourses = ClassDetail::where('course_id', '=', $courseId)->select();
         // 首先获取该课程对应的中间表
@@ -306,9 +307,9 @@ class CourseController extends IndexController {
          
         //$href 文件存储路径
         $href = $uploaddir . $name;
-        if($_FILES['userfile']['size'] !== 0) {
+        if ($_FILES['userfile']['size'] !== 0) {
         $unImportNumber = 0;
-        if(!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
+        if (!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
             $Course->delete();
             return $this->error('文件上传失败');
         }
@@ -346,7 +347,7 @@ class CourseController extends IndexController {
             $Course->delete();
             return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
         }
-        if($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号" ) {
+        if ($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号" ) {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }
@@ -361,7 +362,7 @@ class CourseController extends IndexController {
                 $StudentTmp = Student::get($que);
 
                 //如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
-                // 新增中间表并保存,同时新增成绩 
+                // 新增中间表并保存,同时新增成绩
                 $CourseStudent = new CourseStudent();
                 if (is_null($StudentTmp)) {
                     $Student = new Student();
@@ -370,7 +371,7 @@ class CourseController extends IndexController {
                     if ($Student->validate()->save()) {
                         $CourseStudent->student_id = $Student->id;
                         $flag = $Student->id;
-                        
+
                         // 新增成绩保存
                         if (!$this->saveGrade($Student, $Course)) {
                             return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
@@ -378,14 +379,18 @@ class CourseController extends IndexController {
                     }
                 } else {
                     // 首先增加判断当前课程中是否已经有该学生
-                    if (is_null($CourseStudentTmp = CourseStudent::get(['course_id' => $Course->id, 'student_id' => $StudentTmp->id]))) {
+                    $queTmp = array(
+                        'course_id' => $Course->id,
+                        'student_id' => $StudentTmp->id
+                    );
+                    if (is_null($CourseStudentTmp = CourseStudent::get($queTmp))) {
                         $CourseStudent->student_id = $StudentTmp->id;
                         $flag = $StudentTmp->id;
                         // 新增成绩保存
                         if (!$this->saveGrade($StudentTmp, $Course)) {
                             return $this->error('课程-学生-成绩信息保存失败', url('Course/add'));
                         }
-                    } 
+                    }
                 }
                 if ($flag !== 0) {
                     $CourseStudent->course_id = $Course->id;
@@ -396,13 +401,13 @@ class CourseController extends IndexController {
                     $unImportNumber++;
                 }
                  // 课程对应学生数量加一
-                $Course->student_num++;  
+                $Course->student_num++;
             }
         }
 
         if (!$Course->save()) {
             return $this->success('学生人数更新失败', Request::instance()->header('referer'));
-        } 
+        }
         return true;
     }
 
