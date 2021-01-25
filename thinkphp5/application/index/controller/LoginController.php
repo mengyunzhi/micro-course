@@ -92,7 +92,7 @@ class LoginController extends Controller {
                 if (strlen($username) > 25 || strlen($username) < 6) {
                     return $this->error(
                         '注册失败,请保证用户名在6-25位之间',
-                        url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password)
+                         url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password)
                     );
                 } else {
                     $Teacher = new Teacher();
