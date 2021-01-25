@@ -68,6 +68,19 @@ class Menu {
         }
     }
 
+    /**
+     * 获取当前登录的教师姓名
+     */
+    public function getTeacherName() {
+        // 首先获取教师id
+        $teacherId = session('teacherId');
+
+        // 根据教师id获取当前登录教师
+        if (!is_null($Teacher = Teacher::get($teacherId))) {
+            return $Teacher->name;
+        }
+    }
+
     public function getHref() {
         if (is_null($this->href)) {
             $this->href = url($this->controller . '/' . $this->action);

@@ -38,11 +38,15 @@ class Student extends Model
 
     /**
      * 增加登陆判断
+     * @param username 登录检验用到的用户名(学号)
+     * @param password 登录检验用的密码
+     * @param name 存在多个相同学号的额外判定条件
      */
-    static public function Login($username, $password) {
+    static public function Login($username, $password, $name = null) {
         // 定制查询信息，判断是否存在username
         $que = array(
             'username' => $username,
+            'name' => $name
         );
         $Student = Student::get($que);
         if (!is_null($Student)) {

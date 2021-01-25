@@ -5,6 +5,23 @@
 {block name="hr1"}
 
 <div style="margin-top: 100px;">
+    <b style="font-size: 15px; float: left; padding-top: 3px">当前课程:&nbsp;</b>
+<div class="btn-group" style="margin-bottom: 10px">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px; padding: 4px ">
+        <b>{eq name="$Course" value=""}
+            无课程
+            {else /}
+            {$Course->name}
+            {/eq}</b>
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" style="min-width: 100px">
+        {volist name="courses" id="_course"}
+        <li>
+            <a href="{:url('aftersign?courseId=' . $_course->id)}">{$_course->name}</a></li>
+        {/volist}
+    </ul>
+</div>
 <table class="table table-hover table-bordered" style="margin-top: 40px;">
     <tr class="info">
         <th>序号</th>

@@ -17,7 +17,25 @@ use app\common\model\ClassCourse;
 class LoginController extends Controller {
     //用户登录表单
     public function index() {
-       
+        // 获取教师id
+        $teacherId = session('teacherId');
+        if (!is_null($teacherId)) {
+            // 获取对应教师
+            $Teacher = Teacher::get($teacherId);
+            if (!is_null($Teacher)) {
+                if ($Teacher->username === 'admin') {
+                    // 如果登陆了已经，则直接跳转到管理员首页
+                    $url = url('index/term/index');
+                    header("Location: $url");
+                    exit();
+                } else {
+                    // 如果不是管理员，则跳转到教师首页
+                    $url = url('index/course/index');
+                    header("Location: $url");
+                    exit();
+                }
+            }
+        }
         // 接收登陆信息
         $username = Request::instance()->param('username');
         $password = '';
@@ -70,23 +88,19 @@ class LoginController extends Controller {
             if (!is_null($Teacher = Teacher::get(['username' => $username]))) {
                 return $this->error('用户名已存在', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
             } else {
-                if (strlen($password) > 25 || strlen($password) < 6) {
-                    return $this->error('注册失败,请保证密码在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                $this->checkPassword($password, $username, $name);
+                if (strlen($username) > 25 || strlen($username) < 6) {
+                    return $this->error('注册失败,请保证用户名在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
                 } else {
-                    if (strlen($username) > 25 || strlen($username) < 6) {
-                        return $this->error('注册失败,请保证用户名在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
-                    } else {
-                        $Teacher = new Teacher();
-                        $Teacher->name = $name;
-                        $Teacher->username = $username;
-                        $Teacher->num = 0;
-                        $Teacher->classroom_id = $classroomId;
-                        $Teacher->password = $Teacher->encryptPassword($password);
-                        if (!$Teacher->validate()->save()) {
-                            return $this->error('注册失败,请保证教师姓名长度2-4位', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
-                        } 
-                    }
-                }
+                    $Teacher = new Teacher();
+                    $Teacher->name = $name;
+                    $Teacher->username = $username;
+                    $Teacher->classroom_id = $classroomId;
+                    $Teacher->password = $Teacher->encryptPassword($password);
+                    if (!$Teacher->validate()->save()) {
+                        return $this->error('注册失败,请保证教师姓名长度2-4位', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                    } 
+                }  
             }
             
             // 调用M层的方法对用户名密码进行判断，同时存储登陆的session
@@ -123,18 +137,168 @@ class LoginController extends Controller {
     }
 
     /**
+     * 学生注册首页
+     */
+    public function studentFirst() {
+        // 接受传入的几项信息
+        $username = Request::instance()->param('username');
+        $name = Request::instance()->param('name');
+        $seatId = Request::instance()->param('seatId');
+
+        // 将接受的信息传入V层，防止第一次注册失败，重新注册情况
+        $this->assign('username', $username);
+        $this->assign('name', $name);
+        $this->assign('seatId', $seatId);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 负责学生注册判定
+     */
+    public function checkStudent() {
+        // 接受姓名/学号（用户名）/密码
+        $username = Request::instance()->param('username');
+        $name = Request::instance()->param('name');
+        $password = Request::instance()->param('password');
+        $seatId = Request::instance()->param('seatId');
+        if (is_null($seatId)) {
+            return $this->error('座位信息传递失败', url('studentFirst?username=' . $username . '&name=' . $name));
+        }
+
+        // 首先判断学号长度是否为6位
+        if (strlen($username) !== 6) {
+            return $this->error('请确认学号输入正确', url('studentFirst?username=' . $username . '&name=' . $name));
+        }
+
+        // 判断姓名长度
+        if (strlen($name) > 25) {
+            return $this->error('请确认姓名输入正确', url('studentFirst?username=' . $username . '&name=' . $name));
+        } 
+
+        // 密码长度和组成判定
+        // 判断密码长度是否在六位到25位之间
+        if (strlen($password) < 6 || strlen($password) > 25) {
+            return $this->error('请保证密码长度在6位到25位之间', url('studentFirst?username=' . $username . '&name=' . $name));
+        }
+
+        // 判断密码是否含有字母
+        if (!preg_match('/[a-zA-Z]/', $password)) {
+            return $this->error('请保证密码中包含字母', url('studentFirst?username=' . $username . '&name=' . $name));
+        }
+
+        // 均符合条件后判断数据库中是否有该学生信息
+        $que = array(
+            'name' => $name,
+            'username' => $username
+        );
+        $StudentTmp = Student::get($que);
+
+        // 如果数据库中有该信息，则判断该条信息是否有密码
+        if (!is_null($StudentTmp)) {
+            // 如果有密码，则说明该条信息已经被注册
+            if (!is_null($StudentTmp->password)) {
+                return $this->error('该学生信息已被注册,如非本人，请联系管理员修改');
+            // 如果没有密码，说明该条信息未被注册，只是被老师导入了而已
+            } else {
+                $StudentTmp->password = $StudentTmp->encryptPassword($password);
+                if (!$StudentTmp->validate()->save()) {
+                    return $this->error('注册失败', Request::instance()->header('referer'));
+                }
+            }
+        // 第二种情况：数据库没有该条信息，则需要新建，直接注册
+        } else {
+            $Student = new Student();
+            $Student->name = $name;
+            $Student->username = $username;
+            $Student->password = $Student->encryptPassword($password);
+            $Student->num = $username;
+            // 将新建立的学生信息保存
+            if (!$Student->validate()->save()) {
+                return $this->error('保存失败', Request::instance()->header('referer'));
+            }
+        }
+
+        return $this->success('注册成功', url('studentWx?seatId=' . $seatId));
+    }
+
+    /**
+     * 老师注册负责判断密码是否符合要求
+     * @param password 待判断的密码
+     * @param username 不符合规则跳转需要传的用户名
+     * @param name 不符合规则需要传递的注册姓名
+     */
+    public function checkPassword($password, $username, $name) {
+        // 判断密码长度是否在六位到25位之间
+        if (strlen($password) < 6 || strlen($password) > 25) {
+            return $this->error('请保证密码长度在6位到25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+        }
+
+        // 判断密码是否含有字母
+        if (!preg_match('/[a-zA-Z]/', $password)) {
+            return $this->error('请保证密码中包含字母', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+        }   
+    }
+
+    /**
      * 学生登陆首页
      */
     public function studentWx() {
+        // 获取从wxLogin传出的seatId
+        $seatId = Request::instance()->param('seatId');
+        if (is_null($seatId)) {
+            return $this->error('座位信息传递失败,请重新扫码',''); 
+        }
+        // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
+        $studentId = session('studentId');
+        if (!is_null($studentId)) {
+            $url = url('index/login/wxLogin?seatId=' . $seatId);
+            header("Location: $url");
+            exit();
+        }
+
         // 接收上次登陆失败返回的信息
         $username = Request::instance()->param('username');
         $password = '';
-        // 获取从wxLogin传出的seatId
-        $seatId = Request::instance()->param('seatId');
 
         // 将$seatId传入V层
         $this->assign('password', $password);
         $this->assign('username', $username);
+        $this->assign('seatId', $seatId);
+        // 直接到V层渲染
+        return $this->fetch();
+    }
+
+    /**
+     * 多条相同学号学生登录
+     */
+    public function studentAgain() {
+        // 获取从wxLogin传出的seatId
+        $seatId = Request::instance()->param('seatId');
+        if (is_null($seatId)) {
+            return $this->error('座位信息传递失败,请重新扫码', Request::instance()->header('referer')); 
+        }
+        // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
+        $studentId = session('studentId');
+        if (!is_null($studentId)) {
+            $url = url('index/login/wxLogin?seatId=' . $seatId);
+            header("Location: $url");
+            exit();
+        }
+
+        // 获取当前所在的控制器
+        $action = 'studentAgain';
+
+        // 接收上次登陆失败返回的信息
+        $username = Request::instance()->param('username');
+        $name = Request::instance()->param('name');
+        $password = '';
+
+        // 将$seatId传入V层
+        $this->assign('password', $password);
+        $this->assign('username', $username);
+        $this->assign('name', $name);
+        $this->assign('action', $action);
         $this->assign('seatId', $seatId);
         // 直接到V层渲染
         return $this->fetch();
@@ -148,6 +312,8 @@ class LoginController extends Controller {
         $username = Request::instance()->post('username');
         $password = Request::instance()->post('password');
         $seatId = Request::instance()->param('seatId/d');
+        $name = Request::instance()->param('name');
+        $action = Request::instance()->param('action');
 
         // 获取学生id，判断session是否过期
         $studentId = session('studentId');
@@ -156,7 +322,29 @@ class LoginController extends Controller {
         dump($Student);
         die();
         */
-        // 第一种session已经过期，输入用户名密码登陆
+        // 首先判断是不是没登录或登录信息过期且存在多个相同学号情况
+        if (is_null($Student) || is_null($studentId)) {
+            // 首先根据学号判断是否有多个为当前学号的
+            $students = Student::where('username', '=', $username)->select();
+            if (sizeof($students) > 1 && is_null($action)) {
+                return $this->success('检测到其他学号相同注册信息，请填写完整信息', url('studentagain?username=' . $username . '&seatId=' . $seatId));
+            }
+            if (sizeof($students) > 1) {
+                // 如果是从studentAgain跳过来的直接登录
+                if ($action === 'studentAgain') {
+                    // 此种情况需要通过name和用户名和密码共同判断学生信息
+                    if (Student::Login($username, $password, $name)){
+                        // 登录成功，直接跳转到签到页面
+                        $studentId = session('studentId');
+                        return $this->success('登陆成功', url('Seat/sign?studentId=' . $studentId . '&seatId=' . $seatId));
+                    }
+                } else {
+                    return $this->error('登录信息不正确', url('studentagain?username=' . $username . '&seatId=' . $seatId . '&name=' . $name));
+                }
+            }
+        } 
+
+        // 第2种session已经过期，输入用户名密码登陆
         if (is_null($Student) || is_null($studentId)) {
             if (is_null($username) || is_null($password)) {
                 return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
@@ -170,13 +358,16 @@ class LoginController extends Controller {
                     }
                     return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
                 } else {
-                    return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
+                    if ($action !== 'studentAgain') {
+                        return $this->error('用户名或密码不正确', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
+                    } else {
+                        return $this->error('用户名或密码不正确', url('studentAgain?username=' . $username . '&name=' . $name . '&seatId=' . $seatId));
+                    }
                 }
             }
 
             // 第二种session未过期，直接登陆
         } else {
-
          // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
             if (is_null($seatId) || $seatId === 0) {
                 return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));

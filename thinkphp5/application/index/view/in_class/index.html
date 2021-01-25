@@ -50,7 +50,7 @@
                     上课课程:{:$Course->name}
                 </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <label style="font-size: 15px;">
-                    签到时长:
+                    签到时长修改:
                 </label>
                 <input type="text" name="signTime" value="{:$Classroom->sign_time}" style="width: 100px;">
                 <label style="font-size: 15px;">
@@ -59,7 +59,7 @@
                 <input type="hidden" name="classroomId" value="{:$Classroom->id}">
                 <button>保存</button> &nbsp;&nbsp;&nbsp;
                 <label style="font-size: 15px;">
-                    签到截止时间:<span class="label label-warning">{:date('G:i',$Classroom->sign_deadline_time);}</span>
+                    当前签到截止时间:<span class="label label-warning">{:date('G:i',$Classroom->sign_deadline_time);}</span>
                 </label>
             </td>
         </form>
