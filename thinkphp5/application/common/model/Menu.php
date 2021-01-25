@@ -83,6 +83,20 @@ class Menu {
         }
     }
 
+    /**
+     * 获取学生名字
+     */
+    public function getStudentName()
+    {
+        // 首先获取学生id
+        $studentId = session('studentId');
+
+        // 根据学生id获取当前登录学生信息
+        if (!is_null($Student = Student::get($studentId))) {
+            return $Student->name;
+        }
+    }
+
     public function getHref() {
         if (is_null($this->href)) {
             $this->href = url($this->controller . '/' . $this->action);
