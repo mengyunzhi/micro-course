@@ -102,9 +102,9 @@ class LoginController extends Controller {
                     $Teacher->password = $Teacher->encryptPassword($password);
                     if (!$Teacher->validate()->save()) {
                         return $this->error(
-                        '注册失败,请保证教师姓名长度2-4位',
-                        url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password)
-                    );
+                            '注册失败,请保证教师姓名长度2-4位',
+                            url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password)
+                        );
                     }
                 }
             }
@@ -228,7 +228,8 @@ class LoginController extends Controller {
                 if (!$StudentTmp->validate()->save()) {
                     return $this->error(
                         '注册失败',
-                        Request::instance()->header('referer'));
+                        Request::instance()->header('referer')
+                    );
                 }
             }
         // 第二种情况：数据库没有该条信息，则需要新建，直接注册
@@ -242,7 +243,8 @@ class LoginController extends Controller {
             if (!$Student->validate()->save()) {
                 return $this->error(
                     '保存失败',
-                    Request::instance()->header('referer'));
+                    Request::instance()->header('referer')
+                );
             }
         }
 
@@ -312,8 +314,9 @@ class LoginController extends Controller {
         $seatId = Request::instance()->param('seatId');
         if (is_null($seatId)) {
             return $this->error(
-            '座位信息传递失败,请重新扫码',
-            Request::instance()->header('referer'));
+                '座位信息传递失败,请重新扫码',
+                Request::instance()->header('referer')
+            );
         }
         // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
         $studentId = session('studentId');
@@ -553,7 +556,8 @@ class LoginController extends Controller {
             if (!$Teacher->save()) {
                 return $this->error(
                     '教师-教室信息绑定失败',
-                    Request::instance()->header('referer'));
+                    Request::instance()->header('referer')
+                );
                 }
                 return $this->success('登陆成功', url('teacherwx/index'));
             }
@@ -625,7 +629,8 @@ class LoginController extends Controller {
         } else {
             return $this->error(
                 '注销失败',
-                Request::instance()->header('referer'));
+                Request::instance()->header('referer')
+            );
         }
     } 
 

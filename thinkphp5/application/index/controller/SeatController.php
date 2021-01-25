@@ -149,9 +149,10 @@ class SeatController extends controller {
                 url('Student/aftersign?studentId=' . $studentId)
             );
         }
+        $courseId = $Classroom->course_id;
         return $this->success(
             '扫码签到成功，开始上课',
-            url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId . '&courseId=' . $Classroom->course_id)
+            url('Student/afterSign?studentId=' . $studentId . '&seatId=' . $seatId . '&courseId=' . $courseId)
         );
     }
 
