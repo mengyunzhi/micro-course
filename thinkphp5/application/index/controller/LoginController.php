@@ -63,8 +63,7 @@ class LoginController extends Controller {
             // 如果不是则认定为教师端登陆，跳转到教师端
             return $this->success('登陆成功', url('Course/index'));
         } else {
-            return $this->error('用户名或密码不正确', 
-                url('index?username=' . $username . '&password=' . $password));
+            return $this->error('用户名或密码不正确', url('index?username=' . $username . '&password=' . $password));
         }
     }
 
@@ -78,24 +77,20 @@ class LoginController extends Controller {
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId/d');
         if (is_null($classroomId) || $classroomId === 0) {
-            return $this->error('教室信息传递失败，请从新扫码', 
-                Request::instance()->header('referer'));
+            return $this->error('教室信息传递失败，请从新扫码', Request::instance()->header('referer'));
         }
 
         // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
         if (is_null($username) || is_null($password) || is_null($name)) {
-            return $this->error('请输入完整注册信息', 
-                url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+            return $this->error('请输入完整注册信息', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
         } else {
             // 保存教师信息
             if (!is_null($Teacher = Teacher::get(['username' => $username]))) {
-                return $this->error('用户名已存在', 
-                    url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                return $this->error('用户名已存在', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
             } else {
                 $this->checkPassword($password, $username, $name);
                 if (strlen($username) > 25 || strlen($username) < 6) {
-                    return $this->error('注册失败,请保证用户名在6-25位之间', 
-                        url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                    return $this->error('注册失败,请保证用户名在6-25位之间', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
                 } else {
                     $Teacher = new Teacher();
                     $Teacher->name = $name;
@@ -103,8 +98,7 @@ class LoginController extends Controller {
                     $Teacher->classroom_id = $classroomId;
                     $Teacher->password = $Teacher->encryptPassword($password);
                     if (!$Teacher->validate()->save()) {
-                        return $this->error('注册失败,请保证教师姓名长度2-4位', 
-                            url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+                        return $this->error('注册失败,请保证教师姓名长度2-4位', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
                     }
                 }
             }
@@ -171,33 +165,28 @@ class LoginController extends Controller {
         $password = Request::instance()->param('password');
         $seatId = Request::instance()->param('seatId');
         if (is_null($seatId)) {
-            return $this->error('座位信息传递失败', 
-                url('studentFirst?username=' . $username . '&name=' . $name));
+            return $this->error('座位信息传递失败', url('studentFirst?username=' . $username . '&name=' . $name));
         }
 
         // 首先判断学号长度是否为6位
         if (strlen($username) !== 6) {
-            return $this->error('请确认学号输入正确', 
-                url('studentFirst?username=' . $username . '&name=' . $name));
+            return $this->error('请确认学号输入正确', url('studentFirst?username=' . $username . '&name=' . $name));
         }
 
         // 判断姓名长度
         if (strlen($name) > 25) {
-            return $this->error('请确认姓名输入正确', 
-                url('studentFirst?username=' . $username . '&name=' . $name));
+            return $this->error('请确认姓名输入正确', url('studentFirst?username=' . $username . '&name=' . $name));
         }
 
         // 密码长度和组成判定
         // 判断密码长度是否在六位到25位之间
         if (strlen($password) < 6 || strlen($password) > 25) {
-            return $this->error('请保证密码长度在6位到25位之间', 
-                url('studentFirst?username=' . $username . '&name=' . $name));
+            return $this->error('请保证密码长度在6位到25位之间', url('studentFirst?username=' . $username . '&name=' . $name));
         }
 
         // 判断密码是否含有字母
         if (!preg_match('/[a-zA-Z]/', $password)) {
-            return $this->error('请保证密码中包含字母', 
-                url('studentFirst?username=' . $username . '&name=' . $name));
+            return $this->error('请保证密码中包含字母', url('studentFirst?username=' . $username . '&name=' . $name));
         }
 
         // 均符合条件后判断数据库中是否有该学生信息
@@ -216,8 +205,7 @@ class LoginController extends Controller {
             } else {
                 $StudentTmp->password = $StudentTmp->encryptPassword($password);
                 if (!$StudentTmp->validate()->save()) {
-                    return $this->error('注册失败', 
-                        Request::instance()->header('referer'));
+                    return $this->error('注册失败', Request::instance()->header('referer'));
                 }
             }
         // 第二种情况：数据库没有该条信息，则需要新建，直接注册
@@ -229,8 +217,7 @@ class LoginController extends Controller {
             $Student->num = $username;
             // 将新建立的学生信息保存
             if (!$Student->validate()->save()) {
-                return $this->error('保存失败', 
-                    Request::instance()->header('referer'));
+                return $this->error('保存失败', Request::instance()->header('referer'));
             }
         }
 
@@ -252,8 +239,7 @@ class LoginController extends Controller {
 
         // 判断密码是否含有字母
         if (!preg_match('/[a-zA-Z]/', $password)) {
-            return $this->error('请保证密码中包含字母', 
-                url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
+            return $this->error('请保证密码中包含字母', url('teacherFirst?name=' . $name . '&username=' . $username . '&password=' . $password));
         }
     }
 
@@ -345,8 +331,7 @@ class LoginController extends Controller {
             // 首先根据学号判断是否有多个为当前学号的
             $students = Student::where('username', '=', $username)->select();
             if (sizeof($students) > 1 && is_null($action)) {
-                return $this->success('检测到其他学号相同注册信息，请填写完整信息', 
-                    url('studentagain?username=' . $username . '&seatId=' . $seatId));
+                return $this->success('检测到其他学号相同注册信息，请填写完整信息', url('studentagain?username=' . $username . '&seatId=' . $seatId));
             }
             if (sizeof($students) > 1) {
                 // 如果是从studentAgain跳过来的直接登录
@@ -355,12 +340,10 @@ class LoginController extends Controller {
                     if (Student::login($username, $password, $name)) {
                         // 登录成功，直接跳转到签到页面
                         $studentId = session('studentId');
-                        return $this->success('登陆成功', 
-                            url('Seat/sign?studentId=' . $studentId . '&seatId=' . $seatId));
+                        return $this->success('登陆成功', url('Seat/sign?studentId=' . $studentId . '&seatId=' . $seatId));
                     }
                 } else {
-                    return $this->error('登录信息不正确', 
-                        url('studentagain?username=' . $username . '&seatId=' . $seatId . '&name=' . $name));
+                    return $this->error('登录信息不正确', url('studentagain?username=' . $username . '&seatId=' . $seatId . '&name=' . $name));
                 }
             }
         }
@@ -368,26 +351,22 @@ class LoginController extends Controller {
         // 第2种session已经过期，输入用户名密码登陆
         if (is_null($Student) || is_null($studentId)) {
             if (is_null($username) || is_null($password)) {
-                return $this->error('请先输入完整的登陆信息', 
-                    url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
+                return $this->error('请先输入完整的登陆信息', url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
             } else {
                 if (Student::login($username, $password)) {
                     // 登陆成功
                     $Student = Student::get($studentId = session('studentId'));
                     // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
                     if (is_null($seatId) || $seatId === 0) {
-                        return $this->error('座位信息不存在，请重新扫码', 
-                            url('studentwx?username=' . $username . '&password=' . $password));
+                        return $this->error('座位信息不存在，请重新扫码', url('studentwx?username=' . $username . '&password=' . $password));
                     }
-                    return $this->success('登陆成功', 
-                        url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
+                    return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
                 } else {
                     if ($action !== 'studentAgain') {
                         return $this->error('用户名或密码不正确', 
                             url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId));
                     } else {
-                        return $this->error('用户名或密码不正确', 
-                            url('studentAgain?username=' . $username . '&name=' . $name . '&seatId=' . $seatId));
+                        return $this->error('用户名或密码不正确', url('studentAgain?username=' . $username . '&name=' . $name . '&seatId=' . $seatId));
                     }
                 }
             }
@@ -399,8 +378,7 @@ class LoginController extends Controller {
                 return $this->error('座位信息不存在，请重新扫码', 
                     url('studentwx?username=' . $username . '&password=' . $password));
             }
-            return $this->success('登陆成功', 
-                url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
+            return $this->success('登陆成功', url('Seat/sign?studentId=' . $Student->id . '&seatId=' . $seatId));
         }
     }
 
@@ -413,8 +391,7 @@ class LoginController extends Controller {
         $Teacher = Teacher::get(['classroom_id' => $classroomId]);
         $Classroom = Classroom::get($classroomId);
         if (is_null($Classroom)) {
-            $this->error('当前教室信息为空，请重新扫码', 
-                Request::instance()->header('referer'));
+            $this->error('当前教室信息为空，请重新扫码', Request::instance()->header('referer'));
         }
         $teacherId = session('teacherId');
 
@@ -554,8 +531,7 @@ class LoginController extends Controller {
                 return $this->success('登陆成功', url('teacherwx/index'));
             } else {
                 // 登陆不成功状况
-                return $this->error('用户名或密码不正确', 
-                    url('teacherIndex?username=' . $username . '&password=' . $password));
+                return $this->error('用户名或密码不正确', url('teacherIndex?username=' . $username . '&password=' . $password));
             }
         } else {
             // 用户名密码输入不完整状况，重新输入
