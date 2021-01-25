@@ -103,7 +103,7 @@ class Student extends Model
      * @param password 登录检验用的密码
      * @param name 存在多个相同学号的额外判定条件
      */
-    static public function login($username, $password, $name = null)
+    public static function login($username, $password, $name = null)
     {
         // 定制查询信息，判断是否存在username
         $que = array(
@@ -125,12 +125,13 @@ class Student extends Model
     /**
      * 设置学生登陆密码算法加密
      */
-    static public function encryptPassword($password) {
+    public static function encryptPassword($password)
+    {
         // 增加判断传入密码是否为字符串
-        if(!is_string($password)) {
-            throw new \RuntimeException("传入变量类型非字符串，错误码2", 2);  
+        if (!is_string($password)) {
+            throw new \RuntimeException("传入变量类型非字符串，错误码2", 2);
         }
-        
+
         // 如果密码合格直接加密
         return sha1(md5($password) . 'mengyunzhi');
     }

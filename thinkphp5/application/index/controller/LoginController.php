@@ -289,7 +289,7 @@ class LoginController extends Controller {
             header("Location: $url");
             exit();
         }
- 
+
         // 获取当前所在的控制器
         $action = 'studentAgain';
 
@@ -337,7 +337,7 @@ class LoginController extends Controller {
                 // 如果是从studentAgain跳过来的直接登录
                 if ($action === 'studentAgain') {
                     // 此种情况需要通过name和用户名和密码共同判断学生信息
-                    if (Student::login($username, $password, $name)){
+                    if (Student::login($username, $password, $name)) {
                         // 登录成功，直接跳转到签到页面
                         $studentId = session('studentId');
                         return $this->success('登陆成功', url('Seat/sign?studentId=' . $studentId . '&seatId=' . $seatId));

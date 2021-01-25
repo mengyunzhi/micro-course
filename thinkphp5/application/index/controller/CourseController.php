@@ -308,18 +308,18 @@ class CourseController extends IndexController {
         //$href 文件存储路径
         $href = $uploaddir . $name;
         if ($_FILES['userfile']['size'] !== 0) {
-        $unImportNumber = 0;
-        if (!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
-            $Course->delete();
-            return $this->error('文件上传失败');
-        }
+            $unImportNumber = 0;
+            if (!$this->excel($_FILES['userfile']['tmp_name'], $Course, $unImportNumber)) {
+                $Course->delete();
+                return $this->error('文件上传失败');
+            }
 
-        // 成功新增课程，但是要返回未导入人数
-        if ($unImportNumber === 0) {
-            return $this->success('新增课程和学生成功', url('index'));
-        } else {
-            return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
-        }
+            // 成功新增课程，但是要返回未导入人数
+            if ($unImportNumber === 0) {
+                return $this->success('新增课程和学生成功', url('index'));
+            } else {
+                return $this->error('课程新增成功,未成功导入人数' . $unImportNumber . '个', url('index'));
+            }
         } else {
             return $this->success('新增课程成功', url('index'));
         }
@@ -347,7 +347,7 @@ class CourseController extends IndexController {
             $Course->delete();
             return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
         }
-        if ($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号" ) {
+        if ($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号") {
             $Course->delete();
             return $this->error('文件格式与模板格式不相符', Request::instance()->header('referer'));
         }

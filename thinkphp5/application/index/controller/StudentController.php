@@ -407,7 +407,7 @@ class StudentController extends Controller
         } else {
             $Course = '';
         }
-        
+
         $Student = Student::get($studentId);
         if (is_null($Student)) {
             return $this->error('学生信息不存在,请重新登陆', Request::instance()->header('referer'));
