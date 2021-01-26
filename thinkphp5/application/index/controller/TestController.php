@@ -14,6 +14,8 @@ class TestController extends Controller
 {
 	public function index()
 	{
+        $Student = new Student();
+        dump($Student->encryptPassword('000000'));
         return $this->fetch();
 	}
 

@@ -106,10 +106,17 @@ class Student extends Model
     public static function login($username, $password, $name = null)
     {
         // 定制查询信息，判断是否存在username
-        $que = array(
-            'username' => $username,
-            'name' => $name
-        );
+        if (!is_null($name)) {
+            $que = array(
+                'username' => $username,
+                'name' => $name
+            );
+        } else {
+            $que = array(
+                'username' => $username,
+            );
+        }
+
         $Student = Student::get($que);
         if (!is_null($Student)) {
             // 验证密码是否正确
