@@ -17,35 +17,33 @@ use app\common\model\Seat;
 class SeatMapController extends Controller {
     public function index(){
         $name = input('param.name');
-        $seatMaps = new SeatMap;
-        if(!is_null($name)) {
+        $seatMaps = new SeatMap();
+        if (!is_null($name)) {
             $seatMaps = SeatMap::where('name', 'like', '%' . $name . '%');
         }
         $seatMaps = $seatMaps->order('id desc')->paginate(5);
         $this->assign('seatMaps', $seatMaps);
         return $this->fetch();
     }
-    
+
     /**
      * 座位图模板显示
      */
-    public function template() {
-
-        // 判断有无模板
-        if(empty(SeatMap::all())) {
+    public function template()
+    {    // 判断有无模板
+        if (empty(SeatMap::all())) {
             return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
         }
 
 
         $match = input('param.match');
-        
         $url = '';
         //判断上一级路由是否是教室那边
         //字符串的模式匹配
         if (preg_match("/add/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
             $url = 'classroom/add';
             $match = 1;
-        } else if(preg_match("/edit/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
+        } elseif (preg_match("/edit/i", $_SERVER["HTTP_REFERER"]) || !empty($match)) {
             $url = 'classroom/edit';
             $match = 1;
         }
@@ -53,15 +51,14 @@ class SeatMapController extends Controller {
         $classroomName = Request::instance()->param('classroomName');
         $seatMapAsc = SeatMap::order('id')->select();
         $id = Request::instance()->param('id/d');
-        
         $course_id = Request::instance()->param('course_id');
         // 实例化课程
         $Course = Course::get($course_id);
         $SeatMap = SeatMap::get($id);
-        $seatAisles = new SeatAisle;
+        $seatAisles = new SeatAisle();
         $seatAisles = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
 
-        if(empty($seatAisles)) {
+        if (empty($seatAisles)) {
             return $this->error('模板' . $SeatMap->name . '座位图为空，请重新编辑或删除该模板', url('index'));
         }
         $index = input('index') === '' ? 0 : input('index');
@@ -74,11 +71,10 @@ class SeatMapController extends Controller {
         $this->assign('classroomId', $classroomId);
         $this->assign('url', $url);
         $this->assign('seatMaps', $seatMapAsc);
-        $this->assign('SeatMap',$SeatMap);
+        $this->assign('SeatMap', $SeatMap);
         $this->assign('seatAisles', $seatAisles);
-        $this->assign('Course',$Course);
+        $this->assign('Course', $Course);
         return $this->fetch();
-
     }
 
     /**
@@ -87,7 +83,7 @@ class SeatMapController extends Controller {
     public function test()
     {
         $arry = [];
-        for($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $arry[$i] = $i;
         }
         dump(sizeof($arry));
@@ -101,26 +97,28 @@ class SeatMapController extends Controller {
     /**
      * 返回座位图模板数据库里面id升序的数组
      */
-    public function asc() {
+    public function asc()
+    {
         return SeatMap::order('id')->select();
-        
     }
     /**
      * 返回座位图模板数据库id降序的数组
      * @param $arry 要逆置的数组
      */
-    public function desc($arry) {
+    public function desc($arry)
+    {
         return array_reverse ($arry);
     }
 
     /**
      * 增加和编辑模板
      */
-    public function add() {
+    public function add()
+    {
         $id = input('id');
 
         // 默认为新增
-        $SeatMap = new SeatMap;
+        $SeatMap = new SeatMap();
         $SeatMap->id = 0;
         $SeatMap->is_first = 0;
         $SeatMap->name = '';
@@ -139,7 +137,8 @@ class SeatMapController extends Controller {
      * 编辑模板座位图的过道以及座位
      * 设置每个座位是过道还是座位
      */
-    public function edit() {
+    public function edit()
+    {
         $id = Request::instance()->param('id/d');
 
         //判断当前有无使用此模板的教室上课
@@ -148,7 +147,7 @@ class SeatMapController extends Controller {
             rsort($seatAisle);
             $seatAisle = array_reverse($seatAisle);
             $this->assign('seatAisles', $seatAisle);
-            $SeatMap = new SeatMap;
+            $SeatMap = new SeatMap();
             $SeatMap = SeatMap::get($id);
             $this->assign('SeatMap', $SeatMap);
             return $this->fetch();
@@ -158,12 +157,13 @@ class SeatMapController extends Controller {
     /**
      * 修改对应被修改模板的教室
      */
-    public function editClassroom() {
+    public function editClassroom()
+    {
         $seatMapId = input('seatMapId');
         $classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
-        if(!empty($classrooms)) {
+        if (!empty($classrooms)) {
             foreach ($classrooms as $Classroom) {
-                $ClassroomController = new ClassroomController;
+                $ClassroomController = new ClassroomController();
                 $ClassroomController->deleteSeat($Classroom->id);
                 $ClassroomController->saveSeat($seatMapId, $Classroom->id);
             }
@@ -175,10 +175,11 @@ class SeatMapController extends Controller {
      * 保存模板的行和列
      * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
      */
-    public function save() {
+    public function save()
+    {
 
         // 编辑或者模板重置
-        if(input('id') != '0') {
+        if (input('id') != '0') {
             $SeatMap = SeatMap::get(['id' => input('id')]);
             $this->deleteSeatAisle(input('id'));
             $SeatMap->delete();

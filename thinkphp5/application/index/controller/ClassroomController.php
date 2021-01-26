@@ -30,7 +30,7 @@ class ClassroomController extends AdminJudgeController
 
       // 查询
       if(!empty($name)){
-        $Classroom->where('name','like','%'.$name.'%');
+            $Classroom->where('name', 'like', '%' . $name . '%');
       }
       $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
               'query'=>[
