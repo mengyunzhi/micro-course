@@ -232,7 +232,9 @@ class SeatMapController extends Controller {
 
     public function seatMapReset()
     {
-        return $this->success('请重新填写模板信息', url('add?id=' . input('id') . '&isFirst=' . SeatMap::get(['id' => input('id')])->is_first));
+        $isFirst = SeatMap::get(['id' => input('id')])->is_first;
+        $id = input('id');
+        return $this->success('请重新填写模板信息', url('add?id=' . $id . '&isFirst=' . $isFirst));
     }
 
     /**
