@@ -83,7 +83,7 @@ class TeacherwxController extends IndexController {
         }
 
         // 根据教室对象和老师对象，判断该老师当前是否在上课之中
-        if ($Classroom->out_time > time()){
+        if ($Classroom->out_time > time()) {
             if (!is_null($Classroom->Course)) {
                 if (!is_null($Classroom->Course->Teacher)) {
                     if ($Classroom->Course->Teacher->id === $Teacher->id) {
@@ -108,7 +108,7 @@ class TeacherwxController extends IndexController {
         // 新建课程对象，传入V层
         $Course = new Course();
         $Course->name = $name;
-        
+
         // 将数据传入V层，并返回渲染后的效果
         $this->assign('Course', $Course);
         return $this->fetch();
@@ -118,7 +118,7 @@ class TeacherwxController extends IndexController {
      * 接收新增上课对象方法传入的值，并进行保存
      */
     public function save()
-    {   
+    {
         // 首先获取当前学期和教师id
         $teacherId = session('teacherId');
         if (is_null($teacherId) || is_null($Teacher = Teacher::get($teacherId))) {
@@ -327,9 +327,9 @@ class TeacherwxController extends IndexController {
         $unSigns = [];
         // 情况判断，判断当前老师是否导入excel，如果没有，则任意人都可上课
         if (sizeof($courseStudents) !== 0) {
-            $this->unSignStudents($classDetails, $courseStudents, $unSigns);   
+            $this->unSignStudents($classDetails, $courseStudents, $unSigns);
         }
-        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate();        
+        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate();
 
         // 将上课详情对象数组传入V层
         $this->assign('classDetails', $classDetails);

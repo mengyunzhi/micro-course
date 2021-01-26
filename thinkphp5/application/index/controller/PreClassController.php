@@ -66,7 +66,8 @@ class PreClassController extends IndexController
     * @param Classroom 教室对象
     * @param teacherId 教师对应的id
     */
-    public function isSign($Classroom, $teacherId) {
+    public function isSign($Classroom, $teacherId)
+    {
         // 增加判断当前时间和下课截止时间的关系，如果未到下课时间，则再判断是否对应上课老师
         // 首先将时间戳转换为小时:分钟的形式再进行比较
         $currentTime = time();
@@ -77,7 +78,7 @@ class PreClassController extends IndexController
                 return $this->error('当前课程已经不存在,请先添加课程', Request::instance()->header('referer'));
             }
             if (request()->controller() !== 'Teacherwx') {
-                    if ($teacherId === $Classroom->Course->Teacher->id) {
+                if ($teacherId === $Classroom->Course->Teacher->id) {
                     $url = url('InClass/index?reclass=' . 1 . '&classroomId=' . $Classroom->id);
                     header("Location: $url");
                     exit();
