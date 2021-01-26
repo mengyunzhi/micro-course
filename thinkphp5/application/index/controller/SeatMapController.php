@@ -15,7 +15,8 @@ use app\common\model\Seat;
  * 座位图模板
  */
 class SeatMapController extends Controller {
-    public function index(){
+    public function index()
+    {
         $name = input('param.name');
         $seatMaps = new SeatMap();
         if (!is_null($name)) {
@@ -30,7 +31,8 @@ class SeatMapController extends Controller {
      * 座位图模板显示
      */
     public function template()
-    {    // 判断有无模板
+    {    
+        // 判断有无模板
         if (empty(SeatMap::all())) {
             return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
         }
@@ -107,7 +109,7 @@ class SeatMapController extends Controller {
      */
     public function desc($arry)
     {
-        return array_reverse ($arry);
+        return array_reverse($arry);
     }
 
     /**
@@ -293,7 +295,6 @@ class SeatMapController extends Controller {
     public function seatState($seatId, $SOA, $url)
     {
         if (!is_null($seatId)) {
-
             // 1代表是教室座位状态修改
             if ($SOA === 1) {
                 $SeatAisle = Seat::get($seatId);
@@ -301,22 +302,19 @@ class SeatMapController extends Controller {
                 // 0代表座位图状态修改
                 $SeatAisle = SeatAisle::get($seatId);
             }
-    } else {
+        } else {
             return $this->error('未找到相关作为信息');
-    }
+        }
 
         // 如果是座位则切换为过道
-    if ($SeatAisle->is_seat === 1) {
+        if ($SeatAisle->is_seat === 1) {
             $SeatAisle->is_seat = 0;
-    }
-        // 反之切换为座位
-    else {
+        } else {
             $SeatAisle->is_seat = 1;
-    }
-    if (!$SeatAisle->save()) {
+        }
+        if (!$SeatAisle->save()) {
             $this->error('系统未找到ID为' . $id . '的记录');
-    }
-
+        }
         // 如果设置成功返回设置成功的
         header("Location: $url");
         exit();
@@ -349,7 +347,7 @@ class SeatMapController extends Controller {
                         $SeatMap[1]->save();
                     }
 
-                    // 如果是第一个则其后一个座位变为第一个    
+                    // 如果是第一个则其后一个座位变为第一个
                     if ($seatMap->is_first === 1) {
                         $SeatMap = $seats;
                         $SeatMap[1]->is_first = 1;
@@ -361,7 +359,7 @@ class SeatMapController extends Controller {
                 }
             }
         }
-     }
+    }
 
     /**
      * 删除模板对应的教室
