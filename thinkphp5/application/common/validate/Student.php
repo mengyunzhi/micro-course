@@ -3,10 +3,10 @@ namespace app\common\validate;
 use think\Validate;
 class Student extends Validate
 {
- 	protected $rule = [
-        	'name'=>'require|max:25',
-        	'num'=>'require|unique:student|length:6',
-    	];
+    protected $rule = [
+            'name' => 'require|max:25',
+            'num' => 'require|length:6',
+        ];
 
      protected $message  =   [
         'name.require' => '姓名不能为空',

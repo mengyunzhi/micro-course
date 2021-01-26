@@ -6,6 +6,7 @@ class Menu {
     private $href;
     public $action = 'index';
     public $controller;
+
     public function getClass() {
         
         // 增加判断是否为教师微信端，如果是则根据方法进行比较
@@ -66,6 +67,34 @@ class Menu {
             return 'active';
         } else {
             return '';
+        }
+    }
+
+    /**
+     * 获取当前登录的教师姓名
+     */
+    public function getTeacherName()
+    {
+        // 首先获取教师id
+        $teacherId = session('teacherId');
+
+        // 根据教师id获取当前登录教师
+        if (!is_null($Teacher = Teacher::get($teacherId))) {
+            return $Teacher->name;
+        }
+    }
+
+    /**
+     * 获取学生名字
+     */
+    public function getStudentName()
+    {
+        // 首先获取学生id
+        $studentId = session('studentId');
+
+        // 根据学生id获取当前登录学生信息
+        if (!is_null($Student = Student::get($studentId))) {
+            return $Student->name;
         }
     }
 

@@ -1,0 +1,13 @@
+name: reviewdog
+on: [pull_request]
+
+jobs:
+  php_codesniffer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: hrysd/action-php_codesniffer@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          standard: PSR12
+          target_directory: thinkphp5/application

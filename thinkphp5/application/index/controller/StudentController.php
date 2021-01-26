@@ -78,8 +78,6 @@ class StudentController extends Controller
         //获取该ID对应的课程信息
         $course = Course::get($courseId);
 		$Student=new Student;
-		$Student->sex=0;
-		$Student->email='';
 		$Student->num='';
 		$Student->name='';
         $Student->id = 0;
@@ -105,6 +103,7 @@ class StudentController extends Controller
         if (is_null($Course =Course::get($courseId))) {
             return $this->error('课程不存在', Request::instance()->header('referer'));
         }
+
 		//判断是否存在为此id的记录
 		if(is_null($Student = Student::get($id))) {
 			return $this->error('未找到ID为' . $id . '的记录');
@@ -212,9 +211,8 @@ class StudentController extends Controller
 	private function saveStudent(Student &$Student, $isUpdate = false, &$CourseStudent = null, &$Grade = null) {
         //写入要传入的数据
         $name = Request::instance()->post('name');
-        $num = Request::instance()->post('num/d');
+        $num = Request::instance()->post('num');
         $sex = Request::instance()->post('sex/d');
-        $email = Request::instance()->post('email');
         $courseId = Request::instance()->post('courseid');
         $page = Request::instance()->param('page');
         
@@ -227,12 +225,10 @@ class StudentController extends Controller
             // 判断数据库是否存在该学生，存在则不用新增
             if (is_null($StudentTest)) {
                 $Student->name = Request::instance()->post('name');
-                $Student->num = Request::instance()->post('num/d');
-                $Student->sex = Request::instance()->post('sex/d');
-                $Student->email = Request::instance()->post('email');
+                $Student->num = Request::instance()->post('num');
                 // 学生的用户名默认就是学号
                 $Student->username = $Student->num;
-                $Student->password = $Student->encryptPassword('000000');
+                $Student->password = null;
                 // 更新并保存数据
                 return $Student->validate(true)->save();  
             }
@@ -242,11 +238,8 @@ class StudentController extends Controller
                 // 更新操作只更新学生对象信息
                 $newStudent->name = Request::instance()->post('name');
                 $newStudent->num = Request::instance()->post('num');
-                $newStudent->sex = Request::instance()->post('sex/d');
-                $newStudent->email = Request::instance()->post('email');
                 // 学生的用户名默认就是学号
                 $newStudent->username = $newStudent->num;
-                $newStudent->password = $newStudent->encryptPassword('000000');
                 // 更新并保存数据d
                 trace($newStudent,'debug');
                 if (!$newStudent->validate(true)->save()) {
@@ -304,22 +297,36 @@ class StudentController extends Controller
      * @param isUpdate 是否是保存信息
      */
     private function saveGrade(Grade &$Grade,Student &$Student,$isUpdate= false) {
-        // 写入要传入的数据
-        $Grade->student_id = $Student->id;
-        $Grade->course_id = Request::instance()->post('courseid');
-        $Grade->resigternum = 0;
-        $Grade->usgrade = 0;
-
         // 实例化课程对象
         $courseId = Request::instance()->post('courseid');
         $Course = course::get($courseId); 
 
-        // 通过课程对上课表现初始成绩进行赋值
-        $Grade->coursegrade = $Course->begincougrade;        
-        $Grade->allgrade = $Grade->usgrade + $Grade->coursegrade;
+        // 写入要传入的数据
+        $Grade->student_id = $Student->id;
+        $Grade->course_id = $courseId;
+        $Grade->resigternum = 0;
+        $Grade->usgrade = 0;
+        $Grade->coursegrade = $Course->begincougrade;
+
+        // 获取该学生在该课程上课的记录
+        $classCourses = ClassCourse::where('course_id', '=', $courseId)->select();
+        foreach ($classCourses as $ClassCourse) {
+            $que = array(
+                'student_id' => $Student->id,
+                'class_course_id' => $ClassCourse->id
+            );
+            $ClassDetail = ClassDetail::get($que);
+            if (!is_null($ClassDetail)) {
+                if ($ClassDetail->create_time < $ClassCourse->sign_deadline_time) {
+                    $Grade->resigternum ++;
+                }
+                $Grade->coursegrade += $ClassDetail->aod_num;
+                $Grade->getAllgrade();
+            }
+        }
 
         //更新并保存数据
-        return $Grade->validate(true)->save();
+        return true;
     }
 
     /**
@@ -393,10 +400,41 @@ class StudentController extends Controller
      */
     public function afterSign() {
         // 获取学生id，并将学生对象实例化
-        $studentId = Request::instance()->param('studentId');
+        $studentId = session('studentId');
+        $courseId = request()->param('courseId');
+        if (!is_null($courseId)) {
+            $Course = Course::get($courseId);
+        } else {
+            $Course = '';
+        }
+
         $Student = Student::get($studentId);
         if (is_null($Student)) {
             return $this->error('学生信息不存在,请重新登陆', Request::instance()->header('referer'));
+        }
+
+        // 获取成绩信息
+        $courseStudents = CourseStudent::where('student_id', '=', $studentId)->select();
+        // 定义课程数组,并将中间表对应的课程存入该数组
+        $courses = array();
+        foreach ($courseStudents as $CourseStudent) {
+            // 获取对应的课程
+            $courses[] = $CourseStudent->course;
+        }
+
+        // 将签到过的课程也放入
+        $classDetails = ClassDetail::where('student_id', '=', $studentId)->select();
+        foreach ($classDetails as $ClassDetail) {
+            $flag = 0;
+            foreach ($courses as $Course) {
+                if ($Course->id === $ClassDetail->classCourse->course_id) {
+                    $flag = 1;
+                }
+            }
+            // 如果flag还为0,说明之前的数组中没有该课程
+            if ($flag === 0 && !is_null($ClassDetail->classCourse->course)) {
+                $courses[] = $ClassDetail->classCourse->course;
+            }
         }
 
         // 通过中间表和学生id，获取该学生所上的课程
@@ -408,6 +446,8 @@ class StudentController extends Controller
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
         $this->assign('Student', $Student);
+        $this->assign('Course', $Course);
+        $this->assign('courses', $courses);
         return $this->fetch();
     }
 

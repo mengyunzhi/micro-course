@@ -342,8 +342,8 @@ class ClassroomController extends AdminJudgeController
     $this->assign('seats', $seats);
     $this->assign('SeatMap', $SeatMap);
     $this->assign('Classroom', $Classroom);
-    $url = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/wxlogin?classroomId=' . $Classroom->id . '&seatId=';
-    $urlTeacher = 'http://'.$_SERVER['HTTP_HOST'].'/index/login/teacherIndex?classroomId=' . $Classroom->id;
+        $url = 'http://' . $_SERVER['HTTP_HOST'] . '/index/login/studentWx?classroomId=' . $Classroom->id . '&seatId=';
+        $urlTeacher = 'http://' . $_SERVER['HTTP_HOST'] . '/index/login/teacherIndex?classroomId=' . $Classroom->id;
     $this->assign('url', $url);
     $this->assign('urlTeacher', $urlTeacher);
     return $this->fetch();

@@ -7,5 +7,5 @@ use app\common\model\Student;
 
 class CourseStudentController extends IndexController
 {
-	
+
 }
