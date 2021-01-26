@@ -10,7 +10,7 @@
 {block name="content"}
 <?php $time = date('Y-m-d'); ?>
 <br>
-<table class="table table-hover table-bordered" style="200px;">
+<table class="table table-hover table-bordered" style="margin-top: -5px;">
     <td>{$Course->name}:已上课学生名单:</td>
     </td>
 </table>
@@ -29,7 +29,7 @@
         <td>{$_classDetail->student->name}</td>
         <td>{$_classDetail->student->num}</td>
         <td>
-            <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
+            <?php echo(date('m/d G:i',$_classDetail->create_time)); ?>
         </td>
         <td>
             {eq name="_classDetail->seat_id" value="-1"}成功{else/}{lt name="_classDetail->create_time" value='_classDetail->classCourse->sign_deadline_time'}<span class="label label-danger">未成功</span>{else /}成功{/lt}{/eq}
@@ -39,7 +39,7 @@
 </table>
 {:$classDetails->render()}
 <table class="table table-hover table-bordered" style="200px;">
-    <td>{$Course->name}:未签到学生:{:sizeof($unSigns)}人</td>
+    <td>{$Course->name}:未上课学生:{:sizeof($unSigns)}人</td>
 </table>
 <hr>
 <table class="table table-hover table-bordered">

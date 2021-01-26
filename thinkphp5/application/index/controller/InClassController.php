@@ -199,7 +199,10 @@ class InClassController  extends IndexController {
 
         // 新建学生数组接收未签到学生并调用unsignStu函数获取未签到学生
         $Students = [];
-        $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
+        // 增加判断当前是否已经导入学生信息，如果没导入，怎不统计未签到学生
+        if (sizeof($CourseStudents) !== 0) {
+            $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
+        }
 
         // 新建上课缓存数组查看加减分记录 
         $classDetails = [];
@@ -259,12 +262,14 @@ class InClassController  extends IndexController {
 
         // 获取上课缓存数组，进而获得已签名单和签到时间
         $ClassCourse = ClassCourse::get(['classroom_id' => $classroomId, 'begin_time' => $Classroom->begin_time]);
-        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select(); 
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->select();
         $signNumber = sizeof($ClassDetails);
         // 将Students，CourseStudents,Seats传入求未签到学生的函数
-        $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
-
-        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate(); 
+        // 情况判断：老师是否导入了学生的信息，没导入则无法统计未上课学生
+        if (sizeof($CourseStudents) !== 0) {
+            $this->unSignStudents($ClassDetails, $CourseStudents, $Students);
+        }
+        $ClassDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate();
 
         // 将学生、教室、课程信息传入V层进行渲染
         $this->assign('courseStudents', $CourseStudents);

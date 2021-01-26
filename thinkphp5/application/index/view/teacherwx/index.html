@@ -11,6 +11,8 @@
             </div>
             <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i>&nbsp;查询</button>
         </form>
+        <div style="float: right;">
+            <a href="{:url('add')}" class="btn btn-info"><i class="glyphicon glyphicon-plus"></i>&nbsp;增加</button></a></div>
     </div>
 </div>
 {/block}
@@ -26,14 +28,24 @@
         <th>学生人数</th>
         <th>操作</th>
     </tr>
+    {eq name="courseId" value='0'}
+    {volist name="courses" id="_course" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_course->getData('name')}</td>
+        <td>{$_course->student_num}</td>
+        <td><a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}"><button class="btn btn-success" onClick="return confirm('温馨提示：签到时间、下课时间和学生上课情况详情请登录系统web端。请在较早时期导入学生信息，确定上课名单');"><i class="glyphicon glyphicon-ok"></i>&nbsp;上课</button></a></td>
+    </tr>
+    {/volist}
+    {else /}
     {volist name="courses" id="_course" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
-        <td><a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}">上课</a></td>
+        <td>{eq name="courseId" value="$_course->id"}<a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}"  class="btn btn-success  btn-sm "><i class="glyphicon glyphicon-ok"></i>&nbsp;上课</a>{else /}<a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}" class="btn btn-success btn-sm disabled"><i class="glyphicon glyphicon-ok" style="cursor: default;"></i>&nbsp;上课</a>{/eq}</td>
     </tr>
-    {/volist}
+    {/volist}{/eq}
 </table>
 {$courses->render()}
 {/block}

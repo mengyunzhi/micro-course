@@ -398,11 +398,11 @@ class CourseController extends IndexController {
                     if (!$CourseStudent->save()) {
                         return $this->error('课程-学生信息保存失败', url('Course/add'));
                     }
+                    // 课程对应学生数量加一
+                    $Course->student_num++;
                 } else {
                     $unImportNumber++;
                 }
-                 // 课程对应学生数量加一
-                $Course->student_num++;
             }
         }
 

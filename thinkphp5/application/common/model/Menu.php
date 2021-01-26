@@ -81,7 +81,11 @@ class Menu {
 
         // 根据教师id获取当前登录教师
         if (!is_null($Teacher = Teacher::get($teacherId))) {
-            return $Teacher->name;
+            if ($Teacher->username !== 'admin') {
+                return $Teacher->name . '老师';
+            } else {
+                return $Teacher->name;
+            }
         }
     }
 
