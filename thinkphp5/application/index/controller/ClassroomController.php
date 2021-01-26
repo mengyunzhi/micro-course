@@ -19,7 +19,7 @@ class ClassroomController extends AdminJudgeController
 {
     public function index()
     {
-    	$pageSize = 5;
+        $pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
       $Classroom->where('is_delete', '<>', 1);
@@ -30,7 +30,7 @@ class ClassroomController extends AdminJudgeController
 
       // 查询
       if(!empty($name)){
-      	$Classroom->where('name','like','%'.$name.'%');
+        $Classroom->where('name','like','%'.$name.'%');
       }
       $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
               'query'=>[
@@ -148,7 +148,7 @@ class ClassroomController extends AdminJudgeController
         $classroomId = Request::instance()->param('classroomId/d');
         $Classroom = Classroom::get($classroomId);
         $seatMapId = Request::instance()->param('seatMapId');
-        $SeatMapController = new SeatMapController;
+        $SeatMapController = new SeatMapController();
         if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
           //如果存在上级路由（模板选择一级）传过来的值，则赋值
             if (!is_null($seatMapId)) {
@@ -272,14 +272,14 @@ class ClassroomController extends AdminJudgeController
         $Classroom = Classroom::get($classroomId);
         $SeatMapController = new SeatMapController();
         if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
-          $Classroom->is_delete = 1;
-          $this->deleteSeat($classroomId);
+            $Classroom->is_delete = 1;
+            $this->deleteSeat($classroomId);
 
-          // 删除教室
-          if(!$Classroom->save()) {
-            return $this->error('教室未被正确删除');
-          }
-          return $this->success('删除成功', url('index'));
+              // 删除教室
+            if (!$Classroom->save()) {
+                return $this->error('教室未被正确删除');
+            }
+            return $this->success('删除成功', url('index'));
         }
     }
 
@@ -335,7 +335,7 @@ class ClassroomController extends AdminJudgeController
         $id = input('param.id/d');
         $Classroom = Classroom::get($id);
         $seats = Seat::where('classroom_id', '=', $id)->order('id')->select();
-        if(empty($seats)) {
+        if (empty($seats)) {
             return $this->error('当前教室无座位', url('index'));
         }
         $SeatMap = SeatMap::get($Classroom->seat_map_id);

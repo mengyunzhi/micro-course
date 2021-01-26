@@ -22,10 +22,10 @@ class MenuViewTeacher {
         $this->menus = [$courseMenu, $onClassMenu, $gradeMenu];
         $this->viewHtml = view(
             'index/menu',
-            ['menus' => $this->menus, 
+            ['menus' => $this->menus,
             'title' => config('app.title'),
-            'username' => MenuView::getUsername()
-        ]);
+            'username' => MenuView::getUsername()]
+        );
     }
     public function render()
     {
