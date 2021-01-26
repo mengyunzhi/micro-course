@@ -419,8 +419,8 @@ class StudentController extends Controller
         $courses = array();
         foreach ($courseStudents as $CourseStudent) {
             // 获取对应的课程
-            if (!is_null(Course::get($CourseStudent->course_id))) {
-                $courses[] = Course::get($CourseStudent->course_id);
+            if (!is_null($CourseStudent->course)) {
+                $courses[] = $CourseStudent->course;
             }
         }
 

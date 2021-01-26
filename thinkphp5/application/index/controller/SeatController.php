@@ -111,7 +111,7 @@ class SeatController extends controller {
             return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
             // 判断学生是否在当前课程中
-            $Grades = Grade::where('course_id', '=', $Classroom->course_id);
+            $Grades = Grade::where('course_id', '=', $Classroom->course_id)->select();
             if (sizeof($Grades) !== 0) {
                 // 获取此学生和此课程对应的成绩
                 $que = array(
