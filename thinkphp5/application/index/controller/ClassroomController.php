@@ -19,7 +19,7 @@ class ClassroomController extends AdminJudgeController
 {
     public function index()
     {
-    	$pageSize = 5;
+        $pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
       $Classroom->where('is_delete', '<>', 1);
@@ -30,7 +30,7 @@ class ClassroomController extends AdminJudgeController
 
       // 查询
       if(!empty($name)){
-      	$Classroom->where('name','like','%'.$name.'%');
+            $Classroom->where('name', 'like', '%' . $name . '%');
       }
       $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
               'query'=>[
@@ -144,16 +144,16 @@ class ClassroomController extends AdminJudgeController
      */
     public function edit() {
 
-      // 获取教室相关信息，并将教室id实例化
-      $classroomId = Request::instance()->param('classroomId/d');
-      $Classroom = Classroom::get($classroomId);
-      $seatMapId = Request::instance()->param('seatMapId');
-      $SeatMapController = new SeatMapController;
-      if($SeatMapController->judgeClassroom($seatMapId)) {
+          // 获取教室相关信息，并将教室id实例化
+        $classroomId = Request::instance()->param('classroomId/d');
+        $Classroom = Classroom::get($classroomId);
+        $seatMapId = Request::instance()->param('seatMapId');
+        $SeatMapController = new SeatMapController();
+        if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
           //如果存在上级路由（模板选择一级）传过来的值，则赋值
-        if(!is_null($seatMapId)) {
-          $Classroom->seat_map_id = $seatMapId;
-        }
+            if (!is_null($seatMapId)) {
+                $Classroom->seat_map_id = $seatMapId;
+            }
 
         //座位实例化
         $seatMaps = SeatMap::all();
@@ -267,20 +267,20 @@ class ClassroomController extends AdminJudgeController
      * 删除教室
      */
     public function delete() {
-      // 获取教室id，并进行实例化
-      $classroomId = input('param.id');
-      $Classroom = Classroom::get($classroomId);
-      $SeatMapController = new SeatMapController;
-      if($SeatMapController->judgeClassroom($Classroom->seat_map_id)) {
-        $Classroom->is_delete = 1;
-        $this->deleteSeat($classroomId);
+        // 获取教室id，并进行实例化
+        $classroomId = input('param.id');
+        $Classroom = Classroom::get($classroomId);
+        $SeatMapController = new SeatMapController();
+        if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
+            $Classroom->is_delete = 1;
+            $this->deleteSeat($classroomId);
 
-        // 删除教室
-        if(!$Classroom->save()) {
-          return $this->error('教室未被正确删除');
+              // 删除教室
+            if (!$Classroom->save()) {
+                return $this->error('教室未被正确删除');
+            }
+            return $this->success('删除成功', url('index'));
         }
-        return $this->success('删除成功', url('index'));
-      }
     }
 
     /**
@@ -302,23 +302,12 @@ class ClassroomController extends AdminJudgeController
      * 更改座位与过道的函数
      */
     public function isSeat() {
-      // 获取座位id和教室id，并对座位进行实例化
-      $seatId = Request::instance()->param('id/d');
-      $classroomId = input('param.classroomId');
-      $Seat = Seat::get($seatId);
-
-      // 判断座位是否为过道，并将其改为相反状态
-      if($Seat->is_seat === 1) {
-        $Seat->is_seat = 0;
-      } else {
-        $Seat->is_seat = 1;
-      }
-
-      // 增加判断座位状态更新后是否保存成功
-      if(!$Seat->save()) {
-        return $this->error('座位保存错误');
-      }
-      return $this->success('保存成功', url('seatMapChange?id=' . $classroomId)); 
+        // 获取座位id和教室id，并对座位进行实例化
+        $seatId = Request::instance()->param('id/d');
+        $classroomId = input('param.classroomId');
+        $SeatMapController = new SeatMapController();
+        $url = url('seatMapChange?id=' . $classroomId);
+        $SeatMapController->seatState($seatId, 1, $url);
   }
 
   /**
@@ -343,21 +332,28 @@ class ClassroomController extends AdminJudgeController
    * 生成二维码
    */
   public function QRCode() {
-    $id = input('param.id/d');
-    $Classroom = Classroom::get($id);
-    $seats = Seat::where('classroom_id', '=', $id)->select();
-    if(empty($seats)) {
-      return $this->error('当前教室无座位', url('index'));
-    }
-    $SeatMap = SeatMap::get($Classroom->seat_map_id);
-    $seats = $this->seatDisplay($seats, $SeatMap);
-    $this->assign('seats', $seats);
-    $this->assign('SeatMap', $SeatMap);
-    $this->assign('Classroom', $Classroom);
+        $id = input('param.id/d');
+        $Classroom = Classroom::get($id);
+        $seats = Seat::where('classroom_id', '=', $id)->order('id')->select();
+        if (empty($seats)) {
+            return $this->error('当前教室无座位', url('index'));
+        }
+        $SeatMap = SeatMap::get($Classroom->seat_map_id);
+        $this->assign('seats', $seats);
+        $this->assign('SeatMap', $SeatMap);
+        $this->assign('Classroom', $Classroom);
         $url = 'http://' . $_SERVER['HTTP_HOST'] . '/index/login/studentWx?classroomId=' . $Classroom->id . '&seatId=';
         $urlTeacher = 'http://' . $_SERVER['HTTP_HOST'] . '/index/login/teacherIndex?classroomId=' . $Classroom->id;
-    $this->assign('url', $url);
-    $this->assign('urlTeacher', $urlTeacher);
-    return $this->fetch();
+        $this->assign('url', $url);
+        $this->assign('urlTeacher', $urlTeacher);
+        return $this->fetch();
   }
+
+  /**
+   * 保存成功
+   */
+    public function successChanging()
+    {
+        return $this->success('操作成功', url('index'));
+    }
 }

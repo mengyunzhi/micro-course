@@ -86,7 +86,7 @@ class Teacher extends Model
 		//isset()和is_null是一对反义词
 		if(isset($teacherId))
 		{
-			return true;
+            return $teacherId;
 		}
 		else {
 			return false;

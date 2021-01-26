@@ -16,6 +16,7 @@
 <div class="container">
     <form action="{:url('save')}" method="post">
         <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
+        <input type="hidden" name="password" value="{$password}">
         <div class="form-group">
             <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
             <input type="text" name="name" id="name" class="form-control" />
@@ -31,13 +32,10 @@
                 <option value="1">女</option>
             </select>
         </div>
-        <div class="form-group">
-            <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
-            <input type="email" name="email" id="email" class="form-control" />
-        </div>
+        
        
-        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok">
-            提交
+        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" onClick="return confirm('确定新增，该学生的初始密码将为{$password}！');">
+            &nbsp;提交
         </button>
     </form>
 </div>

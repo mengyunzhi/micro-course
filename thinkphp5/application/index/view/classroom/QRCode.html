@@ -22,15 +22,15 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <h3 style="margin-left: 545px;margin-bottom: 20px;">
-        <?php echo($Classroom->name) ?>
-        <hr>
-        <p style="color: green;">讲台</p>
-        <td>
-                <div id="pla" style="margin-left: -40px;"></div>
-                <div style="margin-left: -40px; ">
-                <?php echo('教室：' . $Classroom->name . '    ');echo($urlTeacher);?></div>
-            </td>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <?php echo($Classroom->name) ?>
+            <hr>
+            <h2 style="color: green; padding-left: 50px" >讲台</h2>
+            <div id="pla"></div>
+            <div>
+                <b><?php echo('教室：' . $Classroom->name . '    ');echo($urlTeacher);?></b>
+            </div>
             <script>
             $("#pla").qrcode({
                 render: 'div',
@@ -38,39 +38,29 @@
                 text: '<?php echo($urlTeacher); ?>'
             });
             </script>
-    </h3>
+        </div>
+    </div>
     <table class="table table-bordered table-condensed ">
-        
     </table>
-    <table class="table table-bordered table-condensed " style="margin-left: -300px;">
-        <?php $x = 1;$y = 0; ?>
-        <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
-        <tr>
-            <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-            {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
-            <td>
-                <div id="{$i}{$j}"></div>
-                <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y);echo('列');echo($url . $seats[$i][$j]->id);?>
-            </td>
+    <table class="table table-bordered table-condensed ">
+        <?php $count = sizeof($seats); $x = 1; $y = 0; $index = 0;?>
+        {volist name="seats" id="Seat"}
+        {eq name="Seat->is_seat" value="0"}
+        <div class="col-md-3">
+            <div id="{$Seat->id}"></div>
+            <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y); echo('列'); echo($url . $Seat->id); ?>
             <script>
-            $("#{$i}{$j}").qrcode({
+            $("#{$Seat->id}").qrcode({
                 render: 'div',
                 size: 160,
-                text: '<?php echo($url . $seats[$i][$j]->id); ?>'
+                text: '<?php echo($url . $Seat->id); ?>'
             });
             </script>
-            {else /}
-            <td class="default" style="height: 230px;width: 250px;">
-                <p style="font-size: 25px;width: 100px;">
-                    <div style="margin-left: auto;margin-right: auto;width: 20px;font-size: 20px;"><?php echo('过');?><br><?php echo('道') ?></div>
-                </p>
-            </td>
-            {/eq}
-            <?php endfor; ?>
-            <?php $x++; ?>
-            <?php $y = 0; ?>
-        </tr>
-        <?php endfor; ?>
+        </div>
+        {/eq}
+        <?php $x = $y === 4? ++$x : $x; ?>
+        <?php $y = $y === 4? 0 : $y; ?>
+        {/volist}
     </table>
     <hr>
     </div>

@@ -11,18 +11,18 @@ class AdminTeacherController extends AdminJudgeController
 	public function index()
 	{
 		try {
-            $num = input('param.num');
+            $name = input('param.name');
             $pageSize = 5; // 每页显示5条数据
 
             // 实例化Teacher
             $Teacher = new Teacher; 
 
             //按条件查询
-            if(!is_null($num)) {
-                $Teacher = Teacher::where('num', 'like', '%'. $num. '%');
+            if (!is_null($name)) {
+                $Teacher = Teacher::where('name', 'like', '%' . $name . '%');
             }
             // 调用分页
-            $teachers = $Teacher->where('username', '<>', 'admin')->paginate($pageSize);
+            $teachers = $Teacher->where('is_admin', '<>', '1')->paginate($pageSize);
 
             // 向V层传数据
             $this->assign('teachers', $teachers);
@@ -52,7 +52,6 @@ class AdminTeacherController extends AdminJudgeController
         $Teacher->id = 0;
         $Teacher->name = '';
         $Teacher->username = '';
-        $Teacher->num = 0;
         $Teacher->password = '';
         $this->assign('Teacher', $Teacher);
 
@@ -100,8 +99,9 @@ class AdminTeacherController extends AdminJudgeController
         // 写入要更新的数据
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
-        $Teacher->num = 0;
-        $Teacher->password = $Teacher->encryptPassword('123456');
+        /*dump(input('password'));
+        die();*/
+        $Teacher->password = $Teacher->encryptPassword(input('password'));
 
         // 更新或保存
         return $Teacher->validate(true)->save();
@@ -201,7 +201,7 @@ class AdminTeacherController extends AdminJudgeController
         $Request = Request::instance();
         $id = input('id');
         $Teacher = Teacher::get(['id' => $id]);
-        $password = '123456';
+        $password = $Request->param('password');
         $Teacher->password = $Teacher->encryptPassword($password);
         if(!$Teacher->save()) {
             return $this->error('密码重置失败', url('index'));

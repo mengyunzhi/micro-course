@@ -14,16 +14,18 @@
 {/block}
 {block name="content"}
 <div class="container">
-    <label style="font-size: 15px;">请根据需要选择过道或者座位：</label>
+    <div  class="text-right">
+            <a href="{:url('successChanging')}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">&nbsp;提交</button></a></div>
+</div>
     <hr>
     <table>
-        <table class="table table-bordered table-condensed ">
+        <table style="margin: auto;margin-bottom: 50px;">
             <?php $x = 0; ?>
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php $y = 0; ?>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-                <td>
+                <th>
                     <a href="{:url('isSeat?id=' . $seats[$i][$j]->getData('id') . '&classroomId=' . $Classroom->id)}">
                         {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
                         <button class="btn btn-success" style="height: 50px;width: 80px;">座位 {$x}{$y}
@@ -34,7 +36,7 @@
                         </button>
                         {/eq}
                     </a>
-                </td>
+                </th>
                 <?php endfor; ?>
             </tr>
             <?php if($y === 0): ?>
@@ -43,9 +45,7 @@
             <?php $x++; ?>
             <?php endfor; ?>
         </table>
-        <div style="margin-left: auto;margin-right: auto;">
-            <a href="{:url('edit?id=' . $Classroom->id)}"><button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" style="padding-right: auto;padding-left: auto;">提交</button></a></div>
-</div>
+        
 {/block}
 <th>
     <a href="{:url('isSeat?id=' . $seat->getData('id') ,'&classroomId=' . $Classroom->id)}">
