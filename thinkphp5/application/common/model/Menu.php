@@ -7,8 +7,9 @@ class Menu {
     public $action = 'index';
     public $controller;
 
-    public function getClass() {
-        
+    public function getClass()
+    {
+
         // 增加判断是否为教师微信端，如果是则根据方法进行比较
         if (request()->controller() === 'Teacherwx') {
             if (request()->action() === $this->action) {

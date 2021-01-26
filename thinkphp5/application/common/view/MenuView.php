@@ -27,14 +27,16 @@ class MenuView {
 		 $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu, $SeatmapMenu];
 		 $this->viewHtml = view('index/menu', 
 		 	['menus' => $this->menus, 
-		 	'username' => MenuView::getUsername()]);
+		 	'username' => MenuView::getUsername()
+		 	]);
 	
 	 }
 
 	public function render() {
 		 return $this->viewHtml->getContent();
 	}
-	static public function getUsername() {
+	public static function getUsername()
+	{
 		$username = [];
 		$username[0] = Teacher::get(session('teacherId'))->username;
 		return $username;

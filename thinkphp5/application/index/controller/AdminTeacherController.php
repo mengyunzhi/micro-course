@@ -18,8 +18,8 @@ class AdminTeacherController extends AdminJudgeController
             $Teacher = new Teacher; 
 
             //按条件查询
-            if(!is_null($name)) {
-                $Teacher = Teacher::where('name', 'like', '%'. $name. '%');
+            if (!is_null($name)) {
+                $Teacher = Teacher::where('name', 'like', '%' . $name . '%');
             }
             // 调用分页
             $teachers = $Teacher->where('is_admin', '<>', '1')->paginate($pageSize);

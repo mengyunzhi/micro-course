@@ -15,7 +15,7 @@ class AdminJudgeController extends IndexController {
 
 		//验证用户是否为管理员
 		if(session('teacherId') != $Teacher->id) {
-			return $this->error('无此权限',url('Login/index'));
+			return $this->error('无此权限', url('Login/index'));
 		}
 	}	
 }
