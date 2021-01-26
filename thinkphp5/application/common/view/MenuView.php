@@ -27,7 +27,7 @@ class MenuView {
 
          $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu, $SeatmapMenu];
          $this->viewHtml = view(
-            'index/menu',
+             'index/menu',
              ['menus' => $this->menus,
              'username' => MenuView::getUsername()]
          );

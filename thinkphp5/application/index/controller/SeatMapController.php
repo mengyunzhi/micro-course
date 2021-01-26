@@ -31,7 +31,7 @@ class SeatMapController extends Controller {
      * 座位图模板显示
      */
     public function template()
-    {    
+    {
         // 判断有无模板
         if (empty(SeatMap::all())) {
             return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
