@@ -75,6 +75,8 @@ class AdminStudentController extends AdminJudgeController
         } 
     }
 	public function add(){
+        $password = mt_rand(100000, 999999);
+        $this->assign('password', $password);
         $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);
 		return $this->fetch();
@@ -99,7 +101,6 @@ class AdminStudentController extends AdminJudgeController
 		$Student = new Student();
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
-        $Student->email = input('post.email');   
         $Student->username =  Request::instance()->post('num');
         $password = '123456';
         $Teacher = new Teacher;
@@ -159,7 +160,6 @@ class AdminStudentController extends AdminJudgeController
         $Student->num = Request::instance()->post('num');
         $Student->username =  Request::instance()->post('num');  
         $Student->sex = input('post.sex');
-        $Student->email = input('post.email');
 		if(is_null($Student->validate(true)->save())){
 			return $this->error('学生信息更改发生错误'.$Student->getError());
 		}
@@ -273,7 +273,7 @@ class AdminStudentController extends AdminJudgeController
         $Teacher = new Teacher;
         $id = input('id');
         $Student = Student::get(['id' => $id]);
-        $password = '123456';
+        $password = $Request->param('password');
         $Student->password = $Teacher->encryptPassword($password);
         if(!$Student->save()) {
             return $this->error('密码重置失败', url('index'));

@@ -13,31 +13,40 @@
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>
-    <h3 style="margin-left: 545px;margin-bottom: 50px;">
-        <?php echo($Classroom->name) ?>
-        <hr>
-        <p style="color: green;">讲台</p>
-        <small style="float: right; font-weight: "><strong>门</strong> </small>
-    </h3>
+    <div class="row" style="margin-top: 50px">
+        
+        <div class="col-md-3 col-md-offset-6">
+            <h3>
+                <?php echo($Classroom->name) ?>
+                <hr>
+                <p style="color: green;">讲台</p>
+                <small style="float: right; font-weight: "><strong>门</strong> </small>
+            </h3>
+        </div>
+        <div class="col-md-3 ">
+            <a class="btn btn-primary" href="{:url('seatMapChange?id=' . $Classroom->id)}" style="margin-top: 20px;">
+                <i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑
+            </a>
+        </div>
+    </div>
     <div class="container">
-        <table class="table table-bordered table-condensed ">
+        <table style="margin: auto;margin-bottom: 50px;">
             <?php $x = 1; ?>
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php $y = 0; ?>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-                {eq name='$seat[$i][$j]->getData("is_seat")' value='0'}
-                <td class="success" style="height: 40px;width: 40px;">
-                    <p style="font-size: 25px;">
-                        <?php echo($x);echo(',');echo(++$y);?>
-                    </p>
-                </td>
-                {else /}
-                <td class="default" style="height: 40px;width: 40px;">
-                    <p style="font-size: 25px;">
-                    </p>
-                </td>
-                {/eq}
+                <th>
+                    {eq name='$seat[$i][$j]->getData("is_seat")' value='1'}
+                    <button class="label label-default " style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;">
+                        
+                    </button>
+                    {else /}
+                    <button class="label label-info " style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;">
+                        <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
+                    </button>
+                    {/eq}
+                </th>
                 <?php endfor; ?>
             </tr>
             <?php if ($y !== 0 ) $x++; ?>

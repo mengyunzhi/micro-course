@@ -13,6 +13,7 @@ use app\common\model\ClassDetail;
 use Env;
 use PHPExcel_IOFactory;
 use PHPExcel;
+use think\Controller;
 
 /**
  * 课程的增删改查操作

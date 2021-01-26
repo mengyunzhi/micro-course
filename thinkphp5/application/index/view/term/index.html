@@ -24,7 +24,7 @@
             未激活
         </td>
         {else /}
-        <td> <span class="label label-warning">已激活</span></td>
+        <td> <span class="label label-success">已激活</span></td>
         {/eq}
         <td>
             {eq name="term->getData('state')" value="0"}<!-- 单引号双引号没太大区别 -->
@@ -38,7 +38,7 @@
                 <a class="btn btn-danger btn-sm " href="{:url('delete?id=' . $term->getData('id'))}" onClick="return confirm('确定删除，删除此学期将会删除掉与之相关的所有课程信息！');">
                     <i class="glyphicon glyphicon-trash"></i>
                         &nbsp;删除
-                </a>&nbsp;
+                </a>
             {else /}
                 <a class="btn btn-danger btn-sm disabled" href="{:url('delete?id=' . $term->getData('id'))}" onClick="return confirm('确定删除，删除此学期将会删除掉与之相关的所有课程信息！');">
                     <i class="glyphicon glyphicon-trash"></i>

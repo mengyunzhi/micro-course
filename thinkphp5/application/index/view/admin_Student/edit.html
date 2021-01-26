@@ -32,10 +32,6 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
-            <input type="email" name="email" id="email" class="form-control" value="{$Student->email}" />
-        </div>
-        <div class="form-group">
             <?php use app\common\model\Teacher; ?>
             {volist name="Student->courses()->select()" id="course"}
             <?php $check = 0; ?>
@@ -48,7 +44,7 @@
             <?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
             {/volist}
         </div>
-        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
+        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">&nbsp;提交</button>
     </form>
 </div>
 {/block}

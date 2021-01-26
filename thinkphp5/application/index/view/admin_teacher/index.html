@@ -4,21 +4,21 @@
 {/block}
 {block name="search"}
 <label class="sr-only" for="num">工号</label>
-<input name="num" type="text" class="form-control" placeholder="工号..." value="{:input('get.num')}">
+<input name="name" type="text" class="form-control" placeholder="姓名..." value="{:input('get.name')}">
 {/block}
 {block name="content"}
 <table class="table table-hover table-bordered">
     <tr class="info">
         <th>序号</th>
         <th>姓名</th>
-        <th>工号</th>
+        <!-- <th>用户名</th> -->
         <th>操作</th>
     </tr>
     {volist name="teachers" id="teacher" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$teacher->getData('name')}</td>
-        <td>{$teacher->getData('num')}</td>
+        <!-- <td>{$teacher->getData('username')}</td> -->
         <td>
             <a class="btn btn-success btn-sm" href="{:url('AdminCourse/index?id=' . $teacher->getData('id'))}">
                 <span class="glyphicon glyphicon-eye-open"></span>
@@ -28,8 +28,8 @@
                 <i class="glyphicon glyphicon-pencil"></i>
                 &nbsp;编辑
             </a>
-            <a class="btn btn-sm btn-warning" href="{:url('passwordReset?id=' . $teacher->getData('id'))}" onClick="return confirm('密码将重置为123456，确定重置？')">
-                <i class="glyphicon glyphicon-pencil"></i>
+            <a class="btn btn-sm btn-warning" onClick="return confirm('密码将重置为{$password = mt_rand(100000, 999999);}，确定重置？')" href="{:url('passwordReset?id=' . $teacher->getData('id') . '&password=' . $password)}" >
+                <i class="glyphicon glyphicon-asterisk"></i>
                 &nbsp;重置密码
             </a>
             <a class="btn btn-danger btn-sm" href="{:url('delete?id=' . $teacher->getData('id'))}">

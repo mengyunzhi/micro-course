@@ -9,6 +9,8 @@ use app\common\model\Course;
 use app\common\model\Grade;
 use app\common\model\SeatAisle;
 use app\common\model\Teacher;
+use app\common\model\Seat;
+
 /**
  * 座位图模板
  */
@@ -34,6 +36,7 @@ class SeatMapController extends Controller {
 			return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
 		}
 
+
 		$match = input('param.match');
 		
 		$url = '';
@@ -49,41 +52,51 @@ class SeatMapController extends Controller {
 		$classroomId = Request::instance()->param('classroomId');
 		$classroomName = Request::instance()->param('classroomName');
 		$seatMapAsc = SeatMap::order('id')->select();
-		$seatMapDesc = SeatMap::order('id desc')->select();
 		$id = Request::instance()->param('id/d');
 		
-		// 若是最后一个则下一个模板为最开始的模板
-		if($id == -2 || is_null($id)) {
-			$seatmap = $seatMapAsc[0];
-			$id = $seatmap->id;
-		}
-		// 若是第一个模板则上一个模板是最后的模板
-		if($id === -1) {
-			$seatmap = $seatMapDesc[0];
-			$id = $seatmap->id;
-		}
 		$course_id = Request::instance()->param('course_id');
 		// 实例化课程
 		$Course = Course::get($course_id);
 		$SeatMap = SeatMap::get($id);
 		$seatAisles = new SeatAisle;
 		$seatAisles = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
+
 		if(empty($seatAisles)) {
 			return $this->error('模板' . $SeatMap->name . '座位图为空，请重新编辑或删除该模板', url('index'));
 		}
+		$index = input('index') === ''? 0:input('index');
+		$count = sizeof($seatMapAsc);
 
+		$this->assign('index', $index);
+		$this->assign('count', $count);
 		$this->assign('match', $match);
 		$this->assign('classroomName', $classroomName);
 		$this->assign('classroomId', $classroomId);
 		$this->assign('url', $url);
-		$this->assign('seatMap1', $seatMapAsc);
-		$this->assign('seatMap2', $seatMapDesc);
+		$this->assign('seatMaps', $seatMapAsc);
 		$this->assign('SeatMap',$SeatMap);
 		$this->assign('seatAisles', $seatAisles);
 		$this->assign('Course',$Course);
 		return $this->fetch();
 
 	}
+
+	/**
+	 * 测试
+	 */
+	public function test() {
+		$arry=[];
+		for($i = 0; $i < 4; $i++) {
+			$arry[$i] = $i;
+		}
+		dump(sizeof($arry));
+		for($i = 0; $arry[$i] !== 4; $i++) {
+			dump($i);
+			dump($arry[$i]);
+		}
+		dump($arry[$i]);
+	}
+
 	/**
 	 * 返回座位图模板数据库里面id升序的数组
 	 */
@@ -104,25 +117,23 @@ class SeatMapController extends Controller {
 	 */
 	public function add() {
 		$id = input('id');
+
+		// 默认为新增
 		$SeatMap = new SeatMap;
 		$SeatMap->id = 0;
 		$SeatMap->is_first = 0;
-		if(!is_null($id)) {
-			$SeatMap->id = $id;
-			$SeatMap->is_first = input('isFirst');
-		}
 		$SeatMap->name = '';
 		$SeatMap->x_map = '';
 		$SeatMap->y_map = '';
-		$SeatMap1 = SeatMap::get(['id' => $id]);
 
-		//若传来的$id不为空，即执行编辑操作
-		if(!is_null($SeatMap1)) {
-			$SeatMap = $SeatMap1;
+		// 如果是编辑或者重置
+		if(!is_null($id)) {
+			$SeatMap = SeatMap::get(['id' => $id]);
 		}
 		$this->assign('SeatMap', $SeatMap);
 		return $this->fetch();
 	}
+
 	/**
 	 * 编辑模板座位图的过道以及座位
 	 * 设置每个座位是过道还是座位
@@ -131,7 +142,7 @@ class SeatMapController extends Controller {
 		$id = Request::instance()->param('id/d');
 
 		//判断当前有无使用此模板的教室上课
-		if($this->judgeClassroom($id)) {
+		if($this->judgeClassroom($id, 0)) {
 			$seatAisle = SeatAisle::where('seat_map_id', '=', $id)->select();
 			rsort($seatAisle);
 			$seatAisle = array_reverse($seatAisle);
@@ -164,16 +175,22 @@ class SeatMapController extends Controller {
 	 * 通过模板名字来判断是不是已经添加了模板（解决添加模板时行列输入错误的问题，同时也起到了编辑的作用）
 	 */
 	public function save() {
+		
+		// 编辑或者模板重置
 		if(input('id') != '0') {
 			$SeatMap = SeatMap::get(['id' => input('id')]);
-			if(is_null($SeatMap)) {
-				$SeatMap = new SeatMap;
-				$SeatMap->id = input('id');
-			}
+			$this->deleteSeatAisle(input('id'));
+			$SeatMap->delete();
+
+			// 重设或编辑的模板和之前的模板id必须一样
+			$SeatMap = new SeatMap;
+			$SeatMap->id = input('id');
+		
+			// 模板的第一性不能改变
 			$SeatMap->is_first = input('isFirst');
 
-			$this->deleteSeatAisle(input('id'));
 		} else 	{
+					// 新增
 					$SeatMap = new SeatMap;
 
 					//首个座位图是第一个
@@ -182,15 +199,19 @@ class SeatMapController extends Controller {
 						$SeatMap->is_first = 1;
 					}
 				}
+		
+		// 赋值
 		$SeatMap->name = input('name');
 		$SeatMap->x_map = Request::instance()->post('xMap');
 		$SeatMap->y_map = Request::instance()->post('yMap');
 
+		// 保存
 		if(!$SeatMap->save()) {
 			return $this->error('保存信息错误'.$SeatMap->getError());
 		}
+
+		// 新增的模板id为字符串0
 		$id = $SeatMap->id;
-		
 		if(input('id') === '0') {
 			$seatMaps = SeatMap::all();
 			foreach ($seatMaps as $seatMap) {
@@ -207,14 +228,9 @@ class SeatMapController extends Controller {
 	/**
 	 * 模板重置
 	 */
+
 	public function seatMapReset() {
-
-		$SeatMapPre = SeatMap::get(['id' => input('id')]);
-		$isFirst = $SeatMapPre->is_first;
-		$this->deleteSeatAisle(input('id'));
-		$SeatMapPre->delete();
-		return $this->success('请重新填写模板信息', url('add?id=' . input('id') . '&isFirst=' . $isFirst));
-
+		return $this->success('请重新填写模板信息', url('add?id=' . input('id') . '&isFirst=' . SeatMap::get(['id' => input('id')])->is_first));
 	}
 
 	/**
@@ -255,42 +271,68 @@ class SeatMapController extends Controller {
 
 	/**
 	 *  过道和座位的切换
-	 * 默认为座位，即state = 0; 
-	 * 过道state = 1
+	 * 默认为座位，即is_seat = 0; 
+	 * 过道is_seat = 1
 	 */
 	public function isSeat() {
-		$Request = Request::instance();
 		$id = Request::instance()->param('id/d');
-		$SeatAisle = new SeatAisle;
-		$SeatAisle = SeatAisle::get($id);
+		//目的链接
+		$url = url('index/SeatMap/edit?id=' . SeatAisle::get($id)->seat_map_id);
+
+		$this->seatState($id, 0, $url);
+		
+	}
+
+	/**
+	 * 修改座位与过道状态
+	 * @param $seatId 对应座位或者座位图座位的ID
+	 * @param $SOA 是教室的座位还是座位图的座位
+	 * @param $url 跳转链接
+	 */
+	public function seatState($seatId, $SOA, $url) {
+		if(!is_null($seatId)) {
+
+			// 1代表是教室座位状态修改
+			if($SOA === 1) {
+				$SeatAisle = Seat::get($seatId);
+			} else {
+
+				// 0代表座位图状态修改
+				$SeatAisle = SeatAisle::get($seatId);
+			}
+		} else {
+			return $this->error('未找到相关作为信息');
+		}
 
 		// 如果是座位则切换为过道
-		if($SeatAisle->state === 1) {
-			$SeatAisle->state = 0;
+		if($SeatAisle->is_seat === 1) {
+			$SeatAisle->is_seat = 0;
 		}
 		// 反之切换为座位
 		else {
-			$SeatAisle->state = 1;
+			$SeatAisle->is_seat = 1;
 		}
 		if(!$SeatAisle->save()) {
 			$this->error('系统未找到ID为' . $id . '的记录');
 		}
 
 		// 如果设置成功返回设置成功的
-		$url = url('index/SeatMap/edit?id=' . $SeatAisle->seat_map_id);
         header("Location: $url");
         exit();
+		
 	}
 
 	/**
 	 * 删除座位模板
 	 */
 	public function delete() {
+		dump('delete');
+		die();
 		$id = Request::instance()->param('id');
 		$seatMap = SeatMap::get($id);
 
 		// 判断当前被删的模板的教室是否正在上课
-		if($this->judgeClassroom($id)) {
+		if($this->judgeClassroom($id, 0)) {
 
 			//删除对应教师
 			if(!$this->deleteClassrooms($seatMap->id)) {
@@ -329,6 +371,7 @@ class SeatMapController extends Controller {
 	 * @param $seatMapId
 	*/
 	public function deleteClassrooms($seatMapId) {
+		
 		$classrooms = Classroom::where('seat_map_id', '=', $seatMapId)->select();
 		if(!empty($classrooms)) {
 			foreach ($classrooms as $Classroom) {
@@ -354,25 +397,35 @@ class SeatMapController extends Controller {
 				return $this->error('模板座位未被删除', url('index'));
 			}
 		}
-		return 1;
+		return true;
 	}
 
 	/**
 	 * 判断对应当前模板的教室是否在上课
 	 * @param $seatMapId 对应模板ID 
+	 * @param $classroomId 想要删除的classroom的id
 	 */
- 	public function judgeClassroom($seatMapId) {
+ 	public function judgeClassroom($seatMapId, $classroomId) {
 		$teachers = Teacher::all();
 		foreach ($teachers as $Teacher) {
 			if($Teacher->classroom_id !== 0 && !is_null($Teacher->classroom_id)) {
 				$Classroom = Classroom::get($Teacher->classroom_id);
 				if(!is_null($Classroom)) {
+					if($Classroom->id === $classroomId) {
+						if($Classroom->out_time < time()) {
+							return $this->error('当前此教室正在上课，请稍后删除', url('classroom/index'));
+							
+						} else {
+							return true;
+						}
+					}
 					if($Classroom->seat_map_id === $seatMapId) {
 						if($Classroom->out_time < time()) {
 							return $this->error('当前有与此模板对应的教室正在上课，请稍后删除', url('index'));
+						} else {
+							return true;
 						}
 					}
-					return $this->error('当前此教室正在上课，请稍后删除', url('classroom/index'));
 				}
 			}
 		}

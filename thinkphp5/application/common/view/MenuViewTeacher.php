@@ -21,7 +21,8 @@ class MenuViewTeacher {
 		 $this->menus = [$courseMenu, $onClassMenu, $gradeMenu];
 		 $this->viewHtml = view('index/menu', 
 		 	['menus' => $this->menus, 
-		 	'title' => config('app.title')]);
+		 	'title' => config('app.title'),
+		 	'username' => MenuView::getUsername()]);
 	
 	 }
 

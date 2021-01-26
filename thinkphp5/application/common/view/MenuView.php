@@ -1,6 +1,7 @@
 <?php
 namespace app\common\view;
 use app\common\model\Menu;
+use app\common\model\Teacher;
 
 class MenuView {
 	 private $viewHtml;
@@ -26,11 +27,16 @@ class MenuView {
 		 $this->menus = [$TermMenu, $UserMenu, $ClassroomMenu, $SeatmapMenu];
 		 $this->viewHtml = view('index/menu', 
 		 	['menus' => $this->menus, 
-		 	'title' => config('app.title')]);
+		 	'username' => MenuView::getUsername()]);
 	
 	 }
 
 	public function render() {
 		 return $this->viewHtml->getContent();
+	}
+	static public function getUsername() {
+		$username = [];
+		$username[0] = Teacher::get(session('teacherId'))->username;
+		return $username;
 	}
 }

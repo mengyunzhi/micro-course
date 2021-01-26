@@ -12,6 +12,7 @@
                         <div class="navbar-header">
                             <a class="navbar-brand" href="http://www.mengyunzhi.com" target="_blank">梦云智</a>
                         </div>
+                        
                         {volist name="menus" id="_menu"}
                         {eq name="$_menu->title" value="用户管理"}
                         <ul class="nav nav-tabs navbar-nav navbar-right">
@@ -35,7 +36,7 @@
                     <ul class="nav nav-tabs navbar-nav navbar-right">
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                个人中心 <span class="caret"></span>
+                                {:$username[0]} <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a href="{:url('Login/logout')}">注销</a></li>
