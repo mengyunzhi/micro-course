@@ -47,7 +47,7 @@ class CourseController extends IndexController {
         $courses = $Grade->getCourses($termId, $id, $name)->paginate();
 
         // 获取所有的学期信息
-        $terms = Term::all();   
+        $terms = Term::all();
 
         //向V层传数据
         $this->assign('courses', $courses);
