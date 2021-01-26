@@ -152,7 +152,7 @@ class ClassroomController extends AdminJudgeController
         if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
           //如果存在上级路由（模板选择一级）传过来的值，则赋值
             if (!is_null($seatMapId)) {
-              $Classroom->seat_map_id = $seatMapId;
+                $Classroom->seat_map_id = $seatMapId;
             }
 
         //座位实例化
@@ -270,7 +270,7 @@ class ClassroomController extends AdminJudgeController
         // 获取教室id，并进行实例化
         $classroomId = input('param.id');
         $Classroom = Classroom::get($classroomId);
-        $SeatMapController = new SeatMapController;
+        $SeatMapController = new SeatMapController();
         if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
           $Classroom->is_delete = 1;
           $this->deleteSeat($classroomId);
