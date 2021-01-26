@@ -55,7 +55,7 @@
     <tr>
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
-        <td>{$_course->student_num = sizeof($_course->Students)}</td>
+        <td>{$_course->student_num}</td>
         <td><a class="btn btn-info" href="{:url('student/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-user"></i>&nbsp;点击查看</a>&nbsp;</td>
         <td>
             <a class="btn btn-sm btn-primary" href="{:url('course/courseedit?id=' . $_course->id)}"><i class="glyphicon glyphicon-pencil"></i>&nbsp;编辑</a>&nbsp;&nbsp;<a class=" btn btn-danger btn-sm" href="{:url('course/delete?id=' . $_course->id)}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a></td>

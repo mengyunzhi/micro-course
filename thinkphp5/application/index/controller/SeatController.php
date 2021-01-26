@@ -112,7 +112,7 @@ class SeatController extends controller {
         } else {
             // 判断学生是否在当前课程中
             $Grades = Grade::where('course_id', '=', $Classroom->course_id);
-            if (!is_null($Grades)) {
+            if (sizeof($Grades) !== 0) {
                 // 获取此学生和此课程对应的成绩
                 $que = array(
                     'student_id' => $studentId,
