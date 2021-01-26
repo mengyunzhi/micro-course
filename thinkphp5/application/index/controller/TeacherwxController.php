@@ -40,20 +40,61 @@ class TeacherwxController extends IndexController {
             $termId = $Term->id;
         }
 
+        $courseId = null;
+        // 调用checkClass方法,获取当前上课课程
+        $courseId = $this->checkClass($classroomId, $Teacher);
+        if ($courseId !== 0) {
+            // 此情况说明有上课课程，则获取该课程
+            if (is_null($Course = Course::get($courseId))) {
+                // 为空则需要清除一下此教室的信息，因为教室对应的课程都不存在了
+                $Classroom = Classroom::get($classroomId);
+                $PreClass = new PreClassController();
+                $PreClass->clearClassroom($Classroom);
+            }
+        }
+
         $courses = Course::where('teacher_id', '=', $teacherId)->where('term_id', '=', $termId);
 
         if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate();
             $this->assign('courses', $courses);
             $this->assign('Teacher', $Teacher);
+            $this->assign('courseId', $courseId);
             return $this->fetch();
         } else {
             $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
             // 将课程对象数组传入V层进行渲染
             $this->assign('courses', $courses);
             $this->assign('Teacher', $Teacher);
+            $this->assign('courseId', $courseId);
             return $this->fetch();
         }
+    }
+
+    /**
+     * 判断当前是否有上课课程
+     */
+    public function checkClass($classroomId, $Teacher)
+    {
+        // 首先根据教室id获取当前教室对象,并判断是否为空
+        $Classroom = Classroom::get($classroomId);
+        if (is_null($Classroom)) {
+            return $this->error('教室信息保存失败,请重新扫码上课', Request::instance()->header('referer'));
+        }
+
+        // 根据教室对象和老师对象，判断该老师当前是否在上课之中
+        if ($Classroom->out_time > time()) {
+            if (!is_null($Classroom->Course)) {
+                if (!is_null($Classroom->Course->Teacher)) {
+                    if ($Classroom->Course->Teacher->id === $Teacher->id) {
+                        return $Classroom->Course->id;
+                    }
+                }
+            }
+        }
+
+        // 最后情况，该教室没有处于上课之中，则返回0
+        return 0;
     }
 
     /**
@@ -66,6 +107,7 @@ class TeacherwxController extends IndexController {
 
         // 新建课程对象，传入V层
         $Course = new Course();
+        $Course->name = $name;
 
         // 将数据传入V层，并返回渲染后的效果
         $this->assign('Course', $Course);
@@ -91,8 +133,8 @@ class TeacherwxController extends IndexController {
         // 接收课程信息，并进行保存
         $Course = new Course();
         $Course->name = Request::instance()->post('name');
-        $Course->teacher_id = Request::instance()->post('id');
-        $Course->term_id = Request::instance()->post('term_id');
+        $Course->teacher_id = $teacherId;
+        $Course->term_id = $Term->id;
         $Course->student_num = 0;
         $Course->resigternum = 0;
         $Course->usmix = 50;
@@ -101,8 +143,11 @@ class TeacherwxController extends IndexController {
 
         // 将新增的课程保存
         if (!$Course->validate()->save()) {
-            return $this->error('课程新增失败,请检查信息填写是否正确', Request::instance()->header('referer'));
+            return $this->error('课程新增失败,请检查名称是否符合要求', Request::instance()->header('referer'));
         }
+
+        // 新增成功，返回到首页
+        return $this->success('新增成功，学生导入请登录web端', url('index'));
     }
 
     /**
@@ -280,7 +325,10 @@ class TeacherwxController extends IndexController {
 
         // 获取未签到的学生
         $unSigns = [];
-        $this->unSignStudents($classDetails, $courseStudents, $unSigns);
+        // 情况判断，判断当前老师是否导入excel，如果没有，则任意人都可上课
+        if (sizeof($courseStudents) !== 0) {
+            $this->unSignStudents($classDetails, $courseStudents, $unSigns);
+        }
         $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id)->paginate();
 
         // 将上课详情对象数组传入V层
@@ -490,6 +538,10 @@ class TeacherwxController extends IndexController {
                 }
             }
         }
+
+        // 首先判断是否在签到时间内，如果不在也清空一下这个教室的信息
+        $PreClass = new PreClassController();
+        $PreClass->isSign($Classroom, $teacherId);
 
         // 如果没有上课,调用inClass的两个方法，分别保存上课信息
         $InClass = new InClassController();

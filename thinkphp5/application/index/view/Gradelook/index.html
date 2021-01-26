@@ -19,8 +19,8 @@
         <th>序号</th>
         <th>姓名</th>
         <th>学号</th>
-        <th>考勤成绩({:$course->usmix}%<a href="{:url('Grade/edit?id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i></a>)</th>
-        <th>表现成绩(<?php echo(100-$course->usmix);?>%<a href="{:url('Grade/edit?id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i></a>)</th>
+        <th style="width: 180px;">考勤成绩({:$course->usmix}%<a href="{:url('Grade/edit?id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i></a>)</th>
+        <th style="width: 180px;">上课表现成绩(<?php echo(100-$course->usmix);?>%<a href="{:url('Grade/edit?id=' . $course->id)}"><i class="glyphicon glyphicon-pencil"></i></a>)</th>
         <th>总成绩</th>
         <th>操作</th>
     </tr>

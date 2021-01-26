@@ -190,7 +190,7 @@ class StudentController extends Controller
         }
 
         // 课程对应学生人数也加一，并保存
-        $Course->resigternum ++;
+        $Course->student_num ++;
         if (!$Course->validate(true)->save()) {
             $CourseStudent->delete();
             $Grade->delete();
