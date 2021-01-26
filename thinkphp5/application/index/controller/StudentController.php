@@ -409,7 +409,7 @@ class StudentController extends Controller
         }
 
         $Student = Student::get($studentId);
-        if (is_null($Student)) {
+        if (is_null($Student) || is_null($studentId)) {
             return $this->error('学生信息不存在,请重新登陆', Request::instance()->header('referer'));
         }
 
@@ -419,7 +419,9 @@ class StudentController extends Controller
         $courses = array();
         foreach ($courseStudents as $CourseStudent) {
             // 获取对应的课程
-            $courses[] = $CourseStudent->course;
+            if (!is_null(Course::get($CourseStudent->course_id))) {
+                $courses[] = Course::get($CourseStudent->course_id);
+            }
         }
 
         // 将签到过的课程也放入
@@ -442,6 +444,7 @@ class StudentController extends Controller
             'student_id' => $studentId,
         );
         $classDetails = ClassDetail::order('update_time desc')->where($que)->paginate();
+
 
         // 将数据传入V层进行渲染
         $this->assign('classDetails', $classDetails);
