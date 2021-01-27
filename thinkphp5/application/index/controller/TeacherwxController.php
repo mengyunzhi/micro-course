@@ -61,18 +61,15 @@ class TeacherwxController extends IndexController {
 
         if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate();
-            $this->assign('courses', $courses);
-            $this->assign('Teacher', $Teacher);
-            $this->assign('courseId', $courseId);
-            return $this->fetch();
         } else {
             $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
-            // 将课程对象数组传入V层进行渲染
-            $this->assign('courses', $courses);
-            $this->assign('Teacher', $Teacher);
-            $this->assign('courseId', $courseId);
-            return $this->fetch();
         }
+
+        // 将课程对象数组传入V层进行渲染
+        $this->assign('courses', $courses);
+        $this->assign('Teacher', $Teacher);
+        $this->assign('courseId', $courseId);
+        return $this->fetch();
     }
 
     /**
@@ -85,7 +82,7 @@ class TeacherwxController extends IndexController {
         /*dump(Request::instance()->header('referer'));
         die();*/
         if (is_null($Classroom)) {
-            return $this->error('教室信息保存失败,请重新扫码上课', Request::instance()->header('referer'));
+            return $this->error('教室信息保存失败或您已下课,请重新扫码上课', '');
         }
             dump($Classroom->out_time);
         

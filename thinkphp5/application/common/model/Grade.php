@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 use think\Model;
+use think\Route;
 
 /**
  * 成绩对应的类，负责成绩的保存和计算
@@ -33,10 +34,10 @@ class Grade extends Model {
                 $this->usgrade = 100;
             }
         }
-        
+
         // 将更改后的记录保存并返回
         $this->save();
-        return $this->usgrade;  
+        return $this->usgrade;
     }
 
     /**

@@ -10,6 +10,8 @@ use app\common\model\Teacher;
 use app\common\model\Gradeaod;
 use app\common\model\Grade;
 use app\common\model\Classroom;
+use app\common\model\ClassDetail;
+use app\common\model\ClassCourse;
 
 /**
  * 负责平时成绩的加减和保存
@@ -29,6 +31,17 @@ class GradeaodController extends IndexController
             // 实例化学生、教室对象
             $Student = Student::get($studentId);
             $Classroom = Classroom::get($classroomId);
+            // 实例化课程对象
+            if (!is_null($Classroom)) {
+                if (is_null($Course = Course::get($Classroom->course_id)) || is_null($Classroom->course_id)) {
+                    return $this->error('课程信息不存在', Request::instance()->header('referer'));
+                }
+            } else {
+                return $this->error('教室信息不存在', Request::instance()->header('referer'));
+            }
+
+            // 根据教室信息获取当前对应的上课课程对象
+            $ClassCourse = $this->getClassCourse($Classroom, $studentId);
 
             // 定制查询信息,通过教室对应的课程id和学生的studentId构造查询信息
             $que = array(
@@ -36,8 +49,21 @@ class GradeaodController extends IndexController
                 "course_id" => $Classroom->course_id
             );
 
-            // 查出的理论上是个数组，所以传值要传入第一项数据
+            // 根据查询条件获取成绩对象：两种情况
             $Grade = Grade::get($que);
+            // 第一种：成绩对象为空，说明老师还没导入学生信息
+            if (is_null($Grade)) {
+                // 为空时则要获取该学生对应的此节课的上课详情，通过上课详情进行加减分
+                $que = array(
+                    'student_id' => $studentId,
+                    'class_course_id' => $ClassCourse->id
+                );
+                $ClassDetail = ClassDetail::get($que);
+                if (is_null($ClassDetail)) {
+                    return $this->error('信息不存在', Request::instance()->header('referer'));
+                }
+                $this->assign('ClassDetail', $ClassDetail);
+            }
  
             // 定制查询信息，根据aodId和课程id获取该course对应的加分减分项
             $que = array(
@@ -49,6 +75,7 @@ class GradeaodController extends IndexController
             // 将实例化的值传入V层
             $this->assign('Student', $Student);
             $this->assign('Grade', $Grade);
+            $this->assign('Course', $Course);
             $this->assign('Gradeaods', $Gradeaods);
             $this->assign('Classroom', $Classroom);
 
@@ -68,6 +95,23 @@ class GradeaodController extends IndexController
     }
 
     /**
+     * 获取上课课程对象
+     * @param Classroom 查询所需的教室对象
+     * @param studentId 学生对象id
+     */
+    public function getClassCourse($Classroom, $studentId)
+    {
+        // 构造查询条件
+        $que = array(
+            'begin_time' => $Classroom->begin_time
+        );
+
+        // 根据查询条件获取上课课程对象并返回
+        $ClassCourse = ClassCourse::get($que);
+        return $ClassCourse;
+    }
+
+    /**
      * 用于接收index传入的更新后的数据，并对数据进行保存和跳转
      */
     public function update() {
@@ -75,16 +119,23 @@ class GradeaodController extends IndexController
         $Request = Request::instance();
         $gradeId = Request::instance()->post('gradeId/d');
         $classroomId = Request::instance()->post('classroomId/d');
-
+        $classDetailId = Request::instance()->post('classDetailId/d');
         // 获取当前对象
         $Grade = Grade::get($gradeId);
         $Classroom = Classroom::get($classroomId);
 
         // 判断成绩是否获取成功，并保存修改后的成绩
-        if (!is_null($Grade)) {
+        if (!is_null($Grade) || !is_null($gradeId)) {
             $this->saveGrade($Grade,true);
         } else {
-            return $this->error('当前操作的记录不存在');
+            // 获取上课详情对象
+            if (!is_null($classDetailId)) {
+                $ClassDetail = ClassDetail::get($classDetailId);
+                $ClassDetail->aod_num += Request::instance()->post('aodNum');
+                $ClassDetail->save();
+            } else {
+                return $this->error('当前操作的记录不存在');
+            }
         }
     
         // 成功跳转至InClass/index触发器,并传入教室id
@@ -99,7 +150,15 @@ class GradeaodController extends IndexController
         $courseId = Request::instance()->param('courseId/d');
         $classroomId = Request::instance()->param('classroomId/d');
         $studentId = Request::instance()->param('studentId');
+        $classDetailId = Request::instance()->param('classDetailId');
         $va = Request::instance()->param('va/d');
+
+        // 判断是否是未导入学生情况进行加减分
+        $ClassDetail = '';
+        if (!is_null($classDetailId)) {
+            // 获取上课详情对象
+            $ClassDetail = ClassDetail::get($classDetailId);
+        }
 
         // 实例化教室对象、课程对象、学生对象
         $Classroom = Classroom::get($classroomId);
@@ -119,8 +178,9 @@ class GradeaodController extends IndexController
         $this->assign('gradeaod',$Gradeaod);
         $this->assign('Course', $Course);
         $this->assign('Student', $Student);
-        $this->assign('va',$va);
-        $this->assign('Classroom',$Classroom);
+        $this->assign('va', $va);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('ClassDetail', $ClassDetail);
 
         return $this->fetch('edit');
     }
@@ -132,6 +192,7 @@ class GradeaodController extends IndexController
         // 获取请求传入的学生id和教室id
         $studentId = Request::instance()->param('studentId');
         $classroomId = Request::instance()->param('classroomId');
+        $classDetailId = Request::instance()->param('classDetailId');
 
         // 实例化教室对象和学生对象
         $Student = Student::get($studentId);
@@ -154,7 +215,19 @@ class GradeaodController extends IndexController
         if (!is_null($Grade)) {
             $this->saveGrade($Grade);
         } else {
-            return $this->error('当前操作的记录不存在');
+            // 考虑老师未导入学生情况
+            if (!is_null($classDetailId)) {
+                $ClassDetail = ClassDetail::get($classDetailId);
+                $ClassDetail->aod_num += Request::instance()->post('aodNum');
+                if ($ClassDetail->save()) {
+                    return $this->success(
+                        '成绩修改成功，请尽快导入学生信息',
+                        url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1)
+                    );
+                }
+            } else {
+                return $this->error('当前操作的记录不存在');
+            }
         }
 
         // 成功跳转至index触发器
