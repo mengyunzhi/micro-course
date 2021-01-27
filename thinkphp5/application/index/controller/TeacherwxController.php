@@ -43,7 +43,7 @@ class TeacherwxController extends IndexController {
         $courseId = null;
         // 调用checkClass方法,获取当前上课课程
         $courseId = $this->checkClass($classroomId, $Teacher);
-        if ($courseId !== 0) {
+        if ($courseId !== 0 && $courseId !== -1) {
             // 此情况说明有上课课程，则获取该课程
             if (is_null($Course = Course::get($courseId))) {
                 // 为空则需要清除一下此教室的信息，因为教室对应的课程都不存在了
@@ -75,8 +75,8 @@ class TeacherwxController extends IndexController {
     {
         // 首先根据教室id获取当前教室对象,并判断是否为空
         $Classroom = Classroom::get($classroomId);
-        if (is_null($Classroom)) {
-            return $this->error('教室信息保存失败或您已下课,请重新扫码上课', '');
+        if (is_null($Classroom) || is_null($classroomId)) {
+            return -1;
         }
 
         // 根据教室对象和老师对象，判断该老师当前是否在上课之中

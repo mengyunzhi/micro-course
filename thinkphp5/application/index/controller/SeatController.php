@@ -107,7 +107,7 @@ class SeatController extends controller {
         }
 
         // 通过座位id获取教室id，进而判断本教室是否处于上课状态
-        if ($Classroom->course_id === 0 || is_null($Classroom->course_id)) {
+        if ($Classroom->course_id === 0 || is_null($Classroom->course_id) || $Classroom->out_time < time()) {
             return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
             // 判断学生是否在当前课程中

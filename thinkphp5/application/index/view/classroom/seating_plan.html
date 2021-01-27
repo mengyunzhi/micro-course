@@ -38,11 +38,11 @@
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
                 <th>
                     {eq name='$seat[$i][$j]->getData("is_seat")' value='1'}
-                    <button class="label label-default " style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;">
+                    <button  style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;height: 29.603px">
                         
                     </button>
                     {else /}
-                    <button class="label label-info " style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;">
+                    <button class="label label-info " style="width:60px; padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center;cursor: default;">
                         <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
                     </button>
                     {/eq}
