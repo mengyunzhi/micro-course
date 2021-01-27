@@ -57,7 +57,7 @@ class GradeaodController extends IndexController
                 $que = array(
                     'student_id' => $studentId,
                     'class_course_id' => $ClassCourse->id
-                );  
+                );
                 $ClassDetail = ClassDetail::get($que);
                 if (is_null($ClassDetail)) {
                     return $this->error('信息不存在', Request::instance()->header('referer'));
@@ -99,7 +99,8 @@ class GradeaodController extends IndexController
      * @param Classroom 查询所需的教室对象
      * @param studentId 学生对象id
      */
-    public function getClassCourse($Classroom, $studentId) {
+    public function getClassCourse($Classroom, $studentId)
+    {
         // 构造查询条件
         $que = array(
             'begin_time' => $Classroom->begin_time
@@ -157,7 +158,7 @@ class GradeaodController extends IndexController
         if (!is_null($classDetailId)) {
             // 获取上课详情对象
             $ClassDetail = ClassDetail::get($classDetailId);
-        } 
+        }
 
         // 实例化教室对象、课程对象、学生对象
         $Classroom = Classroom::get($classroomId);
@@ -177,9 +178,9 @@ class GradeaodController extends IndexController
         $this->assign('gradeaod',$Gradeaod);
         $this->assign('Course', $Course);
         $this->assign('Student', $Student);
-        $this->assign('va',$va);
-        $this->assign('Classroom',$Classroom);
-        $this->assign('ClassDetail',$ClassDetail);
+        $this->assign('va', $va);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('ClassDetail', $ClassDetail);
 
         return $this->fetch('edit');
     }

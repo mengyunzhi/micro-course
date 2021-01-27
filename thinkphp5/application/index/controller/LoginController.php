@@ -555,8 +555,8 @@ class LoginController extends Controller {
             $Teacher->classroom_id = $classroomId;
             if (!$Teacher->save()) {
                 return $this->error(
-                    '教师-教室信息绑定失败',
-                    Request::instance()->header('referer')
+                    '教师-教室信息绑定失败,请重新扫码',
+                    ''
                 );
                 }
                 return $this->success('登陆成功', url('teacherwx/index'));
@@ -600,8 +600,8 @@ class LoginController extends Controller {
                     $Teacher->classroom_id = $classroomId;
                     if (!$Teacher->save()) {
                         return $this->error(
-                            '教室-老师信息绑定失败',
-                            Request::instance()->header('referer')
+                            '教室-老师信息绑定失败,请重新扫码',
+                            ''
                         );
                     }
                 }

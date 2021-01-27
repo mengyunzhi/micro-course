@@ -61,7 +61,7 @@ class CoursegradeController extends IndexController {
                         }
                     }
                 }
-            } 
+            }
             
             // 向V层传数据
             $this->assign('Student', $Student);
