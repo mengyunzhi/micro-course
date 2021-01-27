@@ -342,9 +342,13 @@ class CourseController extends IndexController {
        
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+       /* dump($sheetData);
+        dump(sizeof($sheetData[1]));
+        dump();
+        die();*/
 
         // 将学生表中的数据存入数据库
-        if (sizeof($sheetData[1]) !== 3) {
+        if ($this->getCols($sheetData[1]) !== 3) {
             $Course->delete();
             return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
         }
@@ -410,6 +414,21 @@ class CourseController extends IndexController {
             return $this->success('学生人数更新失败', Request::instance()->header('referer'));
         }
         return true;
+    }
+
+    /**
+     * 获取模板的总列数
+     * @param $sheetData 表格第一行
+     */
+    public function getCols($sheetData)
+    {
+        $i = 'A';
+        $count = 0;
+        while (!is_null($sheetData[$i])) {
+            $i++;
+            $count++;
+        }
+        return $count;
     }
 
     /**
