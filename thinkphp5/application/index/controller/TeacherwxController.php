@@ -41,12 +41,10 @@ class TeacherwxController extends IndexController {
         }
 
         $courseId = null;
-        dump($classroomId);
-        dump($classroomId);
 
         // 调用checkClass方法,获取当前上课课程
         $courseId = $this->checkClass($classroomId, $Teacher);
-        dump($courseId);
+
         if ($courseId !== 0) {
             // 此情况说明有上课课程，则获取该课程
             if (is_null($Course = Course::get($courseId))) {

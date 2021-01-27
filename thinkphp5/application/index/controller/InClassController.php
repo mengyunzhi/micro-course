@@ -76,7 +76,6 @@ class InClassController  extends IndexController {
 
         // 通过date函数将时间转换为小时/分钟形式，便于判断
         $outTime = date('G/i', $Classroom->out_time);
-        dump($outTime);
 
         // 获取已签到学生（由于还未完整完成数据传输，此时首先调用所有学生信息进行调试）
         $Students = Student::all();
