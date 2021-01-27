@@ -41,8 +41,12 @@ class TeacherwxController extends IndexController {
         }
 
         $courseId = null;
+        dump($classroomId);
+        dump($classroomId);
+
         // 调用checkClass方法,获取当前上课课程
         $courseId = $this->checkClass($classroomId, $Teacher);
+        dump($courseId);
         if ($courseId !== 0) {
             // 此情况说明有上课课程，则获取该课程
             if (is_null($Course = Course::get($courseId))) {
@@ -78,10 +82,13 @@ class TeacherwxController extends IndexController {
     {
         // 首先根据教室id获取当前教室对象,并判断是否为空
         $Classroom = Classroom::get($classroomId);
+        /*dump(Request::instance()->header('referer'));
+        die();*/
         if (is_null($Classroom)) {
             return $this->error('教室信息保存失败,请重新扫码上课', Request::instance()->header('referer'));
         }
-
+            dump($Classroom->out_time);
+        
         // 根据教室对象和老师对象，判断该老师当前是否在上课之中
         if ($Classroom->out_time > time()) {
             if (!is_null($Classroom->Course)) {
@@ -96,6 +103,10 @@ class TeacherwxController extends IndexController {
         // 最后情况，该教室没有处于上课之中，则返回0
         return 0;
     }
+
+    /**
+     * 
+     */
 
     /**
      * 微信端教师新增课程

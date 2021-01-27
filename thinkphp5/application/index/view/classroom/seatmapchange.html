@@ -28,11 +28,11 @@
                 <th>
                     <a href="{:url('isSeat?id=' . $seats[$i][$j]->getData('id') . '&classroomId=' . $Classroom->id)}">
                         {eq name='$seats[$i][$j]->getData("is_seat")' value='0'}
-                        <button class="btn btn-success" style="height: 50px;width: 80px;">座位 {$x}{$y}
+                        <button class="btn btn-info" style="width: 70px;"><?php echo('('); ?> {$x}<?php echo (','); ?>{$y} <?php echo(')'); ?>
                             <?php $y++;?>
                         </button>
                         {else /}
-                        <button class="btn btn-default" style="height: 50px;width: 80px;">过道
+                        <button class="btn btn-default" style="width: 70px; border: none;">过道
                         </button>
                         {/eq}
                     </a>
