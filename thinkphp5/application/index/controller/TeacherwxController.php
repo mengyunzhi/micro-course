@@ -84,8 +84,7 @@ class TeacherwxController extends IndexController {
         if (is_null($Classroom)) {
             return $this->error('教室信息保存失败或您已下课,请重新扫码上课', '');
         }
-            dump($Classroom->out_time);
-        
+
         // 根据教室对象和老师对象，判断该老师当前是否在上课之中
         if ($Classroom->out_time > time()) {
             if (!is_null($Classroom->Course)) {
@@ -100,10 +99,6 @@ class TeacherwxController extends IndexController {
         // 最后情况，该教室没有处于上课之中，则返回0
         return 0;
     }
-
-    /**
-     * 
-     */
 
     /**
      * 微信端教师新增课程
