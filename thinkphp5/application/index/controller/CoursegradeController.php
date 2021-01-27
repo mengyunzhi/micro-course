@@ -8,6 +8,8 @@ use app\common\model\Student;
 use app\common\model\Teacher;
 use app\common\model\Grade;
 use app\common\model\Classroom;
+use app\common\model\ClassCourse;
+use app\common\model\ClassDetail;
 
 /**
  * 用于在上课时对于上课表现成绩的查看
@@ -28,11 +30,6 @@ class CoursegradeController extends IndexController {
 
             $Student = Student::get($studentId);
 
-            // 接收状态id，判断该按钮是座位还是过道
-            $isSeat = Request::instance()->param('isSeat/d');
-            if ($isSeat === 1) {
-                return $this->error('当前位置为过道', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
-            }
             // 增加判断点击按钮是否存在学生
             if (is_null($Student)) {
                 return $this->error('学生信息不存在', url('InClass/index?classroomId=' . $Classroom->id . '&reclass=' . 1));
@@ -46,9 +43,25 @@ class CoursegradeController extends IndexController {
 
             // 通过条件查询，获得该学生该课程对应的上课成绩
             $Grade = Grade::get($que);
+            $grades = Grade::where('course_id', '=', $Classroom->course_id)->select();
             if (is_null($Grade)) {
-                return $this->error('请保证信息填写正确', Request::instance()->header('referer'));
-            }
+                if (sizeof($grades) !== 0) {
+                    return $this->error('请保证信息填写正确', Request::instance()->header('referer'));
+                } else {
+                    // 如果是未导入学生情况，则根据学生签到总加分获取加分情况
+                    $Grade = new Grade();
+                    $Grade->coursegrade = 0;
+                    $classCourses = ClassCourse::where('course_id', '=', $Classroom->course_id)->select();
+                    foreach ($classCourses as $ClassCourse) {
+                        // 获取上课详情
+                        $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id);
+                        $ClassDetail = $classDetails->where('student_id', '=', $studentId)->select();
+                        if (!is_null($ClassDetail)) {
+                            $Grade->coursegrade += $ClassDetail[0]->aod_num;
+                        }
+                    }
+                }
+            } 
             
             // 向V层传数据
             $this->assign('Student', $Student);

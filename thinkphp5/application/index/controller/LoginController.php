@@ -23,7 +23,7 @@ class LoginController extends Controller {
             // 获取对应教师
             $Teacher = Teacher::get($teacherId);
             if (!is_null($Teacher)) {
-                if ($Teacher->username === 'admin') {
+                if ($Teacher->is_admin === 1) {
                     // 如果登陆了已经，则直接跳转到管理员首页
                     $url = url('index/term/index');
                     header("Location: $url");
@@ -77,7 +77,7 @@ class LoginController extends Controller {
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId/d');
         if (is_null($classroomId) || $classroomId === 0) {
-            return $this->error('教室信息传递失败，请从新扫码', Request::instance()->header('referer'));
+            return $this->error('教室信息传递失败，请从新扫码');
         }
 
         // 首先判断用户名密码是否输入完整，如果不完整重新输入信息

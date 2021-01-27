@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 use think\Model;
+use think\Route;
 
 /**
  * 成绩对应的类，负责成绩的保存和计算

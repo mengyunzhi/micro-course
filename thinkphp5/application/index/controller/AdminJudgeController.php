@@ -12,10 +12,13 @@ class AdminJudgeController extends IndexController {
     {
         //调用父类构造函数
         parent::__construct();
-        $Teacher = Teacher::get(['is_admin' => 1]);
+
+        // 获取当前登录teacherId
+        $teacherId = session('teacherId');
+        $Teacher = Teacher::get($teacherId);
 
         //验证用户是否为管理员
-        if (session('teacherId') != $Teacher->id) {
+        if ($Teacher->is_admin !== 1) {
             return $this->error('无此权限', url('Login/index'));
         }
     }
