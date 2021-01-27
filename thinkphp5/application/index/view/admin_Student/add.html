@@ -14,30 +14,40 @@
 {/block}
 {block name="content"}
 <div class="container">
-    <form action="{:url('save')}" method="post">
-        <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
-        <input type="hidden" name="password" value="{$password}">
-        <div class="form-group">
-            <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
-            <input type="text" name="name" id="name" class="form-control" />
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4" style="background-color: #d9edf7; padding: 40px 40px">
+            <form action="{:url('save')}" method="post">
+                <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
+                <input type="hidden" name="password" value="{$password}">
+                <div class="form-group">
+                    <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
+                    <input type="text" name="name" id="name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
+                    <input type="text" name="num" id="num" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
+                    <select name="sex" class="form-control">
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+                 <div class="row">
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" onClick="return confirm('确定新增，该学生的初始密码将为{$password}！');">&nbsp;提交
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        <a href="{:url('index')}" class=" btn btn-primary glyphicon glyphicon-remove" style="margin-top: 20px">
+                            取消
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
-            <input type="text" name="num" id="num" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
-            <select name="sex" class="form-control">
-                <option value="0">男</option>
-                <option value="1">女</option>
-            </select>
-        </div>
-        
-       
-        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" onClick="return confirm('确定新增，该学生的初始密码将为{$password}！');">
-            &nbsp;提交
-        </button>
-    </form>
+    </div>
 </div>
 {/block}
 {block name="render"}

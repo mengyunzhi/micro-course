@@ -19,35 +19,45 @@
             <form action="{:url($action)}" method="post">
                 <div class="form-group">
                     <input type="hidden" name="id" value="{$Classroom->id}">
-                    <label for="name"><h3 style="font-size: 20px"><b>教室编号</b></h3></label>
+                    <label for="name">
+                        <h3 style="font-size: 20px"><b>教室编号</b></h3>
+                    </label>
                     <input type="text" class="form-control" name="name" id="name" placeholder="教室编号" value="{$Classroom->name}">
                 </div>
                 <hr>
                 <div class="form-group">
-                    <label for="seat_map_name"><h3 style="font-size: 20px"><b>对应模板名称</b></h3></label>
+                    <label for="seat_map_name">
+                        <h3 style="font-size: 20px"><b>对应模板名称</b></h3>
+                    </label>
                     <div class="row">
                         <div class="col-md-6">
                             <select class="form-control" name="seat_map_id" value="" id="select">
-                            {volist name="seatMaps" id="SeatMap" key="key"}
-                            <option value="{$SeatMap->id}" {eq name="SeatMap->getData('id')" value="$Classroom->getData('seat_map_id')" } selected="selected" {/eq}> <h5>{$SeatMap->name}</h5>
-                            </option>
-                            {/volist}
-                        </select>
+                                {volist name="seatMaps" id="SeatMap" key="key"}
+                                <option value="{$SeatMap->id}" {eq name="SeatMap->getData('id')" value="$Classroom->getData('seat_map_id')" } selected="selected" {/eq}> <h5>{$SeatMap->name}</h5>
+                                </option>
+                                {/volist}
+                            </select>
                         </div>
                         <div class="col-md-6">
-                            <a class="btn btn-success" v-on:click="url" :href="message" >
-                            <i class="glyphicon glyphicon-eye-open">
-                            </i>&nbsp;查看模板
-                        </a>
+                            <a class="btn btn-success" v-on:click="url" :href="message">
+                                <i class="glyphicon glyphicon-eye-open">
+                                </i>&nbsp;查看模板
+                            </a>
                         </div>
-                        
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">&nbsp;提交</button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">&nbsp;提交
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        <a href="{:url('index')}" class=" btn btn-primary glyphicon glyphicon-remove" style="margin-top: 20px">
+                            取消
+                        </a>
+                    </div>
+                </div>
             </form>
-            {eq name="$action" value="save"}
-            {else/}
-            {/eq}
         </div>
     </div>
 </div>
