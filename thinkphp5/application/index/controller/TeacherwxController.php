@@ -41,6 +41,7 @@ class TeacherwxController extends IndexController {
         }
 
         $courseId = null;
+
         // 调用checkClass方法,获取当前上课课程
         $courseId = $this->checkClass($classroomId, $Teacher);
         if ($courseId !== 0 && $courseId !== -1) {
