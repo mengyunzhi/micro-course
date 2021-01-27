@@ -22,7 +22,7 @@ class SeatMapController extends Controller {
         if (!is_null($name)) {
             $seatMaps = SeatMap::where('name', 'like', '%' . $name . '%');
         }
-        $seatMaps = $seatMaps->order('id desc')->paginate(5);
+        $seatMaps = $seatMaps->order('id')->paginate(5);
         $this->assign('seatMaps', $seatMaps);
         return $this->fetch();
     }

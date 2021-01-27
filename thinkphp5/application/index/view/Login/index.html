@@ -11,33 +11,35 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="keywords" content="Login form web template, Sign up Web Templates, Flat Web Templates, Login signup Responsive web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
     <!--Google Fonts-->
-
-
     <!--Google Fonts-->
 </head>
 
 <body style="background-color:#999999">
     {php}$action=request()->action()==='teacherIndex'?'teacherLogin':'login';{/php}
-        <form action="{:url($action)}" method="post">
-            <div class="login">
-                <h2>微课堂</h2>
-                <div class="login-top">
-                    <h1 style="color: #69aef5">请登录</h1>
-                    <form>
+    <form action="{:url($action)}" method="post">
+        <div class="login">
+            <h2>微课堂</h2>
+            <div class="login-top">
+                <h1 style="color: #69aef5">请登录</h1>
+                <form>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" style="font-size: 20px;">用户名:</label><input type="text" name="username" id="username" value="{:$username}" placeholder="用户名..." />
-                        <label class="col-sm-2 control-label" style="font-size: 20px;">密码:</label><input type="password" name="password" id="password" value="{:$password}" placeholder="密码..."/>
-                    </form>
-                    <div class="forgot">
-                        <input style="background: #2e6da4" type="submit" value="登陆">
                     </div>
-                </div>
-                <div class="login-bottom" style="background-color: #69aef5;border: 0px;">
-                    <h3>梦云智欢迎你 &nbsp;<a href="#">welcome</a>&nbsp </h3>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" style="font-size: 20px;">密码:</label><input type="password" name="password" id="password" value="{:$password}" placeholder="密码..." />
+                    </div>
+                </form>
+                <div class="forgot">
+                    <input style="background: #2e6da4" type="submit" value="登陆">
                 </div>
             </div>
-            <div class="copyright">
-                <p>创建 &copy; 于 2020 || 作者:梦云智</a></p>
+            <div class="login-bottom" style="background-color: #69aef5;border: 0px;">
+                <h3>梦云智欢迎你 &nbsp;<a href="#">welcome</a>&nbsp </h3>
             </div>
+        </div>
+        <div class="copyright">
+            <p>创建 &copy; 于 2020 || 作者:梦云智</a></p>
+        </div>
     </form>
 </body>
 
