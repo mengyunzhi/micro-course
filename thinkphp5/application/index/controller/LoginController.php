@@ -23,7 +23,7 @@ class LoginController extends Controller {
             // 获取对应教师
             $Teacher = Teacher::get($teacherId);
             if (!is_null($Teacher)) {
-                if ($Teacher->username === 'admin') {
+                if ($Teacher->is_admin === 1) {
                     // 如果登陆了已经，则直接跳转到管理员首页
                     $url = url('index/term/index');
                     header("Location: $url");
@@ -77,7 +77,7 @@ class LoginController extends Controller {
         $password = Request::instance()->post('password');
         $classroomId = Request::instance()->param('classroomId/d');
         if (is_null($classroomId) || $classroomId === 0) {
-            return $this->error('教室信息传递失败，请从新扫码', Request::instance()->header('referer'));
+            return $this->error('教室信息传递失败，请从新扫码');
         }
 
         // 首先判断用户名密码是否输入完整，如果不完整重新输入信息
@@ -555,8 +555,8 @@ class LoginController extends Controller {
             $Teacher->classroom_id = $classroomId;
             if (!$Teacher->save()) {
                 return $this->error(
-                    '教师-教室信息绑定失败',
-                    Request::instance()->header('referer')
+                    '教师-教室信息绑定失败,请重新扫码',
+                    ''
                 );
                 }
                 return $this->success('登陆成功', url('teacherwx/index'));
@@ -600,8 +600,8 @@ class LoginController extends Controller {
                     $Teacher->classroom_id = $classroomId;
                     if (!$Teacher->save()) {
                         return $this->error(
-                            '教室-老师信息绑定失败',
-                            Request::instance()->header('referer')
+                            '教室-老师信息绑定失败,请重新扫码',
+                            ''
                         );
                     }
                 }

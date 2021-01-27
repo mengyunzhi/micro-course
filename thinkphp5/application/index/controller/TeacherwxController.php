@@ -76,7 +76,7 @@ class TeacherwxController extends IndexController {
         // 首先根据教室id获取当前教室对象,并判断是否为空
         $Classroom = Classroom::get($classroomId);
         if (is_null($Classroom)) {
-            return $this->error('教室信息保存失败,请重新扫码上课', Request::instance()->header('referer'));
+            return $this->error('教室信息保存失败或您已下课,请重新扫码上课', '');
         }
 
         // 根据教室对象和老师对象，判断该老师当前是否在上课之中
