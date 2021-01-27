@@ -13,43 +13,50 @@
 {/block}
 {block name="content"}
 <div class="container">
-    <form action="{:url('update')}" method="post">
-        <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
-        <div class="from-group">
-            <input type="hidden" name="id" value="{$Student->getData('id')}" />
-            <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
-            <input type="text" name="name" id="name" class="form-control" value="{$Student->name}" />
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4" style="background-color: #d9edf7; padding: 40px 40px">
+            <form action="{:url('update')}" method="post">
+                <input type="hidden" name="httpref" value="{$_SERVER['HTTP_REFERER']}">
+                <div class="from-group">
+                    <input type="hidden" name="id" value="{$Student->getData('id')}" />
+                    <label for="name" style="font-size: 20px;margin-top: 40px">姓名</label>
+                    <input type="text" name="name" id="name" class="form-control" value="{$Student->name}" />
+                </div>
+                <div class="form-group">
+                    <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
+                    <input type="text" name="num" id="num" class="form-control" value="{$Student->num}" />
+                </div>
+                <div class="form-group">
+                    <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
+                    <select name="sex" class="form-control">
+                        <option value="0">男</option>
+                        <option value="1" {eq name="Student->sex" value="1" } selected="selected" {/eq}>女 </option> </select> </div> <div class="form-group">
+                            <?php use app\common\model\Teacher; ?>
+                            {volist name="Student->courses()->select()" id="course"}
+                            <?php $check = 0; ?>
+                            {volist name="$courseStudents" id="CourseStudent"}
+                            {if($CourseStudent->course_id === $course->id)}
+                            <?php $check = 1; ?>
+                            {/if}
+                            {/volist}
+                            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="check" value="1" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}
+                            <?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
+                            {/volist}
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">&nbsp;提交
+                        </button>
+                    </div>
+                    <div class="col-md-4 col-md-offset-4">
+                        <a href="{:url('index')}" class=" btn btn-primary glyphicon glyphicon-remove" style="margin-top: 20px">
+                            取消
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="num" style="font-size: 20px;margin-top: 20px">学号</label>
-            <input type="text" name="num" id="num" class="form-control" value="{$Student->num}" />
-        </div>
-        <div class="form-group">
-            <label for="sex" style="font-size: 20px;margin-top: 20px">性别</label>
-            <select name="sex" class="form-control">
-                <option value="0">男</option>
-                <option value="1" {eq name="Student->sex" value="1" } selected="selected" {/eq}>女 </option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="email" style="font-size: 20px;margin-top: 20px">邮箱</label>
-            <input type="email" name="email" id="email" class="form-control" value="{$Student->email}" />
-        </div>
-        <div class="form-group">
-            <?php use app\common\model\Teacher; ?>
-            {volist name="Student->courses()->select()" id="course"}
-            <?php $check = 0; ?>
-            {volist name="$courseStudents" id="CourseStudent"}
-            {if($CourseStudent->course_id === $course->id)}
-            <?php $check = 1; ?>
-            {/if}
-            {/volist}
-            <input type="checkbox" name="course_id[]" id="course_id_{$course->id}" value="{$course->id}" {eq name="check" value="1" }checked="checked" {/eq}/> <label for="course_id_{$course->id}">{$course->name}
-            <?php $Teacher = Teacher::get($course->teacher_id); echo('(' . $Teacher->name . ')') ?></label>
-            {/volist}
-        </div>
-        <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px">提交</button>
-    </form>
+    </div>
 </div>
 {/block}
 {block name="render"}

@@ -28,14 +28,22 @@ class IndexController extends Controller {
             }
         // 如果已经登陆，跳转到相应的首页
         }
-        $this->assign('menuView', new menuView());
     }
 
     /**
      * 负责跳转到登陆界面
      */
     public function index() {
+        $teacherId = session('teacherId');
+        if (!is_null($teacherId) && !is_null($Teacher = Teacher::get($teacherId))) {
+            if ($Teacher->is_admin === 1) {
+                $url = url('Term/index');
+            } else {
+                $url = url('Course/index');
+            }
+        } else {
         $url = url('index/login/index');
+        }
         header("Location: $url");
         exit();
     }   

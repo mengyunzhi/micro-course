@@ -6,11 +6,12 @@
      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <title>{block name="title"}标题{/block}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="">
+   <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
 </head>
 
 <body class="container">
+
+    <!-- 调用的是MenuView -->
     <?php use app\common\view\MenuView; ?>
     <?php $MenuView = new MenuView; ?>
     <?php echo $MenuView->render(); ?>

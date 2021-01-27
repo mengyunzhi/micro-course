@@ -30,17 +30,23 @@
         
     </h3>
     <div class="container">
-        <table class="table table-bordered table-condensed ">
+        <table style="margin: auto;margin-bottom: 50px;">
             <?php $x = 1;$y = 0; ?>
             <?php for($i = 0; $i < $SeatMap->x_map; $i++): ?>
             <tr>
                 <?php for($j = 0; $j < $SeatMap->y_map; $j++): ?>
-                {eq name='seatAisles[$i * $SeatMap->y_map + $j]->getData("state")' value='1'}
-                <td style="padding-left: 10px;padding-right: 10px;">
-                </td>{else /}
-                <td class="success" style="padding-left: 10px;padding-right: 10px; text-align: center;">
+                <th>
+                    {eq name='seatAisles[$i * $SeatMap->y_map + $j]->getData("is_seat")' value='1'}
+                   <button class="label label-default " style=" padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center; width:70px;">
+                    
+                    </button>
+                    {else /}
+                    <button class="label label-info " style=" padding: 6px 12px;font-size: 14px;font-weight: 400;text-align: center; width:70px;">
                     <?php echo('(');echo($x);echo(',');echo(++$y);echo(')');?>
-                </td>{/eq}
+                    </button>
+                    {/eq}
+                
+                </th>
                 <?php endfor; ?>
             </tr>
             <?php if ($y !== 0 ) $x++; ?>
@@ -50,28 +56,14 @@
     </div>
     <hr>
     <?php $i = 0; ?>
-    <?php for(; $seatMap1[$i]->id != $SeatMap->id; $i++); ?>
+    <?php for(; $seatMaps[$i]->id !== $SeatMap->id; $i++); ?>
     <div class="row">
+
         <!-- 既不是第一个也不是最后一个模板 -->
         {if($SeatMap->is_last != 1 && $SeatMap->is_first != 1)}
-        <?php $id1 = $seatMap1[$i-1]->id;
-            $id2 = $seatMap1[$i+1]->id; ?>
-        {/if}
-        <!-- 最后一个模板 -->
-        {if($SeatMap->is_last === 1 && $SeatMap->is_first != 1)}
-        <?php $id1 = $seatMap1[$i-1]->id;
-            $id2 = -2; ?>
-        {/if}
-        <!-- 第一个模板 -->
-        {if ($SeatMap->is_first === 1 && $SeatMap->is_last != 1)}
-        <?php $id1 = -1;
-            $id2 = $seatMap1[$i+1]->id; ?>
-        {/if}
-        {if ($SeatMap->is_first === 1 && $SeatMap->is_last === 1)}
-        <?php $id1 = $SeatMap->id;
-            $id2 = $SeatMap->id; ?>
-        {/if}
-        <a href="{:url('template?id=' . $id1 . '&' . $url1 . '&match=' . $match)}" class="btn btn-primary " style="float: left;">
+        <?php $id1 = $seatMaps[$i-1]->id;
+            $id2 = $seatMaps[$i+1]->id; ?>
+            <a href="{:url('template?id=' . $id1 . '&' . $url1 . '&match=' . $match)}" class="btn btn-primary " style="float: left;">
             <i class="glyphicon glyphicon-chevron-left"></i>
             &nbsp;上一个模板
         </a>
@@ -79,6 +71,48 @@
             &nbsp;下一个模板
             <i class="glyphicon glyphicon-chevron-right "></i>
         </a>
+        {/if}
+
+        <!-- 最后一个模板 -->
+        {if($SeatMap->is_last === 1 && $SeatMap->is_first != 1)}
+        <?php $id1 = $seatMaps[$i-1]->id; ?>
+            <a href="{:url('template?id=' . $id1 . '&' . $url1 . '&match=' . $match)}" class="btn btn-primary " style="float: left;">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            &nbsp;上一个模板
+        </a>
+        <a href="" class="btn btn-primary disabled" style="float: right;">
+            &nbsp;下一个模板
+            <i class="glyphicon glyphicon-chevron-right "></i>
+        </a>
+
+        {/if}
+
+        <!-- 第一个模板 -->
+        {if ($SeatMap->is_first === 1 && $SeatMap->is_last != 1)}
+        <?php 
+            $id2 = $seatMaps[$i+1]->id; ?>
+            <a href="" class="btn btn-primary disabled" style="float: left;">
+            <i class="glyphicon glyphicon-chevron-left "></i>
+            &nbsp;上一个模板
+        </a>
+        <a href="{:url('template?id=' . $id2 . '&classroomId=' . $classroomId . '&match=' . $match . '&classroomName=' . $classroomName)}" class="btn btn-primary " style="float: right;">
+            &nbsp;下一个模板
+            <i class="glyphicon glyphicon-chevron-right "></i>
+        </a>
+        {/if}
+        <!-- 只有一个模板的时候 -->
+        {if ($SeatMap->is_first === 1 && $SeatMap->is_last === 1)}
+        
+        <a href="" style="float: left;">
+            <i class="glyphicon glyphicon-chevron-left disabled"></i>
+            &nbsp;上一个模板
+        </a>
+        <a href="" class="btn btn-primary disabled" style="float: right;">
+            &nbsp;下一个模板
+            <i class="glyphicon glyphicon-chevron-right "></i>
+        </a>
+        {/if}
+        
     </div>
     </div>
 </body>
