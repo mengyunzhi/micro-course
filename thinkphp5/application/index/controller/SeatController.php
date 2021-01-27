@@ -163,7 +163,7 @@ class SeatController extends controller {
      * @param seatId 学生所做的座位
      * @param ClassDetail 上课缓存待修改对象
      */
-    public function saveClassDetail($ClassCourse, $studentId, $seatId, ClassDetail &$ClassDetail, $isUpdate = false) {
+    public function saveClassDetail($ClassCourse, $studentId, $seatId, &$ClassDetail, $isUpdate = false) {
         // 如果不是更新，那么增加上课详情赋值
         if (!$isUpdate) {
             $ClassDetail->class_course_id = $ClassCourse->id;

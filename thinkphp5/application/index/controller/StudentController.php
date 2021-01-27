@@ -186,6 +186,7 @@ class StudentController extends Controller
 
         //新增成绩，并判断是否生成
         if(!$this->saveGrade($grade, $Student)) {
+            $CourseStudent->delete();
             return $this->error('新增成绩失败' . $grade->getError());
         }
 
@@ -307,6 +308,12 @@ class StudentController extends Controller
         $Grade->resigternum = 0;
         $Grade->usgrade = 0;
         $Grade->coursegrade = $Course->begincougrade;
+        if (!$Grade->save()) {
+            return false;
+        }
+
+        // 保存后需要重新获取Grade
+        $Grade = Grade::get(['student_id' => $Student->id, 'course_id' => $courseId]);
 
         // 获取该学生在该课程上课的记录
         $classCourses = ClassCourse::where('course_id', '=', $courseId)->select();
@@ -346,7 +353,10 @@ class StudentController extends Controller
             $this->checkPower($courseId);
 
             //该课程学生总数减一
-            $Course->student_num--;
+            $Course->student_num --;
+            if (!$Course->save()) {
+                return $this->error('学生人数更改失败', Request::instance()->header('referer'));
+            }
 
             // 判断是否成功接收
             if (0 === $id) {
