@@ -111,7 +111,7 @@ class SeatController extends controller {
             return $this->error('当前教室并未开始上课', url('Student/afterSign?studentId=' . $studentId));
         } else {
             // 判断学生是否在当前课程中
-            $Grades = Grade::where('course_id', '=', $Classroom->course_id);
+            $Grades = Grade::where('course_id', '=', $Classroom->course_id)->select();
             if (sizeof($Grades) !== 0) {
                 // 获取此学生和此课程对应的成绩
                 $que = array(
@@ -163,7 +163,8 @@ class SeatController extends controller {
      * @param seatId 学生所做的座位
      * @param ClassDetail 上课缓存待修改对象
      */
-    public function saveClassDetail($ClassCourse, $studentId, $seatId, ClassDetail &$ClassDetail, $isUpdate = false) {
+    public function saveClassDetail($ClassCourse, $studentId, $seatId, &$ClassDetail, $isUpdate = false)
+    {
         // 如果不是更新，那么增加上课详情赋值
         if (!$isUpdate) {
             $ClassDetail->class_course_id = $ClassCourse->id;

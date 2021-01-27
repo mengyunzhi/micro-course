@@ -57,18 +57,15 @@ class TeacherwxController extends IndexController {
 
         if (!empty($name)) {
             $courses = $courses->where('name', '=', $name)->paginate();
-            $this->assign('courses', $courses);
-            $this->assign('Teacher', $Teacher);
-            $this->assign('courseId', $courseId);
-            return $this->fetch();
         } else {
             $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
-            // 将课程对象数组传入V层进行渲染
-            $this->assign('courses', $courses);
-            $this->assign('Teacher', $Teacher);
-            $this->assign('courseId', $courseId);
-            return $this->fetch();
         }
+
+        // 将课程对象数组传入V层进行渲染
+        $this->assign('courses', $courses);
+        $this->assign('Teacher', $Teacher);
+        $this->assign('courseId', $courseId);
+        return $this->fetch();
     }
 
     /**
