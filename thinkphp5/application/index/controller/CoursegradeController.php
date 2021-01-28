@@ -56,7 +56,7 @@ class CoursegradeController extends IndexController {
                         // 获取上课详情
                         $classDetails = ClassDetail::where('class_course_id', '=', $ClassCourse->id);
                         $ClassDetail = $classDetails->where('student_id', '=', $studentId)->select();
-                        if (!is_null($ClassDetail)) {
+                        if (sizeof($ClassDetail) !== 0) {
                             $Grade->coursegrade += $ClassDetail[0]->aod_num;
                         }
                     }

@@ -33,7 +33,6 @@
         <td>{$key}</td>
         <td>{$_classDetail->student->name}</td>
         <td>{$_classDetail->student->num}</td>
-        <td>{eq name="_classDetail->student->sex" value='0'}男{else /}女{/eq}</td>
         <td>{$_classDetail->aod_num}分</td>
         <td>
             <?php echo(date('Y/m/d G:i',$_classDetail->create_time)); ?>
