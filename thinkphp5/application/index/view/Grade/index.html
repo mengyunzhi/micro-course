@@ -48,8 +48,8 @@
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
         <td>{$_course->getData('usmix')}%</td>
-        <td><a class="btn btn-info" href="{:url('coursegrade?courseId=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
-        <td><a class="btn btn-success" href="{:url('Gradelook/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;</td>
+        <td>{eq name="_course->student_num" value="0"}<a class="btn btn-info" href="#" onclick="alert('请先导入学生信息')"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;{else /}<a class="btn btn-info" href="{:url('coursegrade?courseId=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;{/eq}</td>
+        <td>{eq name="_course->student_num" value="0"}<a class="btn btn-success" href="#" onclick="alert('请先导入学生信息')"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;{else /}<a class="btn btn-success" href="{:url('Gradelook/index?id=' . $_course->id)}"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;成绩查看</a> &nbsp;&nbsp;{/eq}</td>
     </tr>
     {/volist}
 </table>

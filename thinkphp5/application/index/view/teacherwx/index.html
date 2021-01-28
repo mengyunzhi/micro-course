@@ -38,25 +38,24 @@
     </tr>
     {/volist}
     {else /}
+    {eq name="courseId" value="-1"}
+    {volist name="courses" id="_course" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_course->getData('name')}</td>
+        <td>{$_course->student_num}</td>
+        <td><a href="{:url('index')}" ><button onClick="alert('友情提示:扫码绑定教室后才可上课')" class="btn btn-success"><i class="glyphicon glyphicon-ok" style="cursor: default;"></i>&nbsp;上课</button></a></td>
+    </tr>
+    {/volist}
+    {else /}
     {volist name="courses" id="_course" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num = sizeof($_course->Students)}</td>
-        <td>{eq name="courseId" value="$_course->id"}
-            <a href="{:url('afterclass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}"  class="btn btn-danger  btn-sm " onClick="return confirm('手机端下课不能导出本节课学生信息的表单，确定下课？');">
-                <i class="glyphicon glyphicon-off">
-                </i>&nbsp;下课
-            </a>
-            {else /}
-            <a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}" class="btn btn-success btn-sm disabled">
-                <i class="glyphicon glyphicon-ok" style="cursor: default;"></i>
-            &nbsp;上课
-        </a>
-    {/eq}
-</td>
+        <td>{eq name="courseId" value="$_course->id"}<a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}"  class="btn btn-success  btn-sm "><i class="glyphicon glyphicon-ok"></i>&nbsp;签到查看</a>{else /}<a href="{:url('inClass?courseId=' . $_course->id . '&classroomId=' . $Teacher->classroom_id)}" class="btn btn-success btn-sm disabled"><i class="glyphicon glyphicon-ok" style="cursor: default;"></i>&nbsp;上课</a>{/eq}</td>
     </tr>
-    {/volist}{/eq}
+    {/volist}{/eq}{/eq}
 </table>
 {$courses->render()}
 {/block}
