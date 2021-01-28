@@ -30,8 +30,6 @@ class CourseController extends IndexController {
         //通过接受的id来实例化Teacher
         $Teacher = Teacher::get($id);
         $Term = Term::get(['state' => 1]);
-        $TermTmp = Term::get(['state' => 0]);
-        $TermTmp->delete();
 
         // 增加判断是否当前处于学期激活中
         $termId = input('termId');
