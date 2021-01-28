@@ -371,4 +371,12 @@ class ClassroomController extends AdminJudgeController
     {
         return $this->success('操作成功', url('index'));
     }
+
+    /**
+     * 回跳到seatingPlan
+     */
+    public function submit()
+    {
+        return $this->success('操作成功', url('seatingPlan?id=' . input('id')));
+    }
 }
