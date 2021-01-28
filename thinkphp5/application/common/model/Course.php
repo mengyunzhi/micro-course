@@ -60,4 +60,11 @@ class Course extends Model
             return $this->error('无此权限', request()->header('referer'));
         }
     }
+
+    /**
+     * 获取上一级链接
+     */
+    public static function returnheader() {
+        return Request::instance()->header('referer');
+    }
 }
