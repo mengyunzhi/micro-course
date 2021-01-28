@@ -35,7 +35,7 @@ class ClassroomController extends AdminJudgeController
               $Classroom->where('name', 'like', '%' . $name . '%');
         }
         $classrooms = $Classroom->order('id desc')->paginate($pageSize, false, [
-                'query'=>[
+                'query' => [
                     'name' => $name,
                     ],
                 ]);
@@ -52,7 +52,7 @@ class ClassroomController extends AdminJudgeController
     {
         //判断模板是否存在
         if (empty(SeatMap::all())) {
-          return $this->error('当前不存在座位图模板，无法添加教室', url('index'));
+            return $this->error('当前不存在座位图模板，无法添加教室', url('index'));
         }
         $seatMapId = Request::instance()->param('seatMapId');
         $classroomName = input('param.classroomName');
@@ -66,10 +66,10 @@ class ClassroomController extends AdminJudgeController
 
         // 如果存在上级路由（模板选择一级）传过来的值，则赋值
         if (!is_null($seatMapId)) {
-          $Classroom->seat_map_id = $seatMapId;
+            $Classroom->seat_map_id = $seatMapId;
         }
         if (!is_null($classroomName)) {
-          $Classroom->name = $classroomName;
+            $Classroom->name = $classroomName;
         }
 
         // 向v层传值
@@ -109,10 +109,10 @@ class ClassroomController extends AdminJudgeController
     {
         // 将教室保存，并判断保存是否成功
         if (!$Classroom->save()) {
-          return $this->error('教室未被正确保存');
+            return $this->error('教室未被正确保存');
         }
         if (!$this->saveSeat($Classroom->seat_map_id, $Classroom->id)) {
-          return $this->error('教室座位未被正确保存');
+            return $this->error('教室座位未被正确保存');
         }
         return $this->success('保存成功', url('index'));
     }
@@ -127,14 +127,14 @@ class ClassroomController extends AdminJudgeController
       // 通过座位图id获取对应的座位模板的id，从而获得与座位模板对应的座位
         $seatAisles = new SeatAisle();
         $seatAisles = SeatAisle::where('seat_map_id', '=', $seatMapId)->select();
-        foreach ($seatAisles as $SeatAisle ) {
-            $Seat = new Seat;
+        foreach ($seatAisles as $SeatAisle) {
+            $Seat = new Seat();
             $Seat->x = $SeatAisle->x;
             $Seat->y = $SeatAisle->y;
             $Seat->is_seat = $SeatAisle->is_seat;
             $Seat->classroom_id = $classroomId;
             if (!$Seat->save()) {
-              return error('座位' . $Seat->id . '未被正确保存');
+                return error('座位' . $Seat->id . '未被正确保存');
             }
         }
         // 返回1，用于判断是否保存成功
@@ -188,15 +188,15 @@ class ClassroomController extends AdminJudgeController
         $seatMapId = input('param.seat_map_id');
         $Classroom->name = input('post.name');
         if ($forgettingId != $seatMapId) {
-          $this->deleteSeat($Classroom->id);
-          $Classroom->seat_map_id = input('post.seat_map_id');
-          $this->saveSeatMap($Classroom);
-          $seatChanged = 1;
+            $this->deleteSeat($Classroom->id);
+            $Classroom->seat_map_id = input('post.seat_map_id');
+            $this->saveSeatMap($Classroom);
+            $seatChanged = 1;
         }
         $Classroom->save();
         $Classroom1 = Classroom::get($classroomId);
         if ($Classroom->name != $Classroom1->name || $Classroom->seat_map_id != $Classroom1->seat_map_id) {
-          return $this->error('座位未被正确更新');
+            return $this->error('座位未被正确更新');
         }
         return $this->success('保存成功', url('index'));
     }
@@ -237,11 +237,11 @@ class ClassroomController extends AdminJudgeController
         // 定义一个数组，将座位转换为二维数组按先x后y的方式排好序
         $newSeats = [];
         foreach ($seats as $seat) {
-          $newSeats[$seat->x][$seat->y] = $seat;
-        } 
-        ksort ($newSeats);
+            $newSeats[$seat->x][$seat->y] = $seat;
+        }
+        ksort($newSeats);
         for ($i = 0; $i < $SeatMap->x_map; $i++) {
-          ksort($newSeats[$i]);
+            ksort($newSeats[$i]);
         }
         return $newSeats;
     }
@@ -249,20 +249,20 @@ class ClassroomController extends AdminJudgeController
     /**
      * 显示教室的座位图（不是模板）
      */
-    public function seating_plan()
+    public function seatingPlan()
     {
         // 接收教室id，并根据教室id查找出该教室的所有座位，同时对教室进行实例化
         $classroomId = Request::instance()->param('id');
         $seats = Seat::where('classroom_id', '=', $classroomId)->select();
         if (empty($seats)) {
-          return $this->error('此教室无座位图', url('index'));
+            return $this->error('此教室无座位图', url('index'));
         }
         $Classroom = Classroom::get($classroomId);
 
         // 通过教室id获取对应的教室模板，并判断是否存在
         $SeatMap = SeatMap::get($Classroom->seat_map_id);
         if (empty($SeatMap)) {
-                return $this->error('本教室座位图还未创建');
+            return $this->error('本教室座位图还未创建');
         }
         // 将座位转换为二维数组，并按照先x后y进行排序
         $newSeats = $this->seatDisplay($seats, $SeatMap);
@@ -301,12 +301,12 @@ class ClassroomController extends AdminJudgeController
     public function deleteSeat($id)
     {
         $seats = Seat::where('classroom_id', '=', $id)->select();
-        if(!empty($seats)) {
-          foreach ($seats as $Seat) {
-            if(!$Seat->delete()) {
-              return $this->error('座位未被正确删除');
+        if (!empty($seats)) {
+            foreach ($seats as $Seat) {
+                if (!$Seat->delete()) {
+                    return $this->error('座位未被正确删除');
+                }
             }
-          }
         }
         return 1;
     }
@@ -327,7 +327,7 @@ class ClassroomController extends AdminJudgeController
     /**
      * 思路同上 1为有人，0为无人,默认为0，名字最好不要是is_seated,因为它的功能主要是changeState
      */
-    public function is_seated()
+    public function isSeated()
     {
         // 获取座位id，并对座位进行实例化
         $seatId = Request::instance()->param('id/d');
@@ -335,9 +335,9 @@ class ClassroomController extends AdminJudgeController
 
         // 判断座位是否被坐，并将其改为相反状态
         if ($Seat->isseated === 1) {
-          $Seat->isseated = 0;
+            $Seat->isseated = 0;
         } else {
-          $Seat->isseat = 1;
+            $Seat->isseat = 1;
         }
         return $Seat->save();
     }
