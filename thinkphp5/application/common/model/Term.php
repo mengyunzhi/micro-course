@@ -1,10 +1,15 @@
 <?php
 namespace app\common\model;
 use think\Model;
+use traits\model\SoftDelete;
+
+
 class Term extends Model{
     static $Term_id;
 	protected $dateFormat = 'Y年m月d日';    // 日期格式
 	protected $state = 0;
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
 
    /**
      * 获取要显示的创建时间

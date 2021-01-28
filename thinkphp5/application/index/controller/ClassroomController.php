@@ -19,11 +19,10 @@ class ClassroomController extends AdminJudgeController
 {
     public function index()
     {
-        $pageSize = 5;
+      $pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
       $Classroom->where('is_delete', '<>', 1);
-
       if(!Teacher::isLogin()) {
             return $this->error('plz login first',url('Login/index'));
       }
@@ -126,7 +125,7 @@ class ClassroomController extends AdminJudgeController
         $Seat = new Seat;
         $Seat->x = $SeatAisle->x;
         $Seat->y = $SeatAisle->y;
-        $Seat->is_seat = $SeatAisle->state;
+        $Seat->is_seat = $SeatAisle->is_seat;
         $Seat->classroom_id = $classroomId;
         if(!$Seat->save()) {
           return error('座位' . $Seat->id . '未被正确保存');

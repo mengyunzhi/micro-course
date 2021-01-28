@@ -40,7 +40,7 @@ class InClassController  extends IndexController {
         } 
 
         // 根据教室获得对应的座位,同时获取教室对应的座位图模板
-        $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+        $seats = Seat::order('id asc')->where('classroom_id', '=', $classroomId)->select();
         $SeatTemplate = SeatMap::get($Classroom->seat_map_id);
         
 
@@ -804,23 +804,24 @@ class InClassController  extends IndexController {
      * 显示教室的座位图（不是模板）
      * @param $classroomId 将要输出的教室对象的id
      */
-    public function seatingPlan($classroomId) {
-      // 根据教室id查找出该教室的所有座位，同时对教室进行实例化
-      $seats = Seat::where('classroom_id', '=', $classroomId)->select();
-      $Classroom = Classroom::get($classroomId);
+    public function seatingPlan($classroomId)
+    {
+        // 根据教室id查找出该教室的所有座位，同时对教室进行实例化
+        $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+        $Classroom = Classroom::get($classroomId);
 
-      // 通过教室id获取对应的教室模板，并判断是否存在
-      $SeatMap = SeatMap::get($Classroom->seat_map_id);
-      if(empty($SeatMap)) {
-              return $this->error('本教室座位图还未创建');
-            }
-      // 将座位转换为二维数组，并按照先x后y进行排序
-      $newSeats = $this->seatDisplay($seats, $SeatMap);
+        // 通过教室id获取对应的教室模板，并判断是否存在
+        $SeatMap = SeatMap::get($Classroom->seat_map_id);
+        if(empty($SeatMap)) {
+            return $this->error('本教室座位图还未创建');
+        }
+        // 将座位转换为二维数组，并按照先x后y进行排序
+        $newSeats = $this->seatDisplay($seats, $SeatMap);
 
-      $this->assign('seat', $newSeats);
-      $this->assign('Classroom', $Classroom);
-      $this->assign('SeatMap', $SeatMap);
-      return $this->fetch();
+        $this->assign('seat', $newSeats);
+        $this->assign('Classroom', $Classroom);
+        $this->assign('SeatMap', $SeatMap);
+        return $this->fetch();
     }
 
     /**

@@ -167,7 +167,7 @@ class GradeController extends IndexController {
             $num = Request::instance()->param('name/d');
             if(!empty($num)) {
                 $courseStudents = CourseStudent::alias('a')->where('a.course_id','=',$courseId);
-                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num','=',$num)->paginate();
+                $courseStudents = $courseStudents->join('student s','a.student_id = s.id')->where('s.num', '=', $num)->paginate();
                 if (sizeof($courseStudents) !== 0) {
                     $Grades = Grade::where(['course_id' => $courseStudents[0]->course_id, 'student_id' => $courseStudents[0]->student_id])->paginate();
                     // 直接向V层传数据
