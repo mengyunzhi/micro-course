@@ -44,7 +44,7 @@
         <td>{$key}</td>
         <td>{$_course->getData('name')}</td>
         <td>{$_course->student_num}</td>
-        <td><a href="{:url('index')}" class="btn btn-success"><i class="glyphicon glyphicon-ok" style="cursor: default;" onClick="alert('友情提示:扫码绑定教室后才可上课')"></i>&nbsp;上课</a></td>
+        <td><a href="{:url('index')}" ><button onClick="alert('友情提示:扫码绑定教室后才可上课')" class="btn btn-success"><i class="glyphicon glyphicon-ok" style="cursor: default;"></i>&nbsp;上课</button></a></td>
     </tr>
     {/volist}
     {else /}

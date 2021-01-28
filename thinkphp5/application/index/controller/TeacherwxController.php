@@ -57,7 +57,7 @@ class TeacherwxController extends IndexController {
         $courses = Course::where('teacher_id', '=', $teacherId)->where('term_id', '=', $termId);
 
         if (!empty($name)) {
-            $courses = $courses->where('name', '=', $name)->paginate();
+            $courses = $courses->where('name', 'like', '%' . $name . '%')->paginate();
         } else {
             $courses = Course::where('teacher_id', '=', $teacherId)->paginate();
         }
@@ -77,6 +77,7 @@ class TeacherwxController extends IndexController {
         // 首先根据教室id获取当前教室对象,并判断是否为空
         $Classroom = Classroom::get($classroomId);
         if (is_null($Classroom) || is_null($classroomId)) {
+            // 这种情况是已经下课或者教室信息绑定失败情况
             return -1;
         }
 
