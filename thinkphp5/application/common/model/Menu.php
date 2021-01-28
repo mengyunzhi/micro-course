@@ -6,6 +6,7 @@ class Menu {
     private $href;
     public $action = 'index';
     public $controller;
+    public $match = 0;
 
     public function getClass()
     {
@@ -47,8 +48,7 @@ class Menu {
                 } else {
                     return '';
                 }
-            } 
-
+            }
 
             // 第三种是直属的
             if (request()->controller() === $this->controller) {
