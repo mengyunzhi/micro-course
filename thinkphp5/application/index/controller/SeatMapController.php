@@ -34,7 +34,6 @@ class SeatMapController extends Controller {
      */
     public function template()
     {
-       
         trace(SeatMap::getMatch());
 
         // 判断有无模板
