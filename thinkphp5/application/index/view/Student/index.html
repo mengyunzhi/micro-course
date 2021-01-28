@@ -3,7 +3,7 @@
 课程管理
 {/block}
 {block name="content"}
-
+{eq name="course->Term->state" value="1"}
 <table class="table table-hover table-bordered" style="200px;">
     <td><label style="font-size: 15px;">课程名称:{$course->name}</label></td>
     <td><div class="col-md-4 text-right" style="float: right;">
@@ -25,7 +25,24 @@
         <td><a class="btn btn-danger btn-sm" href="{:url('student/delete?id=' . $_courseStudent->student->getData('id') . '&course_id=' . $_courseStudent->course_id)}"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a></td>
     </tr>
     {/volist}
+</table>{else /}
+<table class="table table-hover table-bordered">
+    <tr class="info">
+        <th>序号</th>
+        <th>学生姓名</th>
+        <th>学生学号</th>
+        <th>总成绩</th>
+    </tr>
+    {volist name="courseStudents" id="_courseStudent" key="key"}
+    <tr>
+        <td>{$key}</td>
+        <td>{$_courseStudent->student->name}</td>
+        <td>{$_courseStudent->student->num}</td>
+        <td>{$_courseStudent->student->grade($course->id)->allgrade}</td>
+    </tr>
+    {/volist}
 </table>
+{/eq}
 {:$courseStudents->render()}
 {/block}
 {/block}

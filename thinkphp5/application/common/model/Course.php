@@ -60,4 +60,13 @@ class Course extends Model
             return $this->error('无此权限', request()->header('referer'));
         }
     }
+
+    /**
+     * 获取该课程的上课课程对象数组
+     */
+    public function classCourses()
+    {
+        // 调用hasmany函数获取一对多情况下的上课课程对象数组
+        return $this->hasMany('class_course');
+    }
 }

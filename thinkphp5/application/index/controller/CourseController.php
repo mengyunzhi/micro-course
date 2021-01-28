@@ -157,7 +157,7 @@ class CourseController extends IndexController {
     public function computeGrades($courseId)
     {
         // 首先获取该课程对应的所有上课课程
-        $classCourses = ClassDetail::where('course_id', '=', $courseId)->select();
+        $classCourses = ClassCourse::where('course_id', '=', $courseId)->select();
         // 首先获取该课程对应的中间表
         $courseStudents = CourseStudent::where('course_id', '=', $courseId)->select();
 
@@ -348,9 +348,11 @@ class CourseController extends IndexController {
         die();*/
 
         // 将学生表中的数据存入数据库
-        if ($this->getCols($sheetData[1]) !== 3) {
-            $Course->delete();
-            return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
+        if (sizeof($sheetData[1]) !== 3) {
+            if ($this->getCols($sheetData[1]) !== 3) {
+                $Course->delete();
+                return $this->error('学生上传失败,请参照模板上传', Request::instance()->header('referer'));
+            }
         }
         if ($sheetData[1]["A"] != "序号" || $sheetData[1]["B"] != "姓名" || $sheetData[1]["C"] != "学号") {
             $Course->delete();
