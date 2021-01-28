@@ -11,15 +11,18 @@ use app\common\model\Course;
 use app\index\controller\SeatMapController;
 use app\index\controller\SeatController;
 use app\common\model\Teacher;
-
 /**
  * 教室管理
  */
+
+      
 class ClassroomController extends AdminJudgeController
 {
     public function index()
+
     {
-        $pageSize = 5;
+/*      trace($class1->getMatch());*/
+      $pageSize = 5;
       $name = Request::instance()->get('name');
       $Classroom = new Classroom;
       $Classroom->where('is_delete', '<>', 1);
@@ -38,6 +41,8 @@ class ClassroomController extends AdminJudgeController
                   ],
               ]);
       $this->assign('classrooms', $classrooms);
+      $class2 = new SeatMap;
+      trace($class2->getMatch());
       return $this->fetch();
     }
 
@@ -126,7 +131,7 @@ class ClassroomController extends AdminJudgeController
         $Seat = new Seat;
         $Seat->x = $SeatAisle->x;
         $Seat->y = $SeatAisle->y;
-        $Seat->is_seat = $SeatAisle->state;
+        $Seat->is_seat = $SeatAisle->is_seat;
         $Seat->classroom_id = $classroomId;
         if(!$Seat->save()) {
           return error('座位' . $Seat->id . '未被正确保存');
@@ -205,18 +210,21 @@ class ClassroomController extends AdminJudgeController
       // 获取教室id,并实例化教室对象
       $classroomId = input('param.id');
       $Classroom = Classroom::get($classroomId);
+      $SeatMapController = new SeatMapController;
+      if ($SeatMapController->judgeClassroom(0, $Classroom->id)) {
 
-      // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板
-      $seats = Seat::where('classroom_id', '=', $classroomId)->select();
-      $SeatMap = SeatMap::get($Classroom->seat_map_id);
-      if(is_null($SeatMap)) {
-        return $this->error('不存在对应模板');
-      }
-      $seats = $this->seatDisplay($seats, $SeatMap);
-      $this->assign('seats', $seats);
-      $this->assign('Classroom', $Classroom);
-      $this->assign('SeatMap', $SeatMap);
-      return $this->fetch();
+          // 根据教室id获取该教室的所有座位，并获取该教室对应的座位模板
+          $seats = Seat::where('classroom_id', '=', $classroomId)->select();
+          $SeatMap = SeatMap::get($Classroom->seat_map_id);
+          if(is_null($SeatMap)) {
+            return $this->error('不存在对应模板');
+          }
+          $seats = $this->seatDisplay($seats, $SeatMap);
+          $this->assign('seats', $seats);
+          $this->assign('Classroom', $Classroom);
+          $this->assign('SeatMap', $SeatMap);
+          return $this->fetch();
+       }
     }
 
     /**
@@ -334,7 +342,7 @@ class ClassroomController extends AdminJudgeController
   public function QRCode() {
         $id = input('param.id/d');
         $Classroom = Classroom::get($id);
-        $seats = Seat::where('classroom_id', '=', $id)->order('id')->select();
+        $seats = Seat::where('classroom_id', '=', $id)->order('id desc')->select();
         if (empty($seats)) {
             return $this->error('当前教室无座位', url('index'));
         }
