@@ -38,7 +38,7 @@
         <td>{$key}</td>
         <td>{$_courseStudent->student->name}</td>
         <td>{$_courseStudent->student->num}</td>
-        <td>{$_courseStudent->student->Grade($course->id)->allgrade}</td>
+        <td>{$_courseStudent->student->grade($course->id)->allgrade}</td>
     </tr>
     {/volist}
 </table>

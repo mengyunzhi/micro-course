@@ -21,7 +21,7 @@ class Student extends Model
      * 获取对应课程的成绩
      * @param courseId 对应的课程id
      */
-    public function Grade($courseId)
+    public function grade($courseId)
     {
         // 根据课程id和学生id获取对应的成绩
         $que = array(
@@ -69,13 +69,15 @@ class Student extends Model
     {
         return $this->belongsTo('course');
     }
-    
-    //获取是否存在相关信息
+
+    /**
+     * 检查是否存在课程信息
+     */
      public function getIsChecked(Course &$Course)
     {
         // 取课程ID
         $studentId = (int)$this->id;
-        $courseId = (int)$Course->id; 
+        $courseId = (int)$Course->id;
 
         // 定制查询条件
         $map = array();

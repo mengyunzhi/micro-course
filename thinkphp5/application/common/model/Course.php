@@ -64,7 +64,8 @@ class Course extends Model
     /**
      * 获取该课程的上课课程对象数组
      */
-    public function classCourses() {
+    public function classCourses()
+    {
         // 调用hasmany函数获取一对多情况下的上课课程对象数组
         return $this->hasMany('class_course');
     }
