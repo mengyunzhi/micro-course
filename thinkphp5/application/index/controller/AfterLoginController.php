@@ -48,6 +48,11 @@ class AfterLoginController extends IndexController {
            return $this->error('新旧密码一致', url('passwordModification'));
         }
 
+        //判断新密码是否符合要求必须由字母
+        if (!preg_match('/[a-zA-Z]/', $password)) {
+            return $this->error('新密码必须包含字母', url('passwordModification'));
+        }
+
         //判断两次新密码是否一致
          if($newPasswordAgain != $password) {
            return $this->error('两次输入的新密码不一致', url('passwordModification'));
