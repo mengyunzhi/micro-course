@@ -812,7 +812,7 @@ class InClassController  extends IndexController {
 
         // 通过教室id获取对应的教室模板，并判断是否存在
         $SeatMap = SeatMap::get($Classroom->seat_map_id);
-        if(empty($SeatMap)) {
+        if (empty($SeatMap)) {
             return $this->error('本教室座位图还未创建');
         }
         // 将座位转换为二维数组，并按照先x后y进行排序
