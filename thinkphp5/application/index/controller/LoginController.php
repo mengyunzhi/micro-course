@@ -321,7 +321,7 @@ class LoginController extends Controller {
         }
         // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
         $studentId = session('studentId');
-        if (!is_null($studentId)) {
+        if (!is_null($studentId) && !is_null($Student = Student::get($studentId))) {
             $url = url('index/login/wxLogin?seatId=' . $seatId);
             header("Location: $url");
             exit();
