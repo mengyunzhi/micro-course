@@ -18,7 +18,6 @@ use app\common\model\Teacher;
 class ClassroomController extends AdminJudgeController
 {
     public function index()
-
     {
         /*trace($class1->getMatch());*/
         $pageSize = 5;
