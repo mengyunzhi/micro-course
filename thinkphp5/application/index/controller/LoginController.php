@@ -268,7 +268,7 @@ class LoginController extends Controller {
             );
         }
 
-        // 判断密码是否含有字母
+        // 判断bai字符串是否包含字母，应当使du用正则zhi表达式匹配dao实现，zhuan用[a-zA-Z]可以匹配字母
         if (!preg_match('/[a-zA-Z]/', $password)) {
             return $this->error(
                 '请保证密码中包含字母',
@@ -321,7 +321,7 @@ class LoginController extends Controller {
         }
         // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
         $studentId = session('studentId');
-        if (!is_null($studentId)) {
+        if (!is_null($studentId) && !is_null($Student = Student::get($studentId))) {
             $url = url('index/login/wxLogin?seatId=' . $seatId);
             header("Location: $url");
             exit();
