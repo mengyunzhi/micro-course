@@ -99,11 +99,10 @@ class AdminTeacherController extends AdminJudgeController
         // 写入要更新的数据
         $Teacher->name = input('post.name');
         $Teacher->username = input('post.username');
-        $password = $Teacher->encryptPassword(input('password'));
-        /*dump(input('password'));
-        die();*/
-        $Teacher->password = is_null($Teacher) === true ? : $Teacher->password;
-
+        if (!is_null(input('password'))) {
+            $Teacher->password = $Teacher->encryptPassword(input('password'));
+        }
+        
         // 更新或保存
         return $Teacher->validate(true)->save();
     }
