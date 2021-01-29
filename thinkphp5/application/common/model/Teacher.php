@@ -92,4 +92,19 @@ class Teacher extends Model
 			return false;
 		}
 	}
+
+    /**
+     * 获取随机密码
+     */
+    public function getRandomPassword()
+    {
+        $str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890';
+
+        //打乱字符串
+        $randStr = str_shuffle($str);
+
+        //substr(string,start,length);返回字符串的一部分
+        $rands= substr($randStr, 0, 6);
+        return $rands;
+    } 
 }

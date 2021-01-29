@@ -31,7 +31,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         {eq name="$action" value="save"}
-                        <?php $password = mt_rand(100000, 999999); ?>
+                        <?php $password = $Teacher->getRandompassword(); ?>
                         <input type="hidden" name="password" value="{$password}">
                         <button type="submit" class="btn btn-primary glyphicon glyphicon-ok" style="margin-top: 20px" onClick="return confirm('初始密码将为为{$password}，确定增加？')">&nbsp;提交</button>
                         {else/}

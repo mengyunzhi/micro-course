@@ -53,6 +53,7 @@ class AdminStudentController extends AdminJudgeController
                 $page = $students->render();
                 $page = $coursestudents->render();
             // 向V层传数据
+            $this->assign('Teacher', new Teacher());
             $this->assign('Course', $Course);
             $this->assign('match', $match);
             $this->assign('students', $students);
@@ -75,7 +76,8 @@ class AdminStudentController extends AdminJudgeController
         } 
     }
 	public function add(){
-        $password = mt_rand(100000, 999999);
+        $Teacher = new Teacher();
+        $password = $Teacher->getRandomPassword();
         $this->assign('password', $password);
         $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);

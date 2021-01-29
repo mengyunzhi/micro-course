@@ -505,6 +505,10 @@ class StudentController extends Controller
             return $this->error('修改失败,原密码不正确', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
         } else {
             // 原密码输入正确时
+            //判断新密码是否含有字母
+            if (!preg_match('/[a-zA-Z]/', $newPassword)) {
+                return $this->error('新密码必须含有字母', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+            }
             if ($newPasswordAgain === $newPassword) {
                 $Student->password = $Student->encryptPassword($newPassword);
                 if (!$Student->save()) {
