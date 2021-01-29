@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 use think\Model;
+
 class Term extends Model{
     static $Term_id;
 	protected $dateFormat = 'Y年m月d日';    // 日期格式
