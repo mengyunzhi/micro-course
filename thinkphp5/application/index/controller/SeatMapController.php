@@ -17,6 +17,8 @@ use app\common\model\Seat;
 class SeatMapController extends Controller {
     public function index()
     {
+        SeatMap::setMatch(0);
+        trace(SeatMap::getMatch());
         $name = input('param.name');
         $seatMaps = new SeatMap();
         if (!is_null($name)) {
@@ -32,6 +34,8 @@ class SeatMapController extends Controller {
      */
     public function template()
     {
+        trace(SeatMap::getMatch());
+
         // 判断有无模板
         if (empty(SeatMap::all())) {
             return $this->error('当前不存在座位图模板', $_SERVER["HTTP_REFERER"]);
@@ -57,6 +61,7 @@ class SeatMapController extends Controller {
         // 实例化课程
         $Course = Course::get($course_id);
         $SeatMap = SeatMap::get($id);
+
         $seatAisles = new SeatAisle();
         $seatAisles = SeatAisle::order('id asc')->where('seat_map_id', '=', $id)->select();
 

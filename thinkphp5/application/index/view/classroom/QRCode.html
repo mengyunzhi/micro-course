@@ -43,12 +43,12 @@
     <table class="table table-bordered table-condensed ">
     </table>
     <table class="table table-bordered table-condensed ">
-        <?php $count = sizeof($seats); $x = 1; $y = 0; $index = 0;?>
+        <?php $count = sizeof($seats); $x = 1; $y = 0; $index = 0; $col = 0; $x1 = 0; $y1 = 0;?>
         {volist name="seats" id="Seat"}
         {eq name="Seat->is_seat" value="0"}
         <div class="col-md-3">
             <div id="{$Seat->id}"></div>
-            <?php echo('第'); echo($x); echo('行/');echo ("第"); echo(++$y); echo('列'); echo($url . $Seat->id); ?>
+            <?php echo('第'); echo($Seat->x - $x1 + 1); echo('行/');echo ("第"); echo($Seat->y - $y1 + 1); echo('列'); echo($url . $Seat->id); ?>
             <script>
             $("#{$Seat->id}").qrcode({
                 render: 'div',
@@ -57,7 +57,12 @@
             });
             </script>
         </div>
+        {else /}
+        <?php $y1++;if ($y1 === $SeatMap->y_map): ?>
+        <?php $x++; endif; ?>
         {/eq}
+        <?php $col++;if($col === $SeatMap->y_map): ?>
+        <?php $y1 = 0; $col = 0; endif; ?>
         <?php $x = $y === 4? ++$x : $x; ?>
         <?php $y = $y === 4? 0 : $y; ?>
         {/volist}

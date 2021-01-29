@@ -213,17 +213,18 @@ class LoginController extends Controller {
         // 均符合条件后判断数据库中是否有该学生信息
         $que = array(
             'name' => $name,
-            'username' => $username
+            'num' => $username
         );
         $StudentTmp = Student::get($que);
 
         // 如果数据库中有该信息，则判断该条信息是否有密码
         if (!is_null($StudentTmp)) {
             // 如果有密码，则说明该条信息已经被注册
-            if (!is_null($StudentTmp->password)) {
+            if (!is_null($StudentTmp->password) || !is_null($StudentTmp->username)) {
                 return $this->error('该学生信息已被注册,如非本人，请联系管理员修改');
             // 如果没有密码，说明该条信息未被注册，只是被老师导入了而已
             } else {
+                $StudentTmp->username = $username;
                 $StudentTmp->password = $StudentTmp->encryptPassword($password);
                 if (!$StudentTmp->validate()->save()) {
                     return $this->error(
@@ -287,7 +288,7 @@ class LoginController extends Controller {
         }
         // 首先判断当前学生是否session未过期,如果未过期，直接重定向到登录判定界面
         $studentId = session('studentId');
-        if (!is_null($studentId)) {
+        if (!is_null($studentId) && !is_null($Student = Student::get($studentId))) {
             $url = url('index/login/wxLogin?seatId=' . $seatId);
             header("Location: $url");
             exit();

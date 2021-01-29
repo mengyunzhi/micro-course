@@ -23,17 +23,19 @@ class CourseController extends IndexController {
      * 负责教师对应课程的展示
      */
     public function index() {
+
         //接受传来的ID值
         $id = session('teacherId');
         $name = Request::instance()->param('name');
 
         //通过接受的id来实例化Teacher
         $Teacher = Teacher::get($id);
-        $Term = Term::get(['state' => 1]);
 
-        // 增加判断是否当前处于学期激活中
+        // 接收V层选定的学期id
         $termId = input('termId');
         $Term = Term::get($termId);
+
+        // 默认显示激活学期
         if(is_null($termId)) {
             $Term = Term::get(['state' => 1]);
             if(is_null($Term)) {
@@ -65,13 +67,16 @@ class CourseController extends IndexController {
      * 课程的新增方法，可通过Excel批量导入学生信息
      */
     public function add() {
+
         // 获取教师id
         $id = Request::instance()->param('id');
+
         // 查询处于激活的学期
         $Term = Term::get(['state' => 1]);
+
         // 判断当前是否有已被激活的学期
         if (is_null($Term)) {
-            return $this->error('当前未处于学期中', Request::instance()->header('referer'));
+            return $this->error('当前未处于学期中', Course::returnheader());
         }
 
         // 实例化教师对象      
@@ -371,6 +376,8 @@ class CourseController extends IndexController {
                 //如果数据库中已经存在该学生，则只需新增中间表,否则新增学生信息并新增数据表
                 // 新增中间表并保存,同时新增成绩
                 $CourseStudent = new CourseStudent();
+
+                //数据库无此学生
                 if (is_null($StudentTmp)) {
                     $Student = new Student();
                     $Student->name = $sheetDataTemp["B"];
@@ -399,6 +406,8 @@ class CourseController extends IndexController {
                         }
                     }
                 }
+
+                //数据库无学生有课程
                 if ($flag !== 0) {
                     $CourseStudent->course_id = $Course->id;
                     if (!$CourseStudent->save()) {
