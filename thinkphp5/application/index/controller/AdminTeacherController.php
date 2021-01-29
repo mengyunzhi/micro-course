@@ -102,7 +102,6 @@ class AdminTeacherController extends AdminJudgeController
         if (!is_null(input('password'))) {
             $Teacher->password = $Teacher->encryptPassword(input('password'));
         }
-        
         // 更新或保存
         return $Teacher->validate(true)->save();
     }
