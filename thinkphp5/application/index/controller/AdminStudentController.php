@@ -102,7 +102,7 @@ class AdminStudentController extends AdminJudgeController
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
         $Student->username =  Request::instance()->post('num');
-        $Student->password = $Student->encryptPassword($password);
+        $Student->password = $Student->encryptPassword(input('password'));
 
         // /a表示获取的类型为数组
 		//新增数据并验证
