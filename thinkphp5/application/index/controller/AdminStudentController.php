@@ -274,6 +274,8 @@ class AdminStudentController extends AdminJudgeController
         $Student = Student::get(['id' => $id]);
         $password = $Request->param('password');
         $Student->password = $Teacher->encryptPassword($password);
+        dump($Request->param('password'));
+        dump($Teacher->encryptPassword($password));
         if(!$Student->save()) {
             return $this->error('密码重置失败', url('index'));
         }

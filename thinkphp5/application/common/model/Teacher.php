@@ -104,7 +104,7 @@ class Teacher extends Model
         $randStr = str_shuffle($str);
 
         //substr(string,start,length);返回字符串的一部分
-        $rands= substr($randStr, 0, 6);
+        $rands = substr($randStr, 0, 6);
         return $rands;
-    } 
+    }
 }
