@@ -88,6 +88,7 @@ class ClassroomController extends AdminJudgeController
         $Classroom->seat_map_id = input('post.seat_map_id');
         $Classroom->create_time = time();
         $Classroom->update_time = time();
+        $Classroom->is_delete = 0;
 
         // 下面为上课部分的初始化
         // 新建后，默认上课课程id为0，表示没有处于上课状态

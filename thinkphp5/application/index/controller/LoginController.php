@@ -19,7 +19,7 @@ class LoginController extends Controller {
     public function index() {
         // 获取教师id
         $teacherId = session('teacherId');
-        if (!is_null($teacherId)) {
+        if (!is_null($teacherId) && input('relogin') !== '1') {
             // 获取对应教师
             $Teacher = Teacher::get($teacherId);
             if (!is_null($Teacher)) {
@@ -268,7 +268,7 @@ class LoginController extends Controller {
             );
         }
 
-        // 判断密码是否含有字母
+        // 判断bai字符串是否包含字母，应当使du用正则zhi表达式匹配dao实现，zhuan用[a-zA-Z]可以匹配字母
         if (!preg_match('/[a-zA-Z]/', $password)) {
             return $this->error(
                 '请保证密码中包含字母',

@@ -53,6 +53,7 @@ class AdminStudentController extends AdminJudgeController
                 $page = $students->render();
                 $page = $coursestudents->render();
             // 向V层传数据
+            $this->assign('Teacher', new Teacher());
             $this->assign('Course', $Course);
             $this->assign('match', $match);
             $this->assign('students', $students);
@@ -75,7 +76,8 @@ class AdminStudentController extends AdminJudgeController
         } 
     }
 	public function add(){
-        $password = mt_rand(100000, 999999);
+        $Teacher = new Teacher();
+        $password = $Teacher->getRandomPassword();
         $this->assign('password', $password);
         $this->assign('courseId', input('param.courseId'));
 		$this->assign('Student',new Student);
@@ -102,7 +104,7 @@ class AdminStudentController extends AdminJudgeController
 		$Student->name = Request::instance()->post('name');
         $Student->num = Request::instance()->post('num');
         $Student->username =  Request::instance()->post('num');
-        $Student->password = $Student->encryptPassword($password);
+        $Student->password = $Student->encryptPassword(input('password'));
 
         // /a表示获取的类型为数组
 		//新增数据并验证
@@ -272,6 +274,8 @@ class AdminStudentController extends AdminJudgeController
         $Student = Student::get(['id' => $id]);
         $password = $Request->param('password');
         $Student->password = $Teacher->encryptPassword($password);
+        dump($Request->param('password'));
+        dump($Teacher->encryptPassword($password));
         if(!$Student->save()) {
             return $this->error('密码重置失败', url('index'));
         }

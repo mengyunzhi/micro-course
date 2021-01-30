@@ -496,33 +496,43 @@ class StudentController extends Controller
         $oldPassword = Request::instance()->param('oldPassword');
         $newPassword = Request::instance()->param('newPassword');
         $newPasswordAgain = Request::instance()->param('newPasswordAgain');
-        if (is_null($Student = Student::get($studentId))) {
-            return $this->error('学生信息接收失败', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+        $Student = Student::get($studentId);
+        $url = url('changePassword?' . 'studentId=' . $Student->id);
+        if (is_null($Student)) {
+            return $this->error('学生信息接收失败', $url);
         }
 
         // 首先判断输入的原密码是否正确
         if ($Student->password !== $Student->encryptPassword($oldPassword)) {
-            return $this->error('修改失败,原密码不正确', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+            dump($oldPassword);
+            dump($Student->encryptPassword($oldPassword));
+            dump($Student->password);
+            die();
+            return $this->error('修改失败,原密码不正确', $url);
         } else {
             // 原密码输入正确时
+            //判断新密码是否含有字母
+            if (!preg_match('/[a-zA-Z]/', $newPassword)) {
+                return $this->error('新密码必须含有字母', $url);
+            }
             if ($newPasswordAgain === $newPassword) {
                 $Student->password = $Student->encryptPassword($newPassword);
                 if (!$Student->save()) {
-                    return $this->error('新密码保存失败,请重新修改', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                    return $this->error('新密码保存失败,请重新修改', $url);
                 } else {
                     // 如果新密码长度不符合要求，返回重新修改
                     if (20 < strlen($newPassword) || strlen($newPassword) < 6) {
-                        return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                        return $this->error('密码长度限制:6至20位', $url);
                     } else {
                         if($newPasswordAgain === $oldPassword) {
-                            return $this->error('密码长度限制:6至20位', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&newPasswordAgain=' . $newPasswordAgain));
+                            return $this->error('密码长度限制:6至20位', $url);
                         }
                     }
                     session('studentId',null);
                     return $this->success('密码修改成功,请重新登陆', url('Login/studentwx?username=' . $Student->username));
                 }
             } else {
-                return $this->error('两次密码不相同，请确认新密码一致', url('changePassword?oldPassword=' . $oldPassword . '&newPassword=' . $newPassword . '&studentId' . $Student->id . '&newPasswordAgain=' . $newPasswordAgain));
+                return $this->error('两次密码不相同，请确认新密码一致', $url);
             }
         }
     }
