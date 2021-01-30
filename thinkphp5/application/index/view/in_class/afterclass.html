@@ -57,14 +57,14 @@
         <th>序号</th>
         <th>学生姓名</th>
         <th>学生学号</th>
-        <th>学生性别</th>
+        <th>考勤成绩</th>
     </tr>
     {volist name="students" id="_student" key="key"}
     <tr>
         <td>{$key}</td>
         <td>{$_student->name}</td>
         <td>{$_student->num}</td>
-        <td>{eq name="$_student->sex" value='0'}男{else /}女{/eq}</td>
+        <td>{$_student->grade->usgrade}</td>
     </tr>
     {/volist}
 </table>
