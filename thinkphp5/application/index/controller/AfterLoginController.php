@@ -68,6 +68,6 @@ class AfterLoginController extends IndexController {
             return $this->error('密码更新失败', url('passwordModification'));
         }
         $username = $Teacher->username;
-        return $this->success('密码修改成功,请重新登录', url('Login/index?username=', $username));
+        return $this->success('密码修改成功,请重新登录', url('Login/index?username=', $username . '&relogin=' . 1));
     }
 }
