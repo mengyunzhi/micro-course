@@ -19,7 +19,7 @@ class LoginController extends Controller {
     public function index() {
         // 获取教师id
         $teacherId = session('teacherId');
-        if (!is_null($teacherId) && input('relogin') !== '1') {
+        if (!is_null($teacherId)) {
             // 获取对应教师
             $Teacher = Teacher::get($teacherId);
             if (!is_null($Teacher)) {
@@ -38,10 +38,8 @@ class LoginController extends Controller {
         }
         // 接收登陆信息
         $username = Request::instance()->param('username');
-        $password = '';
 
         $this->assign('username', $username);
-        $this->assign('password', $password);
 
         // 显示登录表单
         return $this->fetch();
