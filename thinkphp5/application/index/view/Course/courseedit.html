@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-cn">
-
-<head>
-    <meta charset="utf-8">
-    <title>{block name="title"}{/block}</title>
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/static/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-</head>
-
-<body class="container">
-    <!--菜单导航-->
-    <div class="row">
-        <div class="col-md-12">
-            <nav class="navbar navbar-default" role="navigation">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">梦云智</a>
-                    </div>
-                    <!--Collect the nav links,forms,and other contend for toggling-->
-                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                        <ul class="nav navbar-nav">
-                            <li class="active"><a href="{:url('Course/index')}">课程管理</a></li>
-                            <li><a href="{:url('PreClass/index')}">上课管理</a></li>
-                            <li><a href="{:url('grade/index')}">成绩管理</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{:url('Login/logout')}">注销</a></li>
-                        </ul>
-                    </div>
-                    <!--/.navbar-collapse-->
-                </div>
-                <!--/.container-fluid-->
-            </nav>
-        </div>
-    </div>
+{extend name="menu"/}
+{block name="title"}
+成绩编辑
+{/block}
+{block name="search"}{/block}
+{block name="search1"}{/block}
+{block name="content"}
     {php}$action=request()->action()==='add'?'save':'update';{/php}
     <table class="table table-hover table-bordered">
         <td><a href="{:url('templateDownload')}"><button class="btn btn-warning"><i class="glyphicon glyphicon-download"></i>&nbsp;模板下载</button></a>
@@ -65,6 +37,6 @@
                 </div>
             </form>
         </td>
-</body>
-
-</html>
+{/block}
+{block name="page"}
+{/block}

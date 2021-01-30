@@ -396,7 +396,7 @@ class LoginController extends Controller {
 
         // 第2种session已经过期，输入用户名密码登陆
         if (is_null($Student) || is_null($studentId)) {
-            if (is_null($username) || is_null($password)) {
+            if (empty($username) || empty($password)) {
                 return $this->error(
                     '请先输入完整的登陆信息',
                     url('studentwx?username=' . $username . '&password=' . $password . '&seatId=' . $seatId)
@@ -406,7 +406,7 @@ class LoginController extends Controller {
                     // 登陆成功
                     $Student = Student::get($studentId = session('studentId'));
                     // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
-                    if (is_null($seatId) || $seatId === 0) {
+                    if (empty($seatId) || $seatId === 0) {
                         return $this->error(
                             '座位信息不存在，请重新扫码',
                             url('studentwx?username=' . $username . '&password=' . $password)
@@ -434,7 +434,7 @@ class LoginController extends Controller {
             // 第二种session未过期，直接登陆
         } else {
          // 首先判断座位id是否接收成功,如果没成功即为修改密码情况
-            if (is_null($seatId) || $seatId === 0) {
+            if (empty($seatId) || $seatId === 0) {
                 return $this->error(
                     '座位信息不存在，请重新扫码',
                     url('studentwx?username=' . $username . '&password=' . $password)
@@ -559,14 +559,13 @@ class LoginController extends Controller {
                     '教师-教室信息绑定失败,请重新扫码',
                     ''
                 );
-                }
-                return $this->success('登陆成功', url('teacherwx/index'));
             }
+            return $this->success('登陆成功', url('teacherwx/index'));
+        }
 
         // 接收用户名和密码,避免二次登陆重新输入账号密码
         $username = Request::instance()->param('username');
         $password = '';
-        $classroomId = Request::instance()->param('classroomId');
 
         $this->assign('username', $username);
         $this->assign('classroomId', $classroomId);
@@ -587,14 +586,14 @@ class LoginController extends Controller {
         $classroomId = Request::instance()->param('classroomId');
 
         // 通过判断用户名密码是否为空来区分登陆和密码不正确重新登陆状况
-        if (!is_null($username) && !is_null($password)) {
+        if (!empty($username) && !empty($password)) {
             // 直接调用M层方法，进行登录。
             if (Teacher::login($username, $password)) {
                 // 如果不是则认定为教师端登陆，跳转到教师端
                 // 获取教师id
                 $teacherId = session('teacherId');
                 $Teacher = Teacher::get($teacherId);
-                if (is_null($Teacher || is_null($teacherId))) {
+                if (is_null($Teacher) || is_null($teacherId)) {
                     return $this->error('教师信息不存在', url('teacherFirst?classroomId=' . $classroomId));
                 } else {
                     // 绑定教师和教室信息
@@ -610,9 +609,10 @@ class LoginController extends Controller {
                 return $this->success('登陆成功', url('teacherwx/index'));
             } else {
                 // 登陆不成功状况
+                $id = $classroomId;
                 return $this->error(
                     '用户名或密码不正确',
-                    url('teacherIndex?username=' . $username . '&password=' . $password)
+                    url('teacherIndex?username=' . $username . '&password=' . $password . '&classroomId=' . $id)
                 );
             }
         } else {
