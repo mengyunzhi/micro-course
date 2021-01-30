@@ -71,6 +71,6 @@ class AfterLoginController extends IndexController {
 
         // 密码修改成功后消除当前session，跳转到登陆界面
         session('teacherId', null);
-        return $this->success('密码修改成功,请重新登录', url('Login/index?username=', $username . '&relogin=' . 1));
+        return $this->success('密码修改成功,请重新登录', url('Login/index?username=', $username));
     }
 }
