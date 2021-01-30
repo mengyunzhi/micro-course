@@ -19,7 +19,7 @@ class LoginController extends Controller {
     public function index() {
         // 获取教师id
         $teacherId = session('teacherId');
-        if (!is_null($teacherId)) {
+        if (!is_null($teacherId) && input('relogin') !== '1') {
             // 获取对应教师
             $Teacher = Teacher::get($teacherId);
             if (!is_null($Teacher)) {
