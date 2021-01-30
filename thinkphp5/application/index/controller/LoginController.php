@@ -609,9 +609,10 @@ class LoginController extends Controller {
                 return $this->success('登陆成功', url('teacherwx/index'));
             } else {
                 // 登陆不成功状况
+                $id = $classroomId;
                 return $this->error(
                     '用户名或密码不正确',
-                    url('teacherIndex?username=' . $username . '&password=' . $password . '&classroomId=' . $classroomId)
+                    url('teacherIndex?username=' . $username . '&password=' . $password . '&classroomId=' . $id)
                 );
             }
         } else {
